@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, Mail, Calendar, Tag } from "lucide-react";
+import { LogOut, Mail, Calendar, Tag, ChevronDown, ChevronUp } from "lucide-react";
 
-type Submission = {
+type ContactSubmission = {
+  type: "contact";
   id: string;
   first_name: string;
   last_name: string;
@@ -13,29 +14,77 @@ type Submission = {
   submitted_at: string;
 };
 
+type ConsultationSubmission = {
+  type: "consultation";
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  location: string | null;
+  occupation: string | null;
+  years_climbing: string | null;
+  currently_injured: boolean | null;
+  injury_history: string | null;
+  climbing_training_history: string | null;
+  goals: string | null;
+  perceived_strengths: string | null;
+  perceived_weaknesses: string | null;
+  training_facilities: string | null;
+  training_time_per_week: string | null;
+  preferred_disciplines: string[] | null;
+  hardest_sport_redpoint: string | null;
+  hardest_sport_in_a_day: string | null;
+  hardest_sport_onsight: string | null;
+  hardest_boulder_redpoint: string | null;
+  hardest_boulder_flash: string | null;
+  hardest_boulder_in_a_day: string | null;
+  submitted_at: string;
+};
+
+type Submission = ContactSubmission | ConsultationSubmission;
+
+const Field = ({ label, value }: { label: string; value: string | null | undefined }) => {
+  if (!value) return null;
+  return (
+    <div>
+      <p className="font-body text-xs font-semibold uppercase tracking-wider opacity-50 mb-0.5" style={{ color: "white" }}>
+        {label}
+      </p>
+      <p className="font-body text-sm text-white leading-relaxed">{value}</p>
+    </div>
+  );
+};
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [adminEmail, setAdminEmail] = useState("");
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [filter, setFilter] = useState<"all" | "contact" | "consultation">("all");
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) setAdminEmail(user.email ?? "");
     });
-
     fetchSubmissions();
   }, []);
 
   const fetchSubmissions = async () => {
     setLoading(true);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any)
-      .from("contact_submissions")
-      .select("*")
-      .order("submitted_at", { ascending: false });
+    const [{ data: contacts }, { data: consultations }] = await Promise.all([
+      (supabase as any).from("contact_submissions").select("*").order("submitted_at", { ascending: false }),
+      (supabase as any).from("consultation_submissions").select("*").order("submitted_at", { ascending: false }),
+    ]);
 
-    if (!error && data) setSubmissions(data as Submission[]);
+    const merged: Submission[] = [
+      ...((contacts ?? []) as ContactSubmission[]).map((s: ContactSubmission) => ({ ...s, type: "contact" as const })),
+      ...((consultations ?? []) as ConsultationSubmission[]).map((s: ConsultationSubmission) => ({ ...s, type: "consultation" as const })),
+    ].sort((a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime());
+
+    setSubmissions(merged);
     setLoading(false);
   };
 
@@ -44,32 +93,28 @@ const AdminDashboard = () => {
     navigate("/admin/login");
   };
 
-  const formatDate = (iso: string) => {
-    return new Date(iso).toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+
+  const toggleExpand = (id: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
     });
   };
 
+  const filtered = submissions.filter((s) => filter === "all" || s.type === filter);
+
   return (
-    <main
-      className="min-h-screen"
-      style={{ backgroundColor: "hsl(var(--charcoal))" }}
-    >
+    <main className="min-h-screen" style={{ backgroundColor: "hsl(var(--charcoal))" }}>
       {/* Header */}
       <header
         className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b"
-        style={{
-          backgroundColor: "hsl(var(--golden-dark))",
-          borderColor: "hsl(var(--golden-deep))",
-        }}
+        style={{ backgroundColor: "hsl(var(--golden-dark))", borderColor: "hsl(var(--golden-deep))" }}
       >
         <div>
-          <span
-            className="font-display text-2xl tracking-wider"
-            style={{ color: "hsl(var(--golden))" }}
-          >
+          <span className="font-display text-2xl tracking-wider" style={{ color: "hsl(var(--golden))" }}>
             KAIZEN
           </span>
           <span className="font-body text-xs text-white opacity-50 ml-3 uppercase tracking-widest">
@@ -77,9 +122,7 @@ const AdminDashboard = () => {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <span className="font-body text-xs text-white opacity-50 hidden sm:block">
-            {adminEmail}
-          </span>
+          <span className="font-body text-xs text-white opacity-50 hidden sm:block">{adminEmail}</span>
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 font-body text-xs font-semibold uppercase tracking-wider px-3 py-2 transition-colors duration-200"
@@ -93,99 +136,189 @@ const AdminDashboard = () => {
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-6 py-10">
-        <div className="flex items-baseline justify-between mb-8">
-          <h1
-            className="font-display text-5xl tracking-wider"
-            style={{ color: "hsl(var(--golden))" }}
-          >
+        {/* Title + filter */}
+        <div className="flex flex-wrap items-baseline justify-between gap-4 mb-8">
+          <h1 className="font-display text-5xl tracking-wider" style={{ color: "hsl(var(--golden))" }}>
             ALL ENQUIRIES
           </h1>
-          <span className="font-body text-sm text-white opacity-40">
-            {submissions.length} total
-          </span>
+          <div className="flex items-center gap-2">
+            {(["all", "contact", "consultation"] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className="font-body text-xs font-semibold uppercase tracking-wider px-3 py-1.5 transition-colors duration-150"
+                style={{
+                  backgroundColor: filter === f ? "hsl(var(--golden))" : "transparent",
+                  color: filter === f ? "hsl(var(--charcoal))" : "hsl(var(--golden))",
+                  border: "1px solid hsl(var(--golden))",
+                }}
+              >
+                {f}
+              </button>
+            ))}
+            <span className="font-body text-sm text-white opacity-40 ml-2">
+              {filtered.length} total
+            </span>
+          </div>
         </div>
 
         {loading ? (
           <div className="flex justify-center py-24">
             <div
               className="w-8 h-8 border-2 animate-spin"
-              style={{
-                borderColor: "hsl(var(--golden))",
-                borderTopColor: "transparent",
-              }}
+              style={{ borderColor: "hsl(var(--golden))", borderTopColor: "transparent" }}
             />
           </div>
-        ) : submissions.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="text-center py-24">
-            <p className="font-body text-white opacity-30">
-              No enquiries yet. Share the contact form and they'll appear here.
-            </p>
+            <p className="font-body text-white opacity-30">No enquiries yet.</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {submissions.map((sub) => (
-              <div
-                key={sub.id}
-                className="p-6 border"
-                style={{
-                  backgroundColor: "hsl(var(--golden-dark))",
-                  borderColor: "hsl(var(--golden-deep))",
-                }}
-              >
-                {/* Top row */}
-                <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-                  <div>
-                    <p
-                      className="font-display text-2xl tracking-wider"
-                      style={{ color: "hsl(var(--golden))" }}
-                    >
-                      {sub.first_name} {sub.last_name}
-                    </p>
-                    <a
-                      href={`mailto:${sub.email}`}
-                      className="flex items-center gap-1.5 font-body text-sm text-white opacity-70 hover:opacity-100 transition-opacity mt-0.5"
-                    >
-                      <Mail size={12} />
-                      {sub.email}
-                    </a>
-                  </div>
-                  <div
-                    className="flex items-center gap-1.5 font-body text-xs text-white opacity-50 mt-1"
-                  >
-                    <Calendar size={12} />
-                    {formatDate(sub.submitted_at)}
-                  </div>
-                </div>
+            {filtered.map((sub) => {
+              const isOpen = expanded.has(sub.id);
+              const isConsultation = sub.type === "consultation";
+              const c = sub as ConsultationSubmission;
 
-                {/* Interests */}
-                {sub.interests && sub.interests.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {sub.interests.map((interest) => (
-                      <span
-                        key={interest}
-                        className="flex items-center gap-1 font-body text-xs font-semibold uppercase tracking-wider px-2.5 py-1"
+              return (
+                <div
+                  key={sub.id}
+                  className="border"
+                  style={{ backgroundColor: "hsl(var(--golden-dark))", borderColor: "hsl(var(--golden-deep))" }}
+                >
+                  {/* Top row */}
+                  <div className="p-6">
+                    <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+                      <div>
+                        <div className="flex items-center gap-3 mb-1">
+                          <p className="font-display text-2xl tracking-wider" style={{ color: "hsl(var(--golden))" }}>
+                            {sub.first_name} {sub.last_name}
+                          </p>
+                          <span
+                            className="font-body text-xs font-semibold uppercase tracking-wider px-2 py-0.5"
+                            style={{
+                              backgroundColor: isConsultation ? "hsl(var(--golden))" : "hsl(var(--golden-deep))",
+                              color: "hsl(var(--charcoal))",
+                            }}
+                          >
+                            {isConsultation ? "Consultation" : "Contact"}
+                          </span>
+                        </div>
+                        <a
+                          href={`mailto:${sub.email}`}
+                          className="flex items-center gap-1.5 font-body text-sm text-white opacity-70 hover:opacity-100 transition-opacity"
+                        >
+                          <Mail size={12} />
+                          {sub.email}
+                        </a>
+                      </div>
+                      <div className="flex items-center gap-1.5 font-body text-xs text-white opacity-50 mt-1">
+                        <Calendar size={12} />
+                        {formatDate(sub.submitted_at)}
+                      </div>
+                    </div>
+
+                    {/* Contact: interests + message */}
+                    {!isConsultation && (
+                      <>
+                        {(sub as ContactSubmission).interests && (sub as ContactSubmission).interests!.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {(sub as ContactSubmission).interests!.map((interest) => (
+                              <span
+                                key={interest}
+                                className="flex items-center gap-1 font-body text-xs font-semibold uppercase tracking-wider px-2.5 py-1"
+                                style={{ backgroundColor: "hsl(var(--golden))", color: "hsl(var(--charcoal))" }}
+                              >
+                                <Tag size={10} />
+                                {interest}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        {(sub as ContactSubmission).message && (
+                          <p
+                            className="font-body text-sm text-white opacity-70 leading-relaxed border-t pt-4"
+                            style={{ borderColor: "hsl(var(--golden-deep))" }}
+                          >
+                            "{(sub as ContactSubmission).message}"
+                          </p>
+                        )}
+                      </>
+                    )}
+
+                    {/* Consultation: summary + expand toggle */}
+                    {isConsultation && (
+                      <div className="flex flex-wrap gap-4 text-xs font-body text-white opacity-60 mb-2">
+                        {c.location && <span>📍 {c.location}</span>}
+                        {c.years_climbing && <span>🧗 {c.years_climbing} years climbing</span>}
+                        {c.training_time_per_week && <span>⏱ {c.training_time_per_week}/week</span>}
+                        {c.currently_injured && <span className="text-red-400 opacity-100">⚠ Currently injured</span>}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Expand button for consultations */}
+                  {isConsultation && (
+                    <>
+                      <button
+                        onClick={() => toggleExpand(sub.id)}
+                        className="w-full flex items-center justify-center gap-2 py-3 font-body text-xs font-semibold uppercase tracking-wider border-t transition-colors duration-150"
                         style={{
-                          backgroundColor: "hsl(var(--golden))",
-                          color: "hsl(var(--charcoal))",
+                          borderColor: "hsl(var(--golden-deep))",
+                          color: "hsl(var(--golden))",
                         }}
                       >
-                        <Tag size={10} />
-                        {interest}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                        {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        {isOpen ? "Hide details" : "View all fields"}
+                      </button>
 
-                {/* Message */}
-                {sub.message && (
-                  <p className="font-body text-sm text-white opacity-70 leading-relaxed border-t pt-4"
-                    style={{ borderColor: "hsl(var(--golden-deep))" }}
-                  >
-                    "{sub.message}"
-                  </p>
-                )}
-              </div>
-            ))}
+                      {isOpen && (
+                        <div
+                          className="px-6 pb-6 pt-4 border-t grid grid-cols-1 sm:grid-cols-2 gap-5"
+                          style={{ borderColor: "hsl(var(--golden-deep))" }}
+                        >
+                          <Field label="Phone" value={c.phone} />
+                          <Field label="Location" value={c.location} />
+                          <Field label="Occupation" value={c.occupation} />
+                          <Field label="Years Climbing" value={c.years_climbing} />
+                          <Field label="Currently Injured" value={c.currently_injured != null ? (c.currently_injured ? "Yes" : "No") : null} />
+                          <Field label="Training Time per Week" value={c.training_time_per_week} />
+                          <Field label="Training Facilities" value={c.training_facilities} />
+                          {c.preferred_disciplines && c.preferred_disciplines.length > 0 && (
+                            <div>
+                              <p className="font-body text-xs font-semibold uppercase tracking-wider opacity-50 mb-1 text-white">Preferred Disciplines</p>
+                              <div className="flex flex-wrap gap-2">
+                                {c.preferred_disciplines.map((d) => (
+                                  <span key={d} className="font-body text-xs px-2 py-0.5 font-semibold uppercase tracking-wider" style={{ backgroundColor: "hsl(var(--golden))", color: "hsl(var(--charcoal))" }}>{d}</span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          <div className="sm:col-span-2 border-t pt-4" style={{ borderColor: "hsl(var(--golden-deep))" }}>
+                            <p className="font-body text-xs font-semibold uppercase tracking-wider opacity-50 mb-3 text-white">Performance</p>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                              <Field label="Sport Redpoint" value={c.hardest_sport_redpoint} />
+                              <Field label="Sport in a Day" value={c.hardest_sport_in_a_day} />
+                              <Field label="Sport Onsight" value={c.hardest_sport_onsight} />
+                              <Field label="Boulder Redpoint" value={c.hardest_boulder_redpoint} />
+                              <Field label="Boulder Flash" value={c.hardest_boulder_flash} />
+                              <Field label="Boulder in a Day" value={c.hardest_boulder_in_a_day} />
+                            </div>
+                          </div>
+                          <div className="sm:col-span-2 space-y-4 border-t pt-4" style={{ borderColor: "hsl(var(--golden-deep))" }}>
+                            <Field label="Goals" value={c.goals} />
+                            <Field label="Perceived Strengths" value={c.perceived_strengths} />
+                            <Field label="Perceived Weaknesses" value={c.perceived_weaknesses} />
+                            <Field label="Injury History" value={c.injury_history} />
+                            <Field label="Climbing & Training History" value={c.climbing_training_history} />
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
