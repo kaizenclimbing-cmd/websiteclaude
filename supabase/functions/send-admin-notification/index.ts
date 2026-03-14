@@ -124,9 +124,11 @@ serve(async (req) => {
     const messageId = `admin-notify-${crypto.randomUUID()}`;
     const html = renderEmail(payload);
 
+    const runId = crypto.randomUUID();
     const { error } = await supabase.rpc("enqueue_email", {
       queue_name: "transactional_emails",
       payload: {
+        run_id: runId,
         message_id: messageId,
         label: "admin-contact-notification",
         to: adminEmail,
