@@ -60,19 +60,20 @@ const ContactPage = () => {
       return;
     }
 
-    // Fire confirmation email (non-blocking — don't fail the form if this errors)
-    try {
-      await supabase.functions.invoke("send-contact-confirmation", {
-        body: {
-          firstName: form.firstName,
-          lastName: form.lastName,
-          email: form.email,
-          interests: form.interests,
-        },
-      });
-    } catch (emailErr) {
-      console.warn("Confirmation email failed (non-critical):", emailErr);
-    }
+    // Fire both emails in parallel (non-blocking — don't fail the form if these error)
+    const emailPayload = {
+      firstName: form.firstName,
+      lastName: form.lastName,
+      email: form.email,
+      message: form.comment || undefined,
+      interests: form.interests,
+    };
+    Promise.all([
+      supabase.functions.invoke("send-contact-confirmation", { body: emailPayload }),
+      supabase.functions.invoke("send-admin-notification", { body: emailPayload }),
+    ]).catch((emailErr) => {
+      console.warn("Email(s) failed (non-critical):", emailErr);
+    });
 
     setLoading(false);
     setSubmitted(true);
