@@ -128,12 +128,12 @@ serve(async (req) => {
       queue_name: "transactional_emails",
       payload: {
         message_id: messageId,
-        template_name: "admin-contact-notification",
-        recipient_email: adminEmail,
-        recipient_name: "Kaizen Climbing",
+        label: "admin-contact-notification",
+        to: adminEmail,
         subject: `New enquiry from ${firstName} ${lastName}`,
-        html_body: html,
-        metadata: { submitter_email: email, interests },
+        html,
+        purpose: "transactional",
+        queued_at: new Date().toISOString(),
       },
     });
 
