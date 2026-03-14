@@ -29,7 +29,8 @@ const AdminDashboard = () => {
 
   const fetchSubmissions = async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
       .from("contact_submissions")
       .select("*")
       .order("submitted_at", { ascending: false });

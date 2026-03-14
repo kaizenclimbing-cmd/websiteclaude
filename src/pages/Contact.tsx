@@ -43,7 +43,8 @@ const ContactPage = () => {
     setError("");
     setLoading(true);
 
-    const { error: insertError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: insertError } = await (supabase as any)
       .from("contact_submissions")
       .insert({
         first_name: form.firstName,
