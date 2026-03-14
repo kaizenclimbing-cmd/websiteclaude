@@ -20,6 +20,7 @@ const Navigation = () => {
   const navLinks = [
     { label: "About", to: "/" },
     { label: "Plans and Coaching", to: "/plans" },
+    { label: "Training Tips", to: "/training-tips" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -29,17 +30,16 @@ const Navigation = () => {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
         isScrolled ? "shadow-lg" : ""
       }`}
-      style={{ backgroundColor: "hsl(var(--charcoal))" }}
+      style={{ backgroundColor: "hsl(var(--olive-dark))" }}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
         {/* Logo */}
         <Link
           to="/"
-          className="font-display text-xl tracking-widest leading-tight"
-          style={{ color: "hsl(var(--golden))" }}
+          className="font-display text-sm tracking-widest leading-tight"
+          style={{ color: "hsl(var(--yellow))" }}
         >
-          KAIZEN<br className="hidden sm:block" />
-          <span className="text-white text-sm tracking-widest font-display">CLIMBING COACHING</span>
+          KAIZEN CLIMBING COACHING
         </Link>
 
         {/* Desktop Nav */}
@@ -50,8 +50,8 @@ const Navigation = () => {
               to={link.to}
               className={`nav-link-style ${
                 isActive(link.to)
-                  ? "text-golden"
-                  : "text-white hover:text-golden"
+                  ? "text-yellow"
+                  : "text-white hover:text-yellow"
               }`}
             >
               {link.label}
@@ -77,8 +77,8 @@ const Navigation = () => {
         <div
           className="md:hidden border-t"
           style={{
-            backgroundColor: "hsl(var(--charcoal))",
-            borderColor: "hsl(var(--golden-dark))",
+            backgroundColor: "hsl(var(--olive-dark))",
+            borderColor: "hsl(var(--olive))",
           }}
         >
           <nav className="flex flex-col px-6 py-4 gap-4">
@@ -87,9 +87,9 @@ const Navigation = () => {
                 key={link.to}
                 to={link.to}
                 className={`nav-link-style py-2 border-b ${
-                  isActive(link.to) ? "text-golden" : "text-white"
+                  isActive(link.to) ? "text-yellow" : "text-white"
                 }`}
-                style={{ borderColor: "hsl(var(--golden-dark))" }}
+                style={{ borderColor: "hsl(var(--olive))" }}
               >
                 {link.label}
               </Link>

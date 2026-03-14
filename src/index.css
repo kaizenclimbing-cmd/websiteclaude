@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,39 +9,39 @@
 @layer base {
   :root {
     /* Brand Colors */
-    --golden: 43 100% 62%;          /* #FFC93C */
-    --golden-dark: 43 45% 27%;      /* #5C5435 */
-    --golden-deep: 43 37% 23%;      /* #4A442B */
-    --charcoal: 0 0% 10%;           /* #1A1A1A */
+    --yellow: 44 94% 57%;            /* #F9C22E */
+    --olive: 43 16% 23%;             /* #4A4430 */
+    --olive-dark: 43 13% 18%;        /* #3A3425 */
+    --near-black: 60 19% 8%;         /* #1a1a14 */
 
     /* Semantic Tokens */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
+    --background: 43 16% 23%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card: 43 13% 18%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover: 43 13% 18%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 43 100% 62%;
-    --primary-foreground: 0 0% 10%;
+    --primary: 44 94% 57%;
+    --primary-foreground: 60 19% 8%;
 
-    --secondary: 43 45% 27%;
-    --secondary-foreground: 43 100% 62%;
+    --secondary: 43 13% 18%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 43 20% 93%;
-    --muted-foreground: 43 20% 45%;
+    --muted: 43 13% 28%;
+    --muted-foreground: 43 10% 60%;
 
-    --accent: 43 37% 23%;
-    --accent-foreground: 43 100% 62%;
+    --accent: 44 94% 57%;
+    --accent-foreground: 60 19% 8%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 43 25% 82%;
-    --input: 43 25% 82%;
-    --ring: 43 100% 62%;
+    --border: 43 13% 30%;
+    --input: 43 13% 30%;
+    --ring: 44 94% 57%;
 
     --radius: 0rem;
 
@@ -64,70 +64,74 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     scroll-behavior: smooth;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Bebas Neue', 'Arial Black', sans-serif;
-    letter-spacing: 0.03em;
+    font-family: 'Unbounded', sans-serif;
   }
 }
 
 @layer components {
-  .section-golden {
-    background-color: hsl(var(--golden));
-    color: hsl(var(--charcoal));
+  .section-yellow {
+    background-color: hsl(var(--yellow));
+    color: hsl(var(--near-black));
   }
 
-  .section-dark {
-    background-color: hsl(var(--golden-dark));
+  .section-olive {
+    background-color: hsl(var(--olive));
+    color: hsl(0 0% 100%);
+  }
+
+  .section-olive-dark {
+    background-color: hsl(var(--olive-dark));
     color: hsl(0 0% 100%);
   }
 
   .section-white {
     background-color: hsl(0 0% 100%);
-    color: hsl(var(--charcoal));
+    color: hsl(var(--near-black));
   }
 
   .btn-primary {
     @apply inline-block px-6 py-3 font-bold uppercase tracking-wider text-sm transition-all duration-200;
-    background-color: hsl(var(--golden));
-    color: hsl(var(--charcoal));
-    font-family: 'Inter', sans-serif;
+    background-color: hsl(var(--yellow));
+    color: hsl(var(--near-black));
+    font-family: 'Space Grotesk', sans-serif;
   }
 
   .btn-primary:hover {
-    background-color: hsl(var(--golden-dark));
-    color: hsl(var(--golden));
+    background-color: hsl(var(--olive-dark));
+    color: hsl(var(--yellow));
   }
 
   .btn-outline-light {
     @apply inline-block px-6 py-3 font-bold uppercase tracking-wider text-sm transition-all duration-200 border-2;
-    border-color: hsl(var(--golden));
-    color: hsl(var(--golden));
-    font-family: 'Inter', sans-serif;
+    border-color: hsl(var(--yellow));
+    color: hsl(var(--yellow));
+    font-family: 'Space Grotesk', sans-serif;
   }
 
   .btn-outline-light:hover {
-    background-color: hsl(var(--golden));
-    color: hsl(var(--charcoal));
+    background-color: hsl(var(--yellow));
+    color: hsl(var(--near-black));
   }
 
   .nav-link-style {
     @apply uppercase tracking-wider text-sm font-semibold transition-colors duration-200;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
   }
 
-  .plan-card-dark {
-    background-color: hsl(var(--golden-dark));
+  .plan-card-olive {
+    background-color: hsl(var(--olive-dark));
     color: hsl(0 0% 100%);
     @apply p-8;
   }
 
   .testimonial-card {
-    background-color: hsl(var(--golden));
-    color: hsl(var(--charcoal));
+    background-color: hsl(0 0% 100%);
+    color: hsl(var(--near-black));
     @apply p-6;
   }
 }
