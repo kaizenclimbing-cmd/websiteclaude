@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      consultation_submissions: {
+        Row: {
+          climbing_training_history: string | null
+          currently_injured: boolean | null
+          email: string
+          first_name: string
+          goals: string | null
+          hardest_boulder_flash: string | null
+          hardest_boulder_in_a_day: string | null
+          hardest_boulder_redpoint: string | null
+          hardest_sport_in_a_day: string | null
+          hardest_sport_onsight: string | null
+          hardest_sport_redpoint: string | null
+          id: string
+          injury_history: string | null
+          last_name: string
+          location: string | null
+          occupation: string | null
+          perceived_strengths: string | null
+          perceived_weaknesses: string | null
+          phone: string | null
+          preferred_disciplines: string[] | null
+          submitted_at: string
+          training_facilities: string | null
+          training_time_per_week: string | null
+          years_climbing: string | null
+        }
+        Insert: {
+          climbing_training_history?: string | null
+          currently_injured?: boolean | null
+          email: string
+          first_name: string
+          goals?: string | null
+          hardest_boulder_flash?: string | null
+          hardest_boulder_in_a_day?: string | null
+          hardest_boulder_redpoint?: string | null
+          hardest_sport_in_a_day?: string | null
+          hardest_sport_onsight?: string | null
+          hardest_sport_redpoint?: string | null
+          id?: string
+          injury_history?: string | null
+          last_name: string
+          location?: string | null
+          occupation?: string | null
+          perceived_strengths?: string | null
+          perceived_weaknesses?: string | null
+          phone?: string | null
+          preferred_disciplines?: string[] | null
+          submitted_at?: string
+          training_facilities?: string | null
+          training_time_per_week?: string | null
+          years_climbing?: string | null
+        }
+        Update: {
+          climbing_training_history?: string | null
+          currently_injured?: boolean | null
+          email?: string
+          first_name?: string
+          goals?: string | null
+          hardest_boulder_flash?: string | null
+          hardest_boulder_in_a_day?: string | null
+          hardest_boulder_redpoint?: string | null
+          hardest_sport_in_a_day?: string | null
+          hardest_sport_onsight?: string | null
+          hardest_sport_redpoint?: string | null
+          id?: string
+          injury_history?: string | null
+          last_name?: string
+          location?: string | null
+          occupation?: string | null
+          perceived_strengths?: string | null
+          perceived_weaknesses?: string | null
+          phone?: string | null
+          preferred_disciplines?: string[] | null
+          submitted_at?: string
+          training_facilities?: string | null
+          training_time_per_week?: string | null
+          years_climbing?: string | null
+        }
+        Relationships: []
+      }
       contact_submissions: {
         Row: {
           email: string
