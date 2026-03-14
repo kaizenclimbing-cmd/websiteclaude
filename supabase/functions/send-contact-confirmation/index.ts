@@ -100,13 +100,16 @@ serve(async (req) => {
     const html = renderEmail(firstName, interests);
 
     const { error } = await supabase.rpc("enqueue_email", {
-      p_message_id: messageId,
-      p_template_name: "contact-confirmation",
-      p_recipient_email: email,
-      p_recipient_name: `${firstName} ${lastName}`,
-      p_subject: "We've received your enquiry — Kaizen Climbing Coaching",
-      p_html_body: html,
-      p_metadata: { interests },
+      queue_name: "transactional_emails",
+      payload: {
+        message_id: messageId,
+        template_name: "contact-confirmation",
+        recipient_email: email,
+        recipient_name: `${firstName} ${lastName}`,
+        subject: "We've received your enquiry — Kaizen Climbing Coaching",
+        html_body: html,
+        metadata: { interests },
+      },
     });
 
     if (error) throw error;
