@@ -61,6 +61,9 @@ const App = () => (
             }
           />
 
+          {/* Hidden consultation form (no nav link) */}
+          <Route path="/consultation" element={<Consultation />} />
+
           {/* Admin routes (no public navigation) */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
