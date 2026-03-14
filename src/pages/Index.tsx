@@ -5,40 +5,38 @@ import { Link } from "react-router-dom";
 const testimonials = [
   {
     quote:
-      "Buster completely transformed my training. In 12 weeks I went from struggling on 6c to confidently projecting 7b. The structure and accountability made all the difference.",
-    name: "Sarah T.",
-    detail: "Amateur climber, 3 years experience",
+      "I've only been working with Kaizen for the past 2.5 months and I can see incredible improvements in strength and endurance. Their structured and personalised plans are no joke. I've improved a lot. Off the wall I am now consistently doing 1 armers, pull up, lock ups, holding lock offs and my weighted pull ups are up to 80% bodyweight! I've gained tons of confidence on the wall with their help, excited for the next phase of training with Kaizen.",
+    name: "Abcel Basil",
+    detail: "4 Jul 2024",
   },
   {
     quote:
-      "As someone with a shoulder injury history, I was nervous about training hard. Buster's rehab-informed approach meant I trained smarter, not just harder. Pain-free at last.",
-    name: "James R.",
-    detail: "Trad climber, 8 years experience",
+      "It felt great to work on my finger strength with some solid structure provided by the Kaizen team, and make great gains in a fairly short time, cutting in half the assisting weight I was using at the beginning of the plan. The lockdown allowed me to focus on this aspect of my climbing, which I may not have otherwise. Looking forward to making even bigger gains in the future and taking this strength onto the rocks.",
+    name: "Alessia Unkle",
+    detail: "",
   },
   {
     quote:
-      "The 6 Week Peak Plan was exactly what I needed before my trip to Ceuse. Structured, science-backed, and Buster was always on hand for questions. 10/10.",
-    name: "Marco D.",
-    detail: "Sport climber, competition background",
+      "Thanks to Buster helping me to manage and fit in my training, I feel like another climber. With an open and trusting coach-athlete relationship, the sharing of everything, and regular communication all underpinned great improvements for me. The satisfaction wasn't in the grades I have reached but the feeling of improving more and more on different terrain and on types of routes that I never imagined. A real game changer. The training was based on science, carefully considered - not simply being told to 'pull until you're dead mate'.",
+    name: "Arran Hibbins",
+    detail: "",
   },
 ];
 
 const kaizenBullets = [
-  "Fully personalised monthly training plan",
-  "Weekly check-ins via video or message",
-  "Technique analysis from your own footage",
-  "Injury prevention and rehab support",
-  "Nutrition and recovery guidance",
-  "Ongoing plan adjustments based on progress",
+  "Online coaching / mentoring",
+  "Initial consultation call",
+  "Fully personalised training programme",
+  "Day by day session plans: structured climbing sessions, fingerboarding, campusing, strength and conditioning, and more",
+  "Messaging; coach on hand for feedback, plan adjustments and advice",
+  "For a minimum of 12 weeks",
 ];
 
 const peakBullets = [
-  "Structured 6-week periodised programme",
-  "Designed around a specific goal or trip",
-  "Full strength and power phase integration",
-  "Rest and recovery scheduling",
-  "Delivered digitally — start any time",
-  "Email support throughout",
+  "One off 6 week personalised training programme",
+  "Day by day session plans: structured climbing sessions, fingerboarding, campusing, strength and conditioning, and more",
+  "Weekly email support",
+  "£200 for the plan",
 ];
 
 const HomePage = () => {
@@ -131,16 +129,24 @@ const HomePage = () => {
               </h2>
               <div className="space-y-4 font-body text-base leading-relaxed" style={{ color: "hsl(var(--charcoal))" }}>
                 <p>
-                  I've been climbing for over 20 years — from dusty sport crags in Spain to bouldering in Fontainebleau and competing at national level. But somewhere along the way, I realised my greatest passion wasn't sending my next project. It was helping others send theirs.
+                  I've been scientifically studying the science and art of training for climbing for as long as I can remember and am committed to sharing these lessons from 20 years of climbing and 13 years of plan writing in a no-nonsense way.
                 </p>
                 <p>
-                  I hold a BSc in Sports Science and have had the privilege of working with Olympic-level athletes, national team members, and weekend warriors who just want to stop falling off the same move. My approach is the same for everyone: evidence-based, individualised, and results-driven.
+                  I consolidated my personal study and years of experience with a Sports Science degree specialising in sports rehab.
                 </p>
                 <p>
-                  Kaizen is the Japanese concept of continuous improvement. That's the philosophy at the heart of everything I do. No shortcuts. No gimmicks. Just a structured, science-backed path to becoming a better climber — whatever that looks like for you.
+                  Since then, I've worked with hundreds of athletes from all around the world — multiple Olympians, rock climbers at the highest level, as well as regular climbers of all abilities and from all walks of life.
                 </p>
-                <p className="font-semibold" style={{ color: "hsl(var(--golden-dark))" }}>
-                  Whether you're a beginner or a competitor, remote coaching with me will change the way you train.
+                <p>Applying this knowledge to my own training and climbing too:</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>4 x 8a+ routes</li>
+                  <li>Action Directe 8b</li>
+                  <li>Hubble 8b</li>
+                  <li>88+ boulders</li>
+                  <li>80+ flashes</li>
+                </ul>
+                <p>
+                  You get the unique combination of academic knowledge in coaching and rehab, high-level climbing experience, and an understanding of the realities of juggling life's responsibilities and challenges around training and health.
                 </p>
               </div>
               <Link to="/plans" className="btn-primary inline-block mt-8 font-display text-xl tracking-wider">

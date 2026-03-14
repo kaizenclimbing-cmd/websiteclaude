@@ -19,8 +19,7 @@ const Navigation = () => {
 
   const navLinks = [
     { label: "About", to: "/" },
-    { label: "Plans & Coaching", to: "/plans" },
-    { label: "Training Tips", to: "/training-tips" },
+    { label: "Plans and Coaching", to: "/plans" },
   ];
 
   const isActive = (path: string) => location.pathname === path;

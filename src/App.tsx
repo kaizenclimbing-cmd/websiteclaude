@@ -7,7 +7,7 @@ import Navigation from "@/components/Navigation";
 import Index from "./pages/Index";
 import Plans from "./pages/Plans";
 import Contact from "./pages/Contact";
-import TrainingTips from "./pages/TrainingTips";
+
 import Consultation from "./pages/Consultation";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/admin/Login";
@@ -51,16 +51,6 @@ const App = () => (
               </>
             }
           />
-          <Route
-            path="/training-tips"
-            element={
-              <>
-                <Navigation />
-                <TrainingTips />
-              </>
-            }
-          />
-
           {/* Hidden consultation form (no nav link) */}
           <Route path="/consultation" element={<Consultation />} />
 
