@@ -54,13 +54,28 @@ const ContactPage = () => {
         interests: form.interests.length > 0 ? form.interests : null,
       });
 
-    setLoading(false);
-
     if (insertError) {
+      setLoading(false);
       setError("Something went wrong. Please try again or email us directly.");
-    } else {
-      setSubmitted(true);
+      return;
     }
+
+    // Fire confirmation email (non-blocking — don't fail the form if this errors)
+    try {
+      await supabase.functions.invoke("send-contact-confirmation", {
+        body: {
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email,
+          interests: form.interests,
+        },
+      });
+    } catch (emailErr) {
+      console.warn("Confirmation email failed (non-critical):", emailErr);
+    }
+
+    setLoading(false);
+    setSubmitted(true);
   };
 
   return (
