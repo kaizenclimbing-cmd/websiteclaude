@@ -117,17 +117,31 @@ const PlansPage = () => {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="py-12 text-center" style={{ backgroundColor: "hsl(var(--olive-dark))" }}>
-        <h3 className="font-display text-3xl sm:text-4xl text-white mb-4">
-          NOT SURE WHICH PLAN?
-        </h3>
-        <p className="font-body text-sm text-white opacity-70 mb-6 max-w-md mx-auto">
-          Get in touch — a free consultation call will help us figure out the best fit for you.
-        </p>
-        <Link to="/contact" className="btn-primary font-display text-base tracking-wider px-10 py-4">
-          BOOK A FREE CONSULTATION
-        </Link>
-        <div className="mt-12 pt-6 border-t text-white opacity-40 text-xs font-body" style={{ borderColor: "hsl(var(--olive))" }}>
+      {/* ── FREE CONSULTATION CTA ── */}
+      <section className="section-yellow py-16">
+        <div className="max-w-4xl mx-auto px-6 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+          <div>
+            <h2 className="font-display text-3xl sm:text-4xl leading-tight mb-3" style={{ color: "hsl(var(--near-black))" }}>
+              NOT SURE WHICH PLAN?
+            </h2>
+            <p className="font-body text-base leading-relaxed max-w-md" style={{ color: "hsl(var(--near-black))", opacity: 0.8 }}>
+              Book a free initial consultation call with Buster. We'll talk through your goals, current level and lifestyle so we can recommend the right plan for you — no commitment required.
+            </p>
+          </div>
+          <div className="flex-shrink-0">
+            <Link
+              to="/contact"
+              className="inline-block px-10 py-4 font-display text-base tracking-wider transition-all duration-200"
+              style={{ backgroundColor: "hsl(var(--near-black))", color: "hsl(var(--yellow))" }}
+            >
+              GET IN TOUCH
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <footer className="py-8 text-center" style={{ backgroundColor: "hsl(var(--olive-dark))" }}>
+        <div className="text-white opacity-40 text-xs font-body">
           © {new Date().getFullYear()} Kaizen Climbing Coaching. All rights reserved.
         </div>
       </footer>
