@@ -7,7 +7,8 @@ import Navigation from "@/components/Navigation";
 import Index from "./pages/Index";
 import Plans from "./pages/Plans";
 import Contact from "./pages/Contact";
-
+import TrainingTips from "./pages/TrainingTips";
+import Terms from "./pages/Terms";
 import Consultation from "./pages/Consultation";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/admin/Login";
@@ -15,6 +16,13 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
+
+const withNav = (element: React.ReactNode) => (
+  <>
+    <Navigation />
+    {element}
+  </>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -24,33 +32,12 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           {/* Public routes with navigation */}
-          <Route
-            path="/"
-            element={
-              <>
-                <Navigation />
-                <Index />
-              </>
-            }
-          />
-          <Route
-            path="/plans"
-            element={
-              <>
-                <Navigation />
-                <Plans />
-              </>
-            }
-          />
-          <Route
-            path="/contact"
-            element={
-              <>
-                <Navigation />
-                <Contact />
-              </>
-            }
-          />
+          <Route path="/" element={withNav(<Index />)} />
+          <Route path="/plans" element={withNav(<Plans />)} />
+          <Route path="/contact" element={withNav(<Contact />)} />
+          <Route path="/training-tips" element={withNav(<TrainingTips />)} />
+          <Route path="/terms" element={withNav(<Terms />)} />
+
           {/* Hidden consultation form (no nav link) */}
           <Route path="/consultation" element={<Consultation />} />
 

@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["'Bebas Neue'", "'Arial Black'", "sans-serif"],
-        body: ["'Inter'", "sans-serif"],
+        display: ["'Unbounded'", "sans-serif"],
+        body: ["'Space Grotesk'", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -51,10 +51,10 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        golden: "hsl(var(--golden))",
-        "golden-dark": "hsl(var(--golden-dark))",
-        "golden-deep": "hsl(var(--golden-deep))",
-        charcoal: "hsl(var(--charcoal))",
+        yellow: "hsl(var(--yellow))",
+        olive: "hsl(var(--olive))",
+        "olive-dark": "hsl(var(--olive-dark))",
+        "near-black": "hsl(var(--near-black))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
