@@ -5,21 +5,21 @@ import { Link } from "react-router-dom";
 const testimonials = [
   {
     quote:
-      "Buster completely transformed my training. In 12 weeks I went from struggling on 6c to confidently projecting 7b. The structure and accountability made all the difference.",
-    name: "Sarah T.",
-    detail: "Amateur climber, 3 years experience",
+      "I've only been working with Kaizen for the past 2.5 months and I can see incredible improvements in strength and endurance. Their structured and personalised plans are no joke. I've improved a lot. Off the wall I am now consistently doing 1 armers, pull up, lock ups, holding lock offs and my weighted pull ups are up to 80% bodyweight! I've gained tons of confidence on the wall with their help, excited for the next phase of training with Kaizen.",
+    name: "Abcel Basil",
+    detail: "4 Jul 2024",
   },
   {
     quote:
-      "As someone with a shoulder injury history, I was nervous about training hard. Buster's rehab-informed approach meant I trained smarter, not just harder. Pain-free at last.",
-    name: "James R.",
-    detail: "Trad climber, 8 years experience",
+      "It felt great to work on my finger strength with some solid structure provided by the Kaizen team, and make great gains in a fairly short time, cutting in half the assisting weight I was using at the beginning of the plan. The lockdown allowed me to focus on this aspect of my climbing, which I may not have otherwise. Looking forward to making even bigger gains in the future and taking this strength onto the rocks.",
+    name: "Alessia Unkle",
+    detail: "",
   },
   {
     quote:
-      "The 6 Week Peak Plan was exactly what I needed before my trip to Ceuse. Structured, science-backed, and Buster was always on hand for questions. 10/10.",
-    name: "Marco D.",
-    detail: "Sport climber, competition background",
+      "Thanks to Buster helping me to manage and fit in my training, I feel like another climber. With an open and trusting coach-athlete relationship, the sharing of everything, and regular communication all underpinned great improvements for me. The satisfaction wasn't in the grades I have reached but the feeling of improving more and more on different terrain and on types of routes that I never imagined. A real game changer. The training was based on science, carefully considered - not simply being told to 'pull until you're dead mate'.",
+    name: "Arran Hibbins",
+    detail: "",
   },
 ];
 
