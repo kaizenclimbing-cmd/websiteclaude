@@ -51,16 +51,6 @@ const App = () => (
               </>
             }
           />
-          <Route
-            path="/training-tips"
-            element={
-              <>
-                <Navigation />
-                <TrainingTips />
-              </>
-            }
-          />
-
           {/* Hidden consultation form (no nav link) */}
           <Route path="/consultation" element={<Consultation />} />
 

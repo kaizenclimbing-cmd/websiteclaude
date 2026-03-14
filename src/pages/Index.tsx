@@ -129,16 +129,24 @@ const HomePage = () => {
               </h2>
               <div className="space-y-4 font-body text-base leading-relaxed" style={{ color: "hsl(var(--charcoal))" }}>
                 <p>
-                  I've been climbing for over 20 years — from dusty sport crags in Spain to bouldering in Fontainebleau and competing at national level. But somewhere along the way, I realised my greatest passion wasn't sending my next project. It was helping others send theirs.
+                  I've been scientifically studying the science and art of training for climbing for as long as I can remember and am committed to sharing these lessons from 20 years of climbing and 13 years of plan writing in a no-nonsense way.
                 </p>
                 <p>
-                  I hold a BSc in Sports Science and have had the privilege of working with Olympic-level athletes, national team members, and weekend warriors who just want to stop falling off the same move. My approach is the same for everyone: evidence-based, individualised, and results-driven.
+                  I consolidated my personal study and years of experience with a Sports Science degree specialising in sports rehab.
                 </p>
                 <p>
-                  Kaizen is the Japanese concept of continuous improvement. That's the philosophy at the heart of everything I do. No shortcuts. No gimmicks. Just a structured, science-backed path to becoming a better climber — whatever that looks like for you.
+                  Since then, I've worked with hundreds of athletes from all around the world — multiple Olympians, rock climbers at the highest level, as well as regular climbers of all abilities and from all walks of life.
                 </p>
-                <p className="font-semibold" style={{ color: "hsl(var(--golden-dark))" }}>
-                  Whether you're a beginner or a competitor, remote coaching with me will change the way you train.
+                <p>Applying this knowledge to my own training and climbing too:</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>4 x 8a+ routes</li>
+                  <li>Action Directe 8b</li>
+                  <li>Hubble 8b</li>
+                  <li>88+ boulders</li>
+                  <li>80+ flashes</li>
+                </ul>
+                <p>
+                  You get the unique combination of academic knowledge in coaching and rehab, high-level climbing experience, and an understanding of the realities of juggling life's responsibilities and challenges around training and health.
                 </p>
               </div>
               <Link to="/plans" className="btn-primary inline-block mt-8 font-display text-xl tracking-wider">

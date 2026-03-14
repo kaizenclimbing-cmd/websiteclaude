@@ -131,20 +131,11 @@ const PlansPage = () => {
                 className="border-t pt-6 mt-auto"
                 style={{ borderColor: "hsl(var(--golden-deep))" }}
               >
-                <p
-                  className="font-display text-3xl mb-1"
-                  style={{ color: "hsl(var(--golden))" }}
-                >
-                  ENQUIRE FOR PRICING
-                </p>
-                <p className="font-body text-xs opacity-60 mb-4">
-                  Fixed investment for a focused performance block
-                </p>
                 <Link
                   to="/contact"
                   className="btn-outline-light inline-block font-display text-lg tracking-wider"
                 >
-                  CONTACT US TO START
+                  CONTACT US TO START YOUR PLAN
                 </Link>
               </div>
             </div>
