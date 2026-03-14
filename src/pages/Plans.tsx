@@ -39,17 +39,17 @@ const PlansPage = () => {
             className="font-body text-xl sm:text-2xl leading-relaxed font-semibold mb-10"
             style={{ color: "hsl(var(--golden-dark))" }}
           >
-            All coaching at Kaizen is rooted in sports science, built around you, and designed to produce measurable results — not just feel-good training sessions.
+            At Kaizen we understand the importance of combining evidence-based science and experience. Our plans and coaching aim to improve all aspects of climbing performance; movement, mindset and of course the physical aspects of climbing performance such as strength, power and energy systems.
           </p>
           <div className="space-y-5 font-body text-base leading-relaxed text-left text-charcoal">
             <p>
-              Too many climbers train hard without training smart. They repeat the same sessions week after week, grind their tendons into the ground, and wonder why they haven't broken through their plateau. The difference between the climbers who progress consistently and those who stagnate isn't talent — it's structure.
+              Each plan and session is truly personalised around you. They are designed to take into account your goals, facilities/equipment, lifestyle/time available, current ability, strengths and weaknesses, personal preferences and personality.
             </p>
             <p>
-              Every plan at Kaizen Climbing Coaching is built on periodisation principles drawn from elite sport performance science, adapted specifically for the demands of climbing. Whether you're working on your first 6a or gunning for your first 8b, the same systematic approach applies.
+              Experience has taught us that there is no one size fits all approach or formula to improving climbing performance. It has also helped us find the equilibrium between the science and art of training for climbing and making long term improvement. This can't be done with a simple training plan, which is why we are offering not only very personalised plans but online coaching and mentoring too.
             </p>
             <p>
-              Remote coaching means you train on your schedule, at your crag, your wall, your gym — with the expertise of a specialist coach guiding every session. It's the most efficient, flexible, and affordable way to access high-performance coaching.
+              The Kaizen team will become your coaches and mentors, on hand to guide you through your training and progress as a climber.
             </p>
           </div>
         </div>
