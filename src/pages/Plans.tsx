@@ -1,24 +1,19 @@
 import { Link } from "react-router-dom";
 
 const kaizenBullets = [
-  "Fully personalised monthly training plan built around your schedule",
-  "Weekly check-ins via video call or messaging",
-  "Video technique analysis from your own footage",
-  "Injury prevention protocols and active rehab support",
-  "Nutrition and recovery guidance tailored to climbing",
-  "Ongoing plan adjustments based on your week-by-week progress",
-  "Priority email support between sessions",
-  "Access to Buster's full resource library",
+  "Online coaching / mentoring",
+  "Initial consultation call",
+  "Fully personalised training programme",
+  "Day by day session plans: structured climbing sessions, fingerboarding, campusing, strength and conditioning, and more",
+  "Messaging; coach on hand for feedback, plan adjustments and advice",
+  "For a minimum of 12 weeks.",
 ];
 
 const peakBullets = [
-  "Structured 6-week periodised programme with clear phases",
-  "Designed around a specific performance goal, trip, or competition",
-  "Strength, power, and endurance phase integration",
-  "Detailed rest and recovery scheduling",
-  "Delivered digitally — start any time that suits you",
-  "Email support throughout the programme",
-  "Post-programme review and debrief session",
+  "One off 6 week personalised training programme",
+  "Day by day session plans: structured climbing sessions, fingerboarding, campusing, Strength and conditioning, and more",
+  "Weekly email support",
+  "£200 for the plan",
 ];
 
 const PlansPage = () => {
