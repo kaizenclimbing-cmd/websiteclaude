@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Plans from "./pages/Plans";
 import Contact from "./pages/Contact";
 import TrainingTips from "./pages/TrainingTips";
+import Consultation from "./pages/Consultation";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
