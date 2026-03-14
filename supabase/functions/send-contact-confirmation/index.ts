@@ -99,16 +99,18 @@ serve(async (req) => {
     const messageId = `contact-confirm-${crypto.randomUUID()}`;
     const html = renderEmail(firstName, interests);
 
+    const runId = crypto.randomUUID();
     const { error } = await supabase.rpc("enqueue_email", {
       queue_name: "transactional_emails",
       payload: {
+        run_id: runId,
         message_id: messageId,
-        template_name: "contact-confirmation",
-        recipient_email: email,
-        recipient_name: `${firstName} ${lastName}`,
+        label: "contact-confirmation",
+        to: email,
         subject: "We've received your enquiry — Kaizen Climbing Coaching",
-        html_body: html,
-        metadata: { interests },
+        html,
+        purpose: "transactional",
+        queued_at: new Date().toISOString(),
       },
     });
 
