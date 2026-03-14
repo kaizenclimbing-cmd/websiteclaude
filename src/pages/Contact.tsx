@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
-import { Instagram, Mail } from "lucide-react";
+import { Instagram, Mail, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type FormData = {
   firstName: string;
@@ -25,6 +26,8 @@ const ContactPage = () => {
     interests: [],
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const toggleInterest = (option: string) => {
     setForm((prev) => ({
@@ -35,10 +38,29 @@ const ContactPage = () => {
     }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("Contact form submission:", form);
-    setSubmitted(true);
+    setError("");
+    setLoading(true);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: insertError } = await (supabase as any)
+      .from("contact_submissions")
+      .insert({
+        first_name: form.firstName,
+        last_name: form.lastName,
+        email: form.email,
+        message: form.comment || null,
+        interests: form.interests.length > 0 ? form.interests : null,
+      });
+
+    setLoading(false);
+
+    if (insertError) {
+      setError("Something went wrong. Please try again or email us directly.");
+    } else {
+      setSubmitted(true);
+    }
   };
 
   return (
@@ -133,7 +155,10 @@ const ContactPage = () => {
                   Thanks for getting in touch. We'll be back in touch within 24 hours.
                 </p>
                 <button
-                  onClick={() => setSubmitted(false)}
+                  onClick={() => {
+                    setSubmitted(false);
+                    setForm({ firstName: "", lastName: "", email: "", comment: "", interests: [] });
+                  }}
                   className="font-body font-semibold text-sm uppercase tracking-wider underline text-charcoal"
                 >
                   Send another message
@@ -239,21 +264,27 @@ const ContactPage = () => {
                   </div>
                 </div>
 
+                {error && (
+                  <p className="font-body text-xs text-red-600">{error}</p>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full py-4 font-display text-2xl tracking-wider transition-all duration-200"
+                  disabled={loading}
+                  className="w-full py-4 font-display text-2xl tracking-wider transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-60"
                   style={{
                     backgroundColor: "hsl(var(--golden-dark))",
                     color: "hsl(var(--golden))",
                   }}
                   onMouseEnter={(e) => {
-                    (e.target as HTMLButtonElement).style.backgroundColor = "hsl(var(--charcoal))";
+                    if (!loading) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--charcoal))";
                   }}
                   onMouseLeave={(e) => {
-                    (e.target as HTMLButtonElement).style.backgroundColor = "hsl(var(--golden-dark))";
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--golden-dark))";
                   }}
                 >
-                  SUBMIT
+                  {loading && <Loader2 size={20} className="animate-spin" />}
+                  {loading ? "SENDING..." : "SUBMIT"}
                 </button>
               </form>
             )}
