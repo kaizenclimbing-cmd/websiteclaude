@@ -95,9 +95,18 @@ const ContactPage = () => {
             >
               Contact Us
             </h1>
-            <p className="font-body text-base leading-relaxed text-white mb-10 max-w-sm opacity-80">
+            <p className="font-body text-base leading-relaxed text-white mb-6 max-w-sm opacity-80">
               If you are interested in a training plan or want to know more get in touch via email or use the form.
             </p>
+            <div
+              className="px-5 py-4 mb-8 border-l-4"
+              style={{ backgroundColor: "rgba(0,0,0,0.2)", borderColor: "hsl(var(--yellow))" }}
+            >
+              <p className="font-display text-sm text-white mb-1">FREE CONSULTATION CALL</p>
+              <p className="font-body text-xs text-white opacity-70 leading-relaxed">
+                Not sure which plan is right for you? We offer a free initial call to talk through your goals and find the best fit — no commitment required.
+              </p>
+            </div>
 
             <div className="space-y-6">
               <div className="flex items-center gap-4">
