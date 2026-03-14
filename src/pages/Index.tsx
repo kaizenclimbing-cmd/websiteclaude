@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const testimonials = [
   {
     quote:
-      "I've only been working with Kaizen for the past 2.5 months and I can see incredible improvements in strength and endurance. Their structured and personalised plans are no joke. I've improved a lot. Off the wall I am now consistently doing 1 armers, pull up, lock ups, holding lock offs and my weighted pull ups are up to 80% bodyweight! I've gained tons of confidence on the wall with their help, excited for the next phase of training with Kaizen.",
+      "I've only been working with Kaizen for the past 2.5 months and I can see incredible improvements in strength and endurance. Their structured and personalised plans are no joke. I've improved a lot, off the wall I am now consistently doing 1 armers, pull ups, holding lock offs and my weighted pull ups are up to 80% bodyweight! I've gained tons of confidence on the wall with their help, excited for the next phase of training with Kaizen.",
     name: "Abcel Basil",
     detail: "4 Jul 2024",
   },
@@ -17,7 +17,7 @@ const testimonials = [
   },
   {
     quote:
-      "Thanks to Buster helping me to manage and fit in my training, I feel like another climber. With an open and trusting coach-athlete relationship, the sharing of everything, and regular communication all underpinned great improvements for me. The satisfaction wasn't in the grades I have reached but the feeling of improving more and more on different terrain and on types of routes that I never imagined. A real game changer. The training was based on science, carefully considered - not simply being told to 'pull until you're dead mate'.",
+      "Thanks to Buster helping me to manage and fit in my training, I feel like another climber. With an open and trusting coach-athlete relationship, the sharing of everything, and regular communication all underpinned great improvements for me. The satisfaction wasn't in the grades I have reached but the feeling of improving more and more on different terrain and on types of routes that I never imagined. A real game changer. The training was based on science, carefully considered — not simply being told to 'pull until you're dead mate'.",
     name: "Arran Hibbins",
     detail: "",
   },
