@@ -24,21 +24,19 @@ const testimonials = [
 ];
 
 const kaizenBullets = [
-  "Fully personalised monthly training plan",
-  "Weekly check-ins via video or message",
-  "Technique analysis from your own footage",
-  "Injury prevention and rehab support",
-  "Nutrition and recovery guidance",
-  "Ongoing plan adjustments based on progress",
+  "Online coaching / mentoring",
+  "Initial consultation call",
+  "Fully personalised training programme",
+  "Day by day session plans: structured climbing sessions, fingerboarding, campusing, strength and conditioning, and more",
+  "Messaging; coach on hand for feedback, plan adjustments and advice",
+  "For a minimum of 12 weeks",
 ];
 
 const peakBullets = [
-  "Structured 6-week periodised programme",
-  "Designed around a specific goal or trip",
-  "Full strength and power phase integration",
-  "Rest and recovery scheduling",
-  "Delivered digitally — start any time",
-  "Email support throughout",
+  "One off 6 week personalised training programme",
+  "Day by day session plans: structured climbing sessions, fingerboarding, campusing, strength and conditioning, and more",
+  "Weekly email support",
+  "£200 for the plan",
 ];
 
 const HomePage = () => {
