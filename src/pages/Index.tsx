@@ -255,7 +255,7 @@ const HomePage = () => {
           <div className="grid md:grid-cols-2 gap-6">
             {/* Kaizen Plan */}
             <div className="plan-card-retro">
-              <h3 className="font-display text-3xl leading-tight mb-1" style={{ color: "hsl(var(--neon-green))" }}>
+              <h3 className="font-display text-xl leading-tight mb-1" style={{ color: "hsl(var(--neon-green))" }}>
                 THE KAIZEN PLAN
               </h3>
               <p className="font-mono text-xs uppercase tracking-wider mb-6" style={{ color: "hsl(var(--chalk-white) / 0.45)" }}>
