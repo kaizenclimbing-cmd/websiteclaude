@@ -365,7 +365,7 @@ const HomePage = () => {
           // READY TO SEND
         </p>
         <h3
-          className="font-display text-3xl sm:text-4xl mb-4"
+          className="font-display text-2xl sm:text-3xl mb-4"
           style={{ color: "hsl(var(--chalk-white))" }}
         >
           READY TO LEVEL UP?
