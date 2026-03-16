@@ -192,7 +192,7 @@ const HomePage = () => {
                 // ABOUT
               </p>
               <h2
-                className="font-display text-3xl sm:text-5xl leading-tight mb-6"
+                className="font-display text-2xl sm:text-3xl leading-tight mb-6"
                 style={{ color: "hsl(var(--chalk-white))" }}
               >
                 I'm Buster —<br />
