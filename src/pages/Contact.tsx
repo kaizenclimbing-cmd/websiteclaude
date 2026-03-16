@@ -56,7 +56,7 @@ const ContactPage = () => {
 
     if (insertError) {
       setLoading(false);
-      setError("// ERROR: Something went wrong. Please try again or email us directly.");
+      setError("Something went wrong. Please try again or email us directly.");
       return;
     }
 
@@ -86,11 +86,9 @@ const ContactPage = () => {
     fontSize: "13px",
   };
 
-  const inputFocusClass = "outline-none focus:ring-2 focus:ring-neon-green";
-
   return (
     <main style={{ backgroundColor: "hsl(var(--void-black))" }}>
-      <div className="pt-16" style={{ backgroundColor: "hsl(var(--void-black))" }} />
+      <div className="pt-16" />
 
       <section className="min-h-screen">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 min-h-[calc(100vh-4rem)]">
@@ -100,33 +98,34 @@ const ContactPage = () => {
             className="flex flex-col justify-center px-10 py-16"
             style={{
               backgroundColor: "hsl(var(--void-dark))",
-              borderRight: "3px solid hsl(var(--neon-green))",
+              borderRight: "2px solid hsl(var(--neon-green))",
             }}
           >
             <p
-              className="font-mono text-xs tracking-[0.3em] mb-3"
-              style={{ color: "hsl(var(--neon-green))" }}
+              className="font-mono text-xs tracking-[0.25em] mb-3"
+              style={{ color: "hsl(var(--neon-orange))" }}
             >
-              // CONTACT.EXE
+              // CONTACT
             </p>
             <h1
-              className="font-display text-4xl sm:text-5xl leading-tight mb-4 glow-green"
+              className="font-display text-4xl sm:text-5xl leading-tight mb-4"
               style={{ color: "hsl(var(--chalk-white))" }}
             >
-              GET IN <span style={{ color: "hsl(var(--neon-green))" }}>TOUCH</span>
+              Contact Us
             </h1>
             <p
-              className="font-mono text-sm leading-relaxed mb-8 max-w-sm"
+              className="font-mono text-sm leading-relaxed mb-6 max-w-sm"
               style={{ color: "hsl(var(--chalk-white) / 0.6)" }}
             >
-              If you are interested in a training plan or want to know more, get in touch via email or use the form.
+              If you are interested in a training plan or want to know more get in touch via email or use the form.
             </p>
 
             <div
               className="px-5 py-4 mb-8"
               style={{
-                border: "2px solid hsl(var(--neon-orange))",
+                border: "1px solid hsl(var(--neon-orange) / 0.5)",
                 backgroundColor: "hsl(var(--void-black))",
+                borderLeft: "3px solid hsl(var(--neon-orange))",
               }}
             >
               <p
@@ -137,9 +136,9 @@ const ContactPage = () => {
               </p>
               <p
                 className="font-mono text-xs leading-relaxed"
-                style={{ color: "hsl(var(--chalk-white) / 0.6)" }}
+                style={{ color: "hsl(var(--chalk-white) / 0.55)" }}
               >
-                Not sure which plan is right for you? We offer a free initial call — no commitment required.
+                Not sure which plan is right for you? We offer a free initial call to talk through your goals and find the best fit — no commitment required.
               </p>
             </div>
 
@@ -165,7 +164,7 @@ const ContactPage = () => {
                   className="w-10 h-10 flex items-center justify-center flex-shrink-0"
                   style={{ backgroundColor: "hsl(var(--neon-orange))" }}
                 >
-                  <Instagram size={18} color="hsl(var(--void-black))" />
+                  <Instagram size={18} color="hsl(var(--chalk-white))" />
                 </div>
                 <a
                   href="https://www.instagram.com/kaizenclimbing/"
@@ -200,13 +199,13 @@ const ContactPage = () => {
             {submitted ? (
               <div className="text-center">
                 <p
-                  className="font-mono text-xs tracking-[0.3em] mb-4"
+                  className="font-mono text-xs tracking-[0.25em] mb-4"
                   style={{ color: "hsl(var(--neon-green))" }}
                 >
-                  // TRANSMISSION_COMPLETE
+                  // MESSAGE SENT
                 </p>
                 <h2
-                  className="font-display text-4xl leading-none mb-4 glow-green"
+                  className="font-display text-4xl leading-none mb-4"
                   style={{ color: "hsl(var(--neon-green))" }}
                 >
                   MESSAGE SENT!
@@ -215,7 +214,7 @@ const ContactPage = () => {
                   className="font-mono text-sm mb-8 max-w-xs mx-auto"
                   style={{ color: "hsl(var(--chalk-white) / 0.6)" }}
                 >
-                  Thanks for getting in touch. We'll reply within 24 hours.
+                  Thanks for getting in touch. We'll be back in touch within 24 hours.
                 </p>
                 <button
                   onClick={() => {
@@ -225,23 +224,22 @@ const ContactPage = () => {
                   className="font-mono text-xs uppercase tracking-wider underline"
                   style={{ color: "hsl(var(--neon-orange))" }}
                 >
-                  &gt; Send another message
+                  Send another message
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <p
-                  className="font-mono text-xs tracking-[0.3em] mb-2"
+                  className="font-mono text-xs tracking-[0.25em] mb-2"
                   style={{ color: "hsl(var(--neon-orange))" }}
                 >
-                  // INPUT_FORM.EXE
+                  // GET IN TOUCH
                 </p>
                 <h2
                   className="font-display text-3xl sm:text-4xl leading-tight mb-6"
                   style={{ color: "hsl(var(--chalk-white))" }}
                 >
-                  SEND A<br />
-                  <span style={{ color: "hsl(var(--neon-green))" }}>MESSAGE</span>
+                  GET IN TOUCH
                 </h2>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -257,7 +255,7 @@ const ContactPage = () => {
                       required
                       value={form.firstName}
                       onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                      className={`w-full px-4 py-3 ${inputFocusClass}`}
+                      className="w-full px-4 py-3 outline-none focus:ring-2 focus:ring-neon-green"
                       style={inputStyle}
                     />
                   </div>
@@ -273,7 +271,7 @@ const ContactPage = () => {
                       required
                       value={form.lastName}
                       onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                      className={`w-full px-4 py-3 ${inputFocusClass}`}
+                      className="w-full px-4 py-3 outline-none focus:ring-2 focus:ring-neon-green"
                       style={inputStyle}
                     />
                   </div>
@@ -291,7 +289,7 @@ const ContactPage = () => {
                     required
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className={`w-full px-4 py-3 ${inputFocusClass}`}
+                    className="w-full px-4 py-3 outline-none focus:ring-2 focus:ring-neon-green"
                     style={inputStyle}
                   />
                 </div>
@@ -301,13 +299,13 @@ const ContactPage = () => {
                     className="block font-mono text-xs font-semibold uppercase tracking-wider mb-1"
                     style={{ color: "hsl(var(--neon-green))" }}
                   >
-                    Message
+                    Comment
                   </label>
                   <textarea
                     rows={4}
                     value={form.comment}
                     onChange={(e) => setForm({ ...form, comment: e.target.value })}
-                    className={`w-full px-4 py-3 resize-none ${inputFocusClass}`}
+                    className="w-full px-4 py-3 outline-none focus:ring-2 focus:ring-neon-green resize-none"
                     style={inputStyle}
                   />
                 </div>
@@ -329,7 +327,7 @@ const ContactPage = () => {
                         <div
                           className="w-5 h-5 flex-shrink-0 flex items-center justify-center transition-colors duration-150"
                           style={{
-                            border: `2px solid hsl(var(--neon-green))`,
+                            border: "2px solid hsl(var(--neon-green))",
                             backgroundColor: form.interests.includes(option)
                               ? "hsl(var(--neon-green))"
                               : "transparent",
@@ -349,7 +347,7 @@ const ContactPage = () => {
                         </div>
                         <span
                           className="font-mono text-xs select-none"
-                          style={{ color: "hsl(var(--chalk-white) / 0.8)" }}
+                          style={{ color: "hsl(var(--chalk-white) / 0.75)" }}
                         >
                           {option}
                         </span>
@@ -375,7 +373,7 @@ const ContactPage = () => {
                   }}
                 >
                   {loading && <Loader2 size={20} className="animate-spin" />}
-                  {loading ? "TRANSMITTING..." : "SUBMIT"}
+                  {loading ? "SENDING..." : "SUBMIT"}
                 </button>
               </form>
             )}
