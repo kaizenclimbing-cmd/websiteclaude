@@ -276,7 +276,7 @@ const HomePage = () => {
 
             {/* 6 Week Peak Plan */}
             <div className="plan-card-retro" style={{ borderColor: "hsl(var(--neon-orange))" }}>
-              <h3 className="font-display text-3xl leading-tight mb-1" style={{ color: "hsl(var(--neon-orange))" }}>
+              <h3 className="font-display text-xl leading-tight mb-1" style={{ color: "hsl(var(--neon-orange))" }}>
                 6 WEEK PEAK PLAN
               </h3>
               <p className="font-mono text-xs uppercase tracking-wider mb-6" style={{ color: "hsl(var(--chalk-white) / 0.45)" }}>
