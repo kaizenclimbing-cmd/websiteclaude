@@ -22,85 +22,110 @@ const AdminLogin = () => {
     setLoading(false);
 
     if (signInError) {
-      setError("Invalid email or password.");
+      setError("// ERROR: Invalid credentials. Access denied.");
     } else {
       navigate("/admin");
     }
   };
 
+  const inputStyle = {
+    backgroundColor: "hsl(var(--void-black))",
+    color: "hsl(var(--chalk-white))",
+    border: "2px solid hsl(var(--void-light))",
+    fontFamily: "'Share Tech Mono', monospace",
+    fontSize: "14px",
+  };
+
   return (
     <main
       className="min-h-screen flex items-center justify-center"
-      style={{ backgroundColor: "hsl(var(--charcoal))" }}
+      style={{
+        backgroundColor: "hsl(var(--void-black))",
+        backgroundImage: `
+          linear-gradient(hsl(var(--neon-green) / 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, hsl(var(--neon-green) / 0.04) 1px, transparent 1px)
+        `,
+        backgroundSize: "40px 40px",
+      }}
     >
-      <div className="w-full max-w-sm px-8">
+      <div
+        className="w-full max-w-sm px-8 py-10"
+        style={{
+          backgroundColor: "hsl(var(--void-dark))",
+          border: "3px solid hsl(var(--neon-green))",
+        }}
+      >
         <p
-          className="font-display text-4xl tracking-wider mb-1"
-          style={{ color: "hsl(var(--golden))" }}
+          className="font-mono text-xs tracking-[0.3em] mb-1"
+          style={{ color: "hsl(var(--neon-orange))" }}
+        >
+          // ADMIN_PORTAL.EXE
+        </p>
+        <p
+          className="font-display text-3xl tracking-wider mb-1 glow-green"
+          style={{ color: "hsl(var(--neon-green))" }}
         >
           KAIZEN
         </p>
-        <p className="font-body text-xs uppercase tracking-widest text-white opacity-40 mb-10">
-          Admin Portal
+        <p
+          className="font-mono text-xs uppercase tracking-widest mb-10"
+          style={{ color: "hsl(var(--chalk-white) / 0.4)" }}
+        >
+          Restricted Access
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
-              className="block font-body text-xs font-semibold uppercase tracking-wider mb-1"
-              style={{ color: "hsl(var(--golden))" }}
+              className="block font-mono text-xs font-semibold uppercase tracking-wider mb-1"
+              style={{ color: "hsl(var(--neon-green))" }}
             >
-              Email
+              &gt; Email
             </label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 font-body text-sm outline-none focus:ring-2 bg-white text-near-black"
-              style={{ border: "2px solid hsl(var(--golden-dark))" }}
+              className="w-full px-4 py-3 outline-none focus:ring-2 focus:ring-neon-green"
+              style={inputStyle}
             />
           </div>
 
           <div>
             <label
-              className="block font-body text-xs font-semibold uppercase tracking-wider mb-1"
-              style={{ color: "hsl(var(--golden))" }}
+              className="block font-mono text-xs font-semibold uppercase tracking-wider mb-1"
+              style={{ color: "hsl(var(--neon-green))" }}
             >
-              Password
+              &gt; Password
             </label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 font-body text-sm outline-none focus:ring-2 bg-white text-near-black"
-              style={{ border: "2px solid hsl(var(--golden-dark))" }}
+              className="w-full px-4 py-3 outline-none focus:ring-2 focus:ring-neon-green"
+              style={inputStyle}
             />
           </div>
 
           {error && (
-            <p className="font-body text-xs text-red-400">{error}</p>
+            <p className="font-mono text-xs" style={{ color: "hsl(var(--neon-orange))" }}>
+              {error}
+            </p>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 font-display text-2xl tracking-wider transition-all duration-200 disabled:opacity-60"
+            className="w-full py-4 font-display text-xl tracking-wider transition-all duration-150 disabled:opacity-60 mt-2"
             style={{
-              backgroundColor: "hsl(var(--golden))",
-              color: "hsl(var(--charcoal))",
-            }}
-            onMouseEnter={(e) => {
-              if (!loading) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--golden-dark))";
-              if (!loading) (e.currentTarget as HTMLButtonElement).style.color = "hsl(var(--golden))";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--golden))";
-              (e.currentTarget as HTMLButtonElement).style.color = "hsl(var(--charcoal))";
+              backgroundColor: loading ? "hsl(var(--void-mid))" : "hsl(var(--neon-green))",
+              color: "hsl(var(--void-black))",
+              clipPath: "polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%)",
             }}
           >
-            {loading ? "SIGNING IN..." : "SIGN IN"}
+            {loading ? "AUTHENTICATING..." : "SIGN IN"}
           </button>
         </form>
       </div>

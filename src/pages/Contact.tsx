@@ -56,7 +56,7 @@ const ContactPage = () => {
 
     if (insertError) {
       setLoading(false);
-      setError("Something went wrong. Please try again or email us directly.");
+      setError("// ERROR: Something went wrong. Please try again or email us directly.");
       return;
     }
 
@@ -78,48 +78,83 @@ const ContactPage = () => {
     setSubmitted(true);
   };
 
-  return (
-    <main>
-      <div className="pt-16" style={{ backgroundColor: "hsl(var(--olive-dark))" }} />
+  const inputStyle = {
+    backgroundColor: "hsl(var(--void-black))",
+    color: "hsl(var(--chalk-white))",
+    border: "2px solid hsl(var(--void-light))",
+    fontFamily: "'Share Tech Mono', monospace",
+    fontSize: "13px",
+  };
 
-      <section className="min-h-screen" style={{ backgroundColor: "hsl(0 0% 100%)" }}>
+  const inputFocusClass = "outline-none focus:ring-2 focus:ring-neon-green";
+
+  return (
+    <main style={{ backgroundColor: "hsl(var(--void-black))" }}>
+      <div className="pt-16" style={{ backgroundColor: "hsl(var(--void-black))" }} />
+
+      <section className="min-h-screen">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 min-h-[calc(100vh-4rem)]">
 
           {/* LEFT — Info */}
           <div
             className="flex flex-col justify-center px-10 py-16"
-            style={{ backgroundColor: "hsl(var(--olive))" }}
+            style={{
+              backgroundColor: "hsl(var(--void-dark))",
+              borderRight: "3px solid hsl(var(--neon-green))",
+            }}
           >
-            <h1
-              className="font-display text-4xl sm:text-5xl leading-tight mb-4 text-white"
+            <p
+              className="font-mono text-xs tracking-[0.3em] mb-3"
+              style={{ color: "hsl(var(--neon-green))" }}
             >
-              Contact Us
-            </h1>
-            <p className="font-body text-base leading-relaxed text-white mb-6 max-w-sm opacity-80">
-              If you are interested in a training plan or want to know more get in touch via email or use the form.
+              // CONTACT.EXE
             </p>
-            <div
-              className="px-5 py-4 mb-8 border-l-4"
-              style={{ backgroundColor: "rgba(0,0,0,0.2)", borderColor: "hsl(var(--yellow))" }}
+            <h1
+              className="font-display text-4xl sm:text-5xl leading-tight mb-4 glow-green"
+              style={{ color: "hsl(var(--chalk-white))" }}
             >
-              <p className="font-display text-sm text-white mb-1">FREE CONSULTATION CALL</p>
-              <p className="font-body text-xs text-white opacity-70 leading-relaxed">
-                Not sure which plan is right for you? We offer a free initial call to talk through your goals and find the best fit — no commitment required.
+              GET IN <span style={{ color: "hsl(var(--neon-green))" }}>TOUCH</span>
+            </h1>
+            <p
+              className="font-mono text-sm leading-relaxed mb-8 max-w-sm"
+              style={{ color: "hsl(var(--chalk-white) / 0.6)" }}
+            >
+              If you are interested in a training plan or want to know more, get in touch via email or use the form.
+            </p>
+
+            <div
+              className="px-5 py-4 mb-8"
+              style={{
+                border: "2px solid hsl(var(--neon-orange))",
+                backgroundColor: "hsl(var(--void-black))",
+              }}
+            >
+              <p
+                className="font-display text-xs mb-1"
+                style={{ color: "hsl(var(--neon-orange))" }}
+              >
+                FREE CONSULTATION CALL
+              </p>
+              <p
+                className="font-mono text-xs leading-relaxed"
+                style={{ color: "hsl(var(--chalk-white) / 0.6)" }}
+              >
+                Not sure which plan is right for you? We offer a free initial call — no commitment required.
               </p>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-5">
               <div className="flex items-center gap-4">
                 <div
                   className="w-10 h-10 flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: "hsl(var(--yellow))" }}
+                  style={{ backgroundColor: "hsl(var(--neon-green))" }}
                 >
-                  <Mail size={18} color="hsl(var(--near-black))" />
+                  <Mail size={18} color="hsl(var(--void-black))" />
                 </div>
                 <a
                   href="mailto:Info@kaizenclimbing.co.uk"
-                  className="font-body text-sm hover:opacity-80 transition-opacity"
-                  style={{ color: "hsl(var(--yellow))" }}
+                  className="font-mono text-sm hover:opacity-80 transition-opacity"
+                  style={{ color: "hsl(var(--neon-green))" }}
                 >
                   Info@kaizenclimbing.co.uk
                 </a>
@@ -128,27 +163,30 @@ const ContactPage = () => {
               <div className="flex items-center gap-4">
                 <div
                   className="w-10 h-10 flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: "hsl(var(--yellow))" }}
+                  style={{ backgroundColor: "hsl(var(--neon-orange))" }}
                 >
-                  <Instagram size={18} color="hsl(var(--near-black))" />
+                  <Instagram size={18} color="hsl(var(--void-black))" />
                 </div>
                 <a
                   href="https://www.instagram.com/kaizenclimbing/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-body text-sm hover:opacity-80 transition-opacity"
-                  style={{ color: "hsl(var(--yellow))" }}
+                  className="font-mono text-sm hover:opacity-80 transition-opacity"
+                  style={{ color: "hsl(var(--neon-orange))" }}
                 >
                   @kaizenclimbing
                 </a>
               </div>
             </div>
 
-            <div className="mt-16 pt-8 border-t" style={{ borderColor: "hsl(var(--olive-dark))" }}>
-              <p className="font-display text-lg text-white">
+            <div
+              className="mt-16 pt-8 border-t"
+              style={{ borderColor: "hsl(var(--void-light))" }}
+            >
+              <p className="font-display text-base" style={{ color: "hsl(var(--chalk-white))" }}>
                 KAIZEN CLIMBING COACHING
               </p>
-              <p className="font-body text-xs text-white opacity-50 mt-1">
+              <p className="font-mono text-xs mt-1" style={{ color: "hsl(var(--chalk-white) / 0.4)" }}>
                 Remote coaching. Real results.
               </p>
             </div>
@@ -157,36 +195,61 @@ const ContactPage = () => {
           {/* RIGHT — Form */}
           <div
             className="flex flex-col justify-center px-10 py-16"
-            style={{ backgroundColor: "hsl(var(--yellow))" }}
+            style={{ backgroundColor: "hsl(var(--void-mid))" }}
           >
             {submitted ? (
               <div className="text-center">
-                <h2 className="font-display text-4xl leading-none mb-4" style={{ color: "hsl(var(--near-black))" }}>
+                <p
+                  className="font-mono text-xs tracking-[0.3em] mb-4"
+                  style={{ color: "hsl(var(--neon-green))" }}
+                >
+                  // TRANSMISSION_COMPLETE
+                </p>
+                <h2
+                  className="font-display text-4xl leading-none mb-4 glow-green"
+                  style={{ color: "hsl(var(--neon-green))" }}
+                >
                   MESSAGE SENT!
                 </h2>
-                <p className="font-body text-base opacity-80 mb-8 max-w-xs mx-auto" style={{ color: "hsl(var(--near-black))" }}>
-                  Thanks for getting in touch. We'll be back in touch within 24 hours.
+                <p
+                  className="font-mono text-sm mb-8 max-w-xs mx-auto"
+                  style={{ color: "hsl(var(--chalk-white) / 0.6)" }}
+                >
+                  Thanks for getting in touch. We'll reply within 24 hours.
                 </p>
                 <button
                   onClick={() => {
                     setSubmitted(false);
                     setForm({ firstName: "", lastName: "", email: "", comment: "", interests: [] });
                   }}
-                  className="font-body font-semibold text-sm uppercase tracking-wider underline"
-                  style={{ color: "hsl(var(--near-black))" }}
+                  className="font-mono text-xs uppercase tracking-wider underline"
+                  style={{ color: "hsl(var(--neon-orange))" }}
                 >
-                  Send another message
+                  &gt; Send another message
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <h2 className="font-display text-3xl sm:text-4xl leading-tight mb-6" style={{ color: "hsl(var(--near-black))" }}>
-                  GET IN TOUCH
+                <p
+                  className="font-mono text-xs tracking-[0.3em] mb-2"
+                  style={{ color: "hsl(var(--neon-orange))" }}
+                >
+                  // INPUT_FORM.EXE
+                </p>
+                <h2
+                  className="font-display text-3xl sm:text-4xl leading-tight mb-6"
+                  style={{ color: "hsl(var(--chalk-white))" }}
+                >
+                  SEND A<br />
+                  <span style={{ color: "hsl(var(--neon-green))" }}>MESSAGE</span>
                 </h2>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block font-body text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: "hsl(var(--near-black))" }}>
+                    <label
+                      className="block font-mono text-xs font-semibold uppercase tracking-wider mb-1"
+                      style={{ color: "hsl(var(--neon-green))" }}
+                    >
                       First Name *
                     </label>
                     <input
@@ -194,12 +257,15 @@ const ContactPage = () => {
                       required
                       value={form.firstName}
                       onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                      className="w-full px-4 py-3 font-body text-sm outline-none focus:ring-2 bg-white"
-                      style={{ color: "hsl(var(--near-black))", border: "2px solid hsl(var(--near-black))" }}
+                      className={`w-full px-4 py-3 ${inputFocusClass}`}
+                      style={inputStyle}
                     />
                   </div>
                   <div>
-                    <label className="block font-body text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: "hsl(var(--near-black))" }}>
+                    <label
+                      className="block font-mono text-xs font-semibold uppercase tracking-wider mb-1"
+                      style={{ color: "hsl(var(--neon-green))" }}
+                    >
                       Last Name *
                     </label>
                     <input
@@ -207,14 +273,17 @@ const ContactPage = () => {
                       required
                       value={form.lastName}
                       onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                      className="w-full px-4 py-3 font-body text-sm outline-none focus:ring-2 bg-white"
-                      style={{ color: "hsl(var(--near-black))", border: "2px solid hsl(var(--near-black))" }}
+                      className={`w-full px-4 py-3 ${inputFocusClass}`}
+                      style={inputStyle}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-body text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: "hsl(var(--near-black))" }}>
+                  <label
+                    className="block font-mono text-xs font-semibold uppercase tracking-wider mb-1"
+                    style={{ color: "hsl(var(--neon-green))" }}
+                  >
                     Email Address *
                   </label>
                   <input
@@ -222,26 +291,32 @@ const ContactPage = () => {
                     required
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-4 py-3 font-body text-sm outline-none focus:ring-2 bg-white"
-                    style={{ color: "hsl(var(--near-black))", border: "2px solid hsl(var(--near-black))" }}
+                    className={`w-full px-4 py-3 ${inputFocusClass}`}
+                    style={inputStyle}
                   />
                 </div>
 
                 <div>
-                  <label className="block font-body text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: "hsl(var(--near-black))" }}>
-                    Comment
+                  <label
+                    className="block font-mono text-xs font-semibold uppercase tracking-wider mb-1"
+                    style={{ color: "hsl(var(--neon-green))" }}
+                  >
+                    Message
                   </label>
                   <textarea
                     rows={4}
                     value={form.comment}
                     onChange={(e) => setForm({ ...form, comment: e.target.value })}
-                    className="w-full px-4 py-3 font-body text-sm outline-none focus:ring-2 bg-white resize-none"
-                    style={{ color: "hsl(var(--near-black))", border: "2px solid hsl(var(--near-black))" }}
+                    className={`w-full px-4 py-3 resize-none ${inputFocusClass}`}
+                    style={inputStyle}
                   />
                 </div>
 
                 <div>
-                  <p className="font-body text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "hsl(var(--near-black))" }}>
+                  <p
+                    className="font-mono text-xs font-semibold uppercase tracking-wider mb-3"
+                    style={{ color: "hsl(var(--neon-green))" }}
+                  >
                     I'm interested in:
                   </p>
                   <div className="grid grid-cols-2 gap-2">
@@ -254,19 +329,28 @@ const ContactPage = () => {
                         <div
                           className="w-5 h-5 flex-shrink-0 flex items-center justify-center transition-colors duration-150"
                           style={{
-                            border: "2px solid hsl(var(--near-black))",
+                            border: `2px solid hsl(var(--neon-green))`,
                             backgroundColor: form.interests.includes(option)
-                              ? "hsl(var(--near-black))"
-                              : "white",
+                              ? "hsl(var(--neon-green))"
+                              : "transparent",
                           }}
                         >
                           {form.interests.includes(option) && (
                             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                              <path d="M1 4L3.5 6.5L9 1" stroke="hsl(var(--yellow))" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                              <path
+                                d="M1 4L3.5 6.5L9 1"
+                                stroke="hsl(var(--void-black))"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
                             </svg>
                           )}
                         </div>
-                        <span className="font-body text-xs font-medium select-none" style={{ color: "hsl(var(--near-black))" }}>
+                        <span
+                          className="font-mono text-xs select-none"
+                          style={{ color: "hsl(var(--chalk-white) / 0.8)" }}
+                        >
                           {option}
                         </span>
                       </label>
@@ -275,20 +359,23 @@ const ContactPage = () => {
                 </div>
 
                 {error && (
-                  <p className="font-body text-xs text-red-700">{error}</p>
+                  <p className="font-mono text-xs" style={{ color: "hsl(var(--neon-orange))" }}>
+                    {error}
+                  </p>
                 )}
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 font-display text-xl tracking-wider transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-60"
+                  className="w-full py-4 font-display text-xl tracking-wider transition-all duration-150 flex items-center justify-center gap-3 disabled:opacity-60"
                   style={{
-                    backgroundColor: "hsl(var(--near-black))",
-                    color: "hsl(var(--yellow))",
+                    backgroundColor: "hsl(var(--neon-green))",
+                    color: "hsl(var(--void-black))",
+                    clipPath: "polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%)",
                   }}
                 >
                   {loading && <Loader2 size={20} className="animate-spin" />}
-                  {loading ? "SENDING..." : "SUBMIT"}
+                  {loading ? "TRANSMITTING..." : "SUBMIT"}
                 </button>
               </form>
             )}

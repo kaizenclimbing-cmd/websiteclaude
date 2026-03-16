@@ -37,29 +37,66 @@ const sections = [
 
 const TermsPage = () => {
   return (
-    <main>
-      <div className="pt-16" style={{ backgroundColor: "hsl(var(--olive-dark))" }} />
+    <main style={{ backgroundColor: "hsl(var(--void-black))" }}>
+      <div className="pt-16" />
 
       {/* Header */}
-      <section className="section-yellow pt-16 pb-12">
+      <section
+        className="pt-16 pb-12"
+        style={{
+          backgroundColor: "hsl(var(--void-dark))",
+          borderBottom: "3px solid hsl(var(--neon-green))",
+        }}
+      >
         <div className="max-w-4xl mx-auto px-6">
-          <h1 className="font-display text-4xl sm:text-6xl leading-tight mb-4" style={{ color: "hsl(var(--near-black))" }}>
-            Terms &amp; Conditions
+          <p
+            className="font-mono text-xs tracking-[0.3em] mb-3"
+            style={{ color: "hsl(var(--neon-orange))" }}
+          >
+            // TERMS_AND_CONDITIONS.TXT
+          </p>
+          <h1
+            className="font-display text-4xl sm:text-6xl leading-tight mb-4"
+            style={{ color: "hsl(var(--chalk-white))" }}
+          >
+            TERMS &amp;<br />
+            <span style={{ color: "hsl(var(--neon-green))" }}>CONDITIONS</span>
           </h1>
-          <div className="w-16 h-1" style={{ backgroundColor: "hsl(var(--near-black))" }} />
         </div>
       </section>
 
       {/* Content */}
-      <section className="section-olive py-16">
+      <section
+        className="py-16"
+        style={{ backgroundColor: "hsl(var(--void-mid))" }}
+      >
         <div className="max-w-4xl mx-auto px-6">
-          <div className="space-y-10">
+          <div className="space-y-8">
             {sections.map((s, i) => (
-              <div key={i}>
-                <h2 className="font-display text-xl text-white mb-3" style={{ color: "hsl(var(--yellow))" }}>
-                  {s.title}
+              <div
+                key={i}
+                className="p-6"
+                style={{
+                  backgroundColor: "hsl(var(--void-black))",
+                  borderLeft: "3px solid hsl(var(--neon-green))",
+                }}
+              >
+                <p
+                  className="font-mono text-xs tracking-widest mb-1"
+                  style={{ color: "hsl(var(--neon-orange))" }}
+                >
+                  [{String(i + 1).padStart(2, "0")}]
+                </p>
+                <h2
+                  className="font-display text-lg mb-3"
+                  style={{ color: "hsl(var(--neon-green))" }}
+                >
+                  {s.title.toUpperCase()}
                 </h2>
-                <p className="font-body text-base text-white opacity-80 leading-relaxed">
+                <p
+                  className="font-mono text-sm leading-relaxed"
+                  style={{ color: "hsl(var(--chalk-white) / 0.7)" }}
+                >
                   {s.body}
                 </p>
               </div>
@@ -68,12 +105,25 @@ const TermsPage = () => {
         </div>
       </section>
 
-      <footer className="py-8 text-center" style={{ backgroundColor: "hsl(var(--olive-dark))" }}>
-        <Link to="/" className="font-body text-xs text-white opacity-40 hover:opacity-70 transition-opacity underline">
-          ← Back to home
+      <footer
+        className="py-8 text-center"
+        style={{
+          backgroundColor: "hsl(var(--void-dark))",
+          borderTop: "1px solid hsl(var(--void-light))",
+        }}
+      >
+        <Link
+          to="/"
+          className="font-mono text-xs hover:opacity-70 transition-opacity"
+          style={{ color: "hsl(var(--neon-green))" }}
+        >
+          &lt;-- BACK TO HOME
         </Link>
-        <div className="mt-4 text-white opacity-40 text-xs font-body">
-          © {new Date().getFullYear()} Kaizen Climbing Coaching. All rights reserved.
+        <div
+          className="mt-4 font-mono text-xs"
+          style={{ color: "hsl(var(--chalk-white) / 0.3)" }}
+        >
+          © {new Date().getFullYear()} KAIZEN_CLIMBING_COACHING // ALL RIGHTS RESERVED
         </div>
       </footer>
     </main>
