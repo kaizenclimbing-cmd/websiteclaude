@@ -1,47 +1,54 @@
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&family=Share+Tech+Mono&family=Black+Ops+One&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Kaizen Climbing Coaching Design System */
+/* ═══════════════════════════════════════════════
+   KAIZEN CLIMBING — RETRO 90s DESIGN SYSTEM
+═══════════════════════════════════════════════ */
 
 @layer base {
   :root {
-    /* Brand Colors */
-    --yellow: 44 94% 57%;            /* #F9C22E */
-    --olive: 43 16% 23%;             /* #4A4430 */
-    --olive-dark: 43 13% 18%;        /* #3A3425 */
-    --near-black: 60 19% 8%;         /* #1a1a14 */
+    /* 90s Neon Palette */
+    --neon-green: 82 100% 50%;       /* #80FF00 acid green */
+    --neon-orange: 22 100% 55%;      /* #FF6B1A hot orange */
+    --electric-blue: 195 100% 50%;   /* #00CFFF cyan */
+    --hot-pink: 330 100% 55%;        /* #FF1A74 */
+    --void-black: 240 10% 4%;        /* #090910 near black */
+    --void-dark: 240 8% 8%;          /* #111118 */
+    --void-mid: 240 6% 13%;          /* #1E1E26 */
+    --void-light: 240 5% 20%;        /* #2F2F3A */
+    --chalk-white: 60 30% 96%;       /* #F8F8F0 */
 
     /* Semantic Tokens */
-    --background: 43 16% 23%;
-    --foreground: 0 0% 100%;
+    --background: 240 10% 4%;
+    --foreground: 60 30% 96%;
 
-    --card: 43 13% 18%;
-    --card-foreground: 0 0% 100%;
+    --card: 240 8% 8%;
+    --card-foreground: 60 30% 96%;
 
-    --popover: 43 13% 18%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 240 8% 8%;
+    --popover-foreground: 60 30% 96%;
 
-    --primary: 44 94% 57%;
-    --primary-foreground: 60 19% 8%;
+    --primary: 82 100% 50%;
+    --primary-foreground: 240 10% 4%;
 
-    --secondary: 43 13% 18%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 22 100% 55%;
+    --secondary-foreground: 240 10% 4%;
 
-    --muted: 43 13% 28%;
-    --muted-foreground: 43 10% 60%;
+    --muted: 240 6% 13%;
+    --muted-foreground: 240 5% 60%;
 
-    --accent: 44 94% 57%;
-    --accent-foreground: 60 19% 8%;
+    --accent: 195 100% 50%;
+    --accent-foreground: 240 10% 4%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 60 30% 96%;
 
-    --border: 43 13% 30%;
-    --input: 43 13% 30%;
-    --ring: 44 94% 57%;
+    --border: 240 5% 20%;
+    --input: 240 5% 20%;
+    --ring: 82 100% 50%;
 
     --radius: 0rem;
 
@@ -64,74 +71,166 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Share Tech Mono', monospace;
     scroll-behavior: smooth;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(128, 255, 0, 0.015) 2px,
+        rgba(128, 255, 0, 0.015) 4px
+      );
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Unbounded', sans-serif;
+    font-family: 'Bungee', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  ::selection {
+    background-color: hsl(var(--neon-green));
+    color: hsl(var(--void-black));
   }
 }
 
 @layer components {
-  .section-yellow {
-    background-color: hsl(var(--yellow));
-    color: hsl(var(--near-black));
+
+  /* ── SECTION BACKGROUNDS ── */
+  .section-void {
+    background-color: hsl(var(--void-black));
+    color: hsl(var(--chalk-white));
   }
 
-  .section-olive {
-    background-color: hsl(var(--olive));
-    color: hsl(0 0% 100%);
+  .section-dark {
+    background-color: hsl(var(--void-dark));
+    color: hsl(var(--chalk-white));
   }
 
-  .section-olive-dark {
-    background-color: hsl(var(--olive-dark));
-    color: hsl(0 0% 100%);
+  .section-mid {
+    background-color: hsl(var(--void-mid));
+    color: hsl(var(--chalk-white));
   }
 
-  .section-white {
-    background-color: hsl(0 0% 100%);
-    color: hsl(var(--near-black));
+  .section-neon {
+    background-color: hsl(var(--neon-green));
+    color: hsl(var(--void-black));
   }
 
-  .btn-primary {
-    @apply inline-block px-6 py-3 font-bold uppercase tracking-wider text-sm transition-all duration-200;
-    background-color: hsl(var(--yellow));
-    color: hsl(var(--near-black));
-    font-family: 'Space Grotesk', sans-serif;
+  .section-orange {
+    background-color: hsl(var(--neon-orange));
+    color: hsl(var(--void-black));
   }
 
-  .btn-primary:hover {
-    background-color: hsl(var(--olive-dark));
-    color: hsl(var(--yellow));
+  /* ── BUTTONS ── */
+  .btn-neon {
+    @apply inline-block px-6 py-3 font-bold uppercase tracking-wider text-sm transition-all duration-150;
+    font-family: 'Bungee', sans-serif;
+    background-color: hsl(var(--neon-green));
+    color: hsl(var(--void-black));
+    border: 3px solid hsl(var(--neon-green));
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
   }
 
-  .btn-outline-light {
-    @apply inline-block px-6 py-3 font-bold uppercase tracking-wider text-sm transition-all duration-200 border-2;
-    border-color: hsl(var(--yellow));
-    color: hsl(var(--yellow));
-    font-family: 'Space Grotesk', sans-serif;
+  .btn-neon:hover {
+    background-color: hsl(var(--void-black));
+    color: hsl(var(--neon-green));
+    box-shadow: 0 0 20px hsl(var(--neon-green) / 0.5);
   }
 
-  .btn-outline-light:hover {
-    background-color: hsl(var(--yellow));
-    color: hsl(var(--near-black));
+  .btn-orange {
+    @apply inline-block px-6 py-3 font-bold uppercase tracking-wider text-sm transition-all duration-150;
+    font-family: 'Bungee', sans-serif;
+    background-color: hsl(var(--neon-orange));
+    color: hsl(var(--void-black));
+    border: 3px solid hsl(var(--neon-orange));
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
   }
 
-  .nav-link-style {
-    @apply uppercase tracking-wider text-sm font-semibold transition-colors duration-200;
-    font-family: 'Space Grotesk', sans-serif;
+  .btn-orange:hover {
+    background-color: hsl(var(--void-black));
+    color: hsl(var(--neon-orange));
+    box-shadow: 0 0 20px hsl(var(--neon-orange) / 0.5);
   }
 
-  .plan-card-olive {
-    background-color: hsl(var(--olive-dark));
-    color: hsl(0 0% 100%);
+  .btn-outline-neon {
+    @apply inline-block px-6 py-3 font-bold uppercase tracking-wider text-sm transition-all duration-150;
+    font-family: 'Bungee', sans-serif;
+    background-color: transparent;
+    color: hsl(var(--neon-green));
+    border: 3px solid hsl(var(--neon-green));
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+
+  .btn-outline-neon:hover {
+    background-color: hsl(var(--neon-green));
+    color: hsl(var(--void-black));
+    box-shadow: 0 0 20px hsl(var(--neon-green) / 0.5);
+  }
+
+  .btn-outline-orange {
+    @apply inline-block px-6 py-3 font-bold uppercase tracking-wider text-sm transition-all duration-150;
+    font-family: 'Bungee', sans-serif;
+    background-color: transparent;
+    color: hsl(var(--neon-orange));
+    border: 3px solid hsl(var(--neon-orange));
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+
+  .btn-outline-orange:hover {
+    background-color: hsl(var(--neon-orange));
+    color: hsl(var(--void-black));
+    box-shadow: 0 0 20px hsl(var(--neon-orange) / 0.5);
+  }
+
+  /* ── PLAN CARDS ── */
+  .plan-card-retro {
+    background-color: hsl(var(--void-mid));
+    border: 3px solid hsl(var(--neon-green));
     @apply p-8;
   }
 
-  .testimonial-card {
-    background-color: hsl(0 0% 100%);
-    color: hsl(var(--near-black));
-    @apply p-6;
+  /* ── NAV ── */
+  .nav-link-style {
+    @apply uppercase tracking-wider text-sm font-semibold transition-colors duration-150;
+    font-family: 'Bungee', sans-serif;
+  }
+
+  /* ── NEON GLOW ── */
+  .glow-green {
+    text-shadow: 0 0 10px hsl(var(--neon-green) / 0.8), 0 0 30px hsl(var(--neon-green) / 0.4);
+  }
+
+  .glow-orange {
+    text-shadow: 0 0 10px hsl(var(--neon-orange) / 0.8), 0 0 30px hsl(var(--neon-orange) / 0.4);
+  }
+
+  /* ── SCANLINES OVERLAY ── */
+  .scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(0, 0, 0, 0.08) 3px,
+      rgba(0, 0, 0, 0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ── DIAGONAL STRIPE ── */
+  .stripe-border-top {
+    border-top: 4px solid;
+    border-image: repeating-linear-gradient(
+      90deg,
+      hsl(var(--neon-green)) 0px,
+      hsl(var(--neon-green)) 20px,
+      hsl(var(--neon-orange)) 20px,
+      hsl(var(--neon-orange)) 40px
+    ) 1;
   }
 }
