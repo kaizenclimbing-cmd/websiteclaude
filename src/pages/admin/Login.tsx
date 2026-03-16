@@ -57,7 +57,7 @@ const AdminLogin = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 font-body text-sm outline-none focus:ring-2 bg-white text-charcoal"
+              className="w-full px-4 py-3 font-body text-sm outline-none focus:ring-2 bg-white text-near-black"
               style={{ border: "2px solid hsl(var(--golden-dark))" }}
             />
           </div>
@@ -74,7 +74,7 @@ const AdminLogin = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 font-body text-sm outline-none focus:ring-2 bg-white text-charcoal"
+              className="w-full px-4 py-3 font-body text-sm outline-none focus:ring-2 bg-white text-near-black"
               style={{ border: "2px solid hsl(var(--golden-dark))" }}
             />
           </div>
