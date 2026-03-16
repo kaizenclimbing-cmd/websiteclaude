@@ -81,7 +81,7 @@ const HomePage = () => {
           </p>
 
           <h1
-            className="font-display text-4xl sm:text-6xl lg:text-7xl leading-tight mb-10 max-w-2xl"
+            className="font-display text-3xl sm:text-4xl lg:text-5xl leading-tight mb-10 max-w-2xl"
             style={{ color: "hsl(var(--chalk-white))" }}
           >
             Improve your climbing with the 1-to-1 support of a specialist coach and pro climber.
@@ -192,7 +192,7 @@ const HomePage = () => {
                 // ABOUT
               </p>
               <h2
-                className="font-display text-3xl sm:text-5xl leading-tight mb-6"
+                className="font-display text-2xl sm:text-3xl leading-tight mb-6"
                 style={{ color: "hsl(var(--chalk-white))" }}
               >
                 I'm Buster —<br />
@@ -247,7 +247,7 @@ const HomePage = () => {
             // COACHING PLANS
           </p>
           <h2
-            className="font-display text-4xl sm:text-5xl leading-none mb-12"
+            className="font-display text-2xl sm:text-3xl leading-none mb-12"
             style={{ color: "hsl(var(--chalk-white))" }}
           >
             COACHING PLANS
@@ -255,7 +255,7 @@ const HomePage = () => {
           <div className="grid md:grid-cols-2 gap-6">
             {/* Kaizen Plan */}
             <div className="plan-card-retro">
-              <h3 className="font-display text-3xl leading-tight mb-1" style={{ color: "hsl(var(--neon-green))" }}>
+              <h3 className="font-display text-xl leading-tight mb-1" style={{ color: "hsl(var(--neon-green))" }}>
                 THE KAIZEN PLAN
               </h3>
               <p className="font-mono text-xs uppercase tracking-wider mb-6" style={{ color: "hsl(var(--chalk-white) / 0.45)" }}>
@@ -276,7 +276,7 @@ const HomePage = () => {
 
             {/* 6 Week Peak Plan */}
             <div className="plan-card-retro" style={{ borderColor: "hsl(var(--neon-orange))" }}>
-              <h3 className="font-display text-3xl leading-tight mb-1" style={{ color: "hsl(var(--neon-orange))" }}>
+              <h3 className="font-display text-xl leading-tight mb-1" style={{ color: "hsl(var(--neon-orange))" }}>
                 6 WEEK PEAK PLAN
               </h3>
               <p className="font-mono text-xs uppercase tracking-wider mb-6" style={{ color: "hsl(var(--chalk-white) / 0.45)" }}>
@@ -314,7 +314,7 @@ const HomePage = () => {
             // TESTIMONIALS
           </p>
           <h2
-            className="font-display text-4xl sm:text-5xl leading-none mb-12"
+            className="font-display text-2xl sm:text-3xl leading-none mb-12"
             style={{ color: "hsl(var(--chalk-white))" }}
           >
             WHAT PEOPLE ARE SAYING
@@ -365,7 +365,7 @@ const HomePage = () => {
           // READY TO SEND
         </p>
         <h3
-          className="font-display text-3xl sm:text-4xl mb-4"
+          className="font-display text-2xl sm:text-3xl mb-4"
           style={{ color: "hsl(var(--chalk-white))" }}
         >
           READY TO LEVEL UP?

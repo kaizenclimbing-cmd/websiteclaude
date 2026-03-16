@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["'Bungee'", "sans-serif"],
+        display: ["'Barlow Condensed'", "sans-serif"],
         mono: ["'Share Tech Mono'", "monospace"],
         body: ["'Share Tech Mono'", "monospace"],
       },
