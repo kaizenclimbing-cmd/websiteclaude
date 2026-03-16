@@ -81,7 +81,7 @@ const HomePage = () => {
           </p>
 
           <h1
-            className="font-display text-4xl sm:text-6xl lg:text-7xl leading-tight mb-10 max-w-2xl"
+            className="font-display text-3xl sm:text-4xl lg:text-5xl leading-tight mb-10 max-w-2xl"
             style={{ color: "hsl(var(--chalk-white))" }}
           >
             Improve your climbing with the 1-to-1 support of a specialist coach and pro climber.
