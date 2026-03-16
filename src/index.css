@@ -1,54 +1,54 @@
-@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&family=Share+Tech+Mono&family=Black+Ops+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Share+Tech+Mono&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════
-   KAIZEN CLIMBING — RETRO 90s DESIGN SYSTEM
+   KAIZEN CLIMBING — RETRO 90s MUTED DESIGN SYSTEM
 ═══════════════════════════════════════════════ */
 
 @layer base {
   :root {
-    /* 90s Neon Palette */
-    --neon-green: 82 100% 50%;       /* #80FF00 acid green */
-    --neon-orange: 22 100% 55%;      /* #FF6B1A hot orange */
-    --electric-blue: 195 100% 50%;   /* #00CFFF cyan */
-    --hot-pink: 330 100% 55%;        /* #FF1A74 */
-    --void-black: 240 10% 4%;        /* #090910 near black */
-    --void-dark: 240 8% 8%;          /* #111118 */
-    --void-mid: 240 6% 13%;          /* #1E1E26 */
-    --void-light: 240 5% 20%;        /* #2F2F3A */
-    --chalk-white: 60 30% 96%;       /* #F8F8F0 */
+    /* Muted 90s Palette */
+    --neon-green: 88 20% 50%;        /* dusty sage green */
+    --neon-orange: 20 40% 50%;       /* muted rust / sienna */
+    --electric-blue: 200 30% 45%;    /* faded slate blue */
+    --hot-pink: 330 30% 48%;         /* muted rose */
+    --void-black: 215 12% 7%;        /* deep blue-charcoal */
+    --void-dark: 215 10% 11%;
+    --void-mid: 215 8% 16%;
+    --void-light: 215 6% 24%;
+    --chalk-white: 45 20% 92%;       /* warm off-white */
 
     /* Semantic Tokens */
-    --background: 240 10% 4%;
-    --foreground: 60 30% 96%;
+    --background: 215 12% 7%;
+    --foreground: 45 20% 92%;
 
-    --card: 240 8% 8%;
-    --card-foreground: 60 30% 96%;
+    --card: 215 10% 11%;
+    --card-foreground: 45 20% 92%;
 
-    --popover: 240 8% 8%;
-    --popover-foreground: 60 30% 96%;
+    --popover: 215 10% 11%;
+    --popover-foreground: 45 20% 92%;
 
-    --primary: 82 100% 50%;
-    --primary-foreground: 240 10% 4%;
+    --primary: 88 20% 50%;
+    --primary-foreground: 215 12% 7%;
 
-    --secondary: 22 100% 55%;
-    --secondary-foreground: 240 10% 4%;
+    --secondary: 20 40% 50%;
+    --secondary-foreground: 215 12% 7%;
 
-    --muted: 240 6% 13%;
-    --muted-foreground: 240 5% 60%;
+    --muted: 215 8% 16%;
+    --muted-foreground: 215 6% 55%;
 
-    --accent: 195 100% 50%;
-    --accent-foreground: 240 10% 4%;
+    --accent: 200 30% 45%;
+    --accent-foreground: 215 12% 7%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 60 30% 96%;
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 45 20% 92%;
 
-    --border: 240 5% 20%;
-    --input: 240 5% 20%;
-    --ring: 82 100% 50%;
+    --border: 215 6% 24%;
+    --input: 215 6% 24%;
+    --ring: 88 20% 50%;
 
     --radius: 0rem;
 
@@ -73,14 +73,6 @@
     @apply bg-background text-foreground;
     font-family: 'Share Tech Mono', monospace;
     scroll-behavior: smooth;
-    background-image:
-      repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(128, 255, 0, 0.015) 2px,
-        rgba(128, 255, 0, 0.015) 4px
-      );
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -113,45 +105,33 @@
     color: hsl(var(--chalk-white));
   }
 
-  .section-neon {
-    background-color: hsl(var(--neon-green));
-    color: hsl(var(--void-black));
-  }
-
-  .section-orange {
-    background-color: hsl(var(--neon-orange));
-    color: hsl(var(--void-black));
-  }
-
   /* ── BUTTONS ── */
   .btn-neon {
     @apply inline-block px-6 py-3 font-bold uppercase tracking-wider text-sm transition-all duration-150;
     font-family: 'Bungee', sans-serif;
     background-color: hsl(var(--neon-green));
     color: hsl(var(--void-black));
-    border: 3px solid hsl(var(--neon-green));
+    border: 2px solid hsl(var(--neon-green));
     clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
   }
 
   .btn-neon:hover {
-    background-color: hsl(var(--void-black));
+    background-color: transparent;
     color: hsl(var(--neon-green));
-    box-shadow: 0 0 20px hsl(var(--neon-green) / 0.5);
   }
 
   .btn-orange {
     @apply inline-block px-6 py-3 font-bold uppercase tracking-wider text-sm transition-all duration-150;
     font-family: 'Bungee', sans-serif;
     background-color: hsl(var(--neon-orange));
-    color: hsl(var(--void-black));
-    border: 3px solid hsl(var(--neon-orange));
+    color: hsl(var(--chalk-white));
+    border: 2px solid hsl(var(--neon-orange));
     clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
   }
 
   .btn-orange:hover {
-    background-color: hsl(var(--void-black));
+    background-color: transparent;
     color: hsl(var(--neon-orange));
-    box-shadow: 0 0 20px hsl(var(--neon-orange) / 0.5);
   }
 
   .btn-outline-neon {
@@ -159,14 +139,13 @@
     font-family: 'Bungee', sans-serif;
     background-color: transparent;
     color: hsl(var(--neon-green));
-    border: 3px solid hsl(var(--neon-green));
+    border: 2px solid hsl(var(--neon-green));
     clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
   }
 
   .btn-outline-neon:hover {
     background-color: hsl(var(--neon-green));
     color: hsl(var(--void-black));
-    box-shadow: 0 0 20px hsl(var(--neon-green) / 0.5);
   }
 
   .btn-outline-orange {
@@ -174,20 +153,19 @@
     font-family: 'Bungee', sans-serif;
     background-color: transparent;
     color: hsl(var(--neon-orange));
-    border: 3px solid hsl(var(--neon-orange));
+    border: 2px solid hsl(var(--neon-orange));
     clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
   }
 
   .btn-outline-orange:hover {
     background-color: hsl(var(--neon-orange));
-    color: hsl(var(--void-black));
-    box-shadow: 0 0 20px hsl(var(--neon-orange) / 0.5);
+    color: hsl(var(--chalk-white));
   }
 
   /* ── PLAN CARDS ── */
   .plan-card-retro {
     background-color: hsl(var(--void-mid));
-    border: 3px solid hsl(var(--neon-green));
+    border: 2px solid hsl(var(--neon-green));
     @apply p-8;
   }
 
@@ -197,40 +175,16 @@
     font-family: 'Bungee', sans-serif;
   }
 
-  /* ── NEON GLOW ── */
-  .glow-green {
-    text-shadow: 0 0 10px hsl(var(--neon-green) / 0.8), 0 0 30px hsl(var(--neon-green) / 0.4);
+  /* ── SUBTLE ACCENTS ── */
+  .accent-green {
+    color: hsl(var(--neon-green));
   }
 
-  .glow-orange {
-    text-shadow: 0 0 10px hsl(var(--neon-orange) / 0.8), 0 0 30px hsl(var(--neon-orange) / 0.4);
+  .accent-orange {
+    color: hsl(var(--neon-orange));
   }
 
-  /* ── SCANLINES OVERLAY ── */
-  .scanlines::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 3px,
-      rgba(0, 0, 0, 0.08) 3px,
-      rgba(0, 0, 0, 0.08) 4px
-    );
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  /* ── DIAGONAL STRIPE ── */
   .stripe-border-top {
-    border-top: 4px solid;
-    border-image: repeating-linear-gradient(
-      90deg,
-      hsl(var(--neon-green)) 0px,
-      hsl(var(--neon-green)) 20px,
-      hsl(var(--neon-orange)) 20px,
-      hsl(var(--neon-orange)) 40px
-    ) 1;
+    border-top: 3px solid hsl(var(--neon-green));
   }
 }
