@@ -314,7 +314,7 @@ const HomePage = () => {
             // TESTIMONIALS
           </p>
           <h2
-            className="font-display text-4xl sm:text-5xl leading-none mb-12"
+            className="font-display text-2xl sm:text-3xl leading-none mb-12"
             style={{ color: "hsl(var(--chalk-white))" }}
           >
             WHAT PEOPLE ARE SAYING
