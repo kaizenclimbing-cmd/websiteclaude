@@ -10,16 +10,16 @@
 
 @layer base {
   :root {
-    /* Muted 90s Palette */
-    --neon-green: 88 20% 50%;        /* dusty sage green */
-    --neon-orange: 20 40% 50%;       /* muted rust / sienna */
-    --electric-blue: 200 30% 45%;    /* faded slate blue */
-    --hot-pink: 330 30% 48%;         /* muted rose */
-    --void-black: 215 12% 7%;        /* deep blue-charcoal */
-    --void-dark: 215 10% 11%;
-    --void-mid: 215 8% 16%;
-    --void-light: 215 6% 24%;
-    --chalk-white: 45 20% 92%;       /* warm off-white */
+    /* Muted 90s Palette — desaturated, weathered */
+    --neon-green: 100 8% 52%;        /* weathered sage, almost grey-green */
+    --neon-orange: 22 18% 48%;       /* faded terracotta / clay */
+    --electric-blue: 205 12% 42%;    /* dusty slate */
+    --hot-pink: 330 10% 46%;         /* barely-there mauve */
+    --void-black: 210 8% 8%;         /* near-black with cool tint */
+    --void-dark: 210 7% 11%;
+    --void-mid: 210 6% 16%;
+    --void-light: 210 5% 22%;
+    --chalk-white: 40 10% 88%;       /* aged paper white */
 
     /* Semantic Tokens */
     --background: 215 12% 7%;
