@@ -180,7 +180,6 @@ serve(async (req) => {
     const { error: adminError } = await supabase.rpc("enqueue_email", {
       queue_name: "transactional_emails",
       payload: {
-        run_id: crypto.randomUUID(),
         message_id: `consultation-admin-${crypto.randomUUID()}`,
         label: "consultation-admin-notification",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
