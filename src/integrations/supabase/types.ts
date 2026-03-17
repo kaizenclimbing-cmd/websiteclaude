@@ -37,6 +37,7 @@ export type Database = {
       }
       consultation_submissions: {
         Row: {
+          call_scheduled_at: string | null
           climbing_training_history: string | null
           currently_injured: boolean | null
           email: string
@@ -65,6 +66,7 @@ export type Database = {
           years_climbing: string | null
         }
         Insert: {
+          call_scheduled_at?: string | null
           climbing_training_history?: string | null
           currently_injured?: boolean | null
           email: string
@@ -93,6 +95,7 @@ export type Database = {
           years_climbing?: string | null
         }
         Update: {
+          call_scheduled_at?: string | null
           climbing_training_history?: string | null
           currently_injured?: boolean | null
           email?: string
