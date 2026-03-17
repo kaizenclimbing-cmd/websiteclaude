@@ -25,13 +25,17 @@ export default function ConsultationAuth() {
     setLoading(true);
 
     if (mode === "signup") {
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: { emailRedirectTo: `${window.location.origin}/consultation/next` },
       });
       if (signUpError) {
         setError(signUpError.message);
+      } else if (data.user && data.user.identities && data.user.identities.length === 0) {
+        // Account already exists — silently switch to login
+        setMode("login");
+        setError("An account with this email already exists. Please sign in instead.");
       } else {
         setCheckEmail(true);
       }
