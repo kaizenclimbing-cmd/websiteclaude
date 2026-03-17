@@ -31,6 +31,7 @@ export default function PaymentSuccess() {
   const planDetails = PLAN_DETAILS[plan] ?? null;
 
   useEffect(() => {
+    if (isPreview) return;
     if (!sessionId) { setStatus("error"); return; }
 
     (async () => {
