@@ -387,6 +387,7 @@ const AdminDashboard = () => {
   const TABS = [
     { id: "enquiries" as const, label: "All Enquiries" },
     { id: "pipeline" as const, label: "Pipeline" },
+    { id: "clients" as const, label: "Active Clients" },
     { id: "analytics" as const, label: "Analytics" },
     { id: "templates" as const, label: "Email Templates" },
   ];
