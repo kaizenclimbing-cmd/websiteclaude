@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-type Mode = "signup" | "login";
+type Mode = "signup" | "login" | "forgot";
 
 const labelCls = "block font-body text-xs font-semibold uppercase tracking-wider mb-1.5";
 const inputCls =
@@ -18,13 +18,25 @@ export default function ConsultationAuth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [checkEmail, setCheckEmail] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+
+  const switchMode = (next: Mode) => { setMode(next); setError(""); setCheckEmail(false); setResetSent(false); };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    if (mode === "signup") {
+    if (mode === "forgot") {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (resetError) {
+        setError(resetError.message);
+      } else {
+        setResetSent(true);
+      }
+    } else if (mode === "signup") {
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -33,7 +45,6 @@ export default function ConsultationAuth() {
       if (signUpError) {
         setError(signUpError.message);
       } else if (data.user && data.user.identities && data.user.identities.length === 0) {
-        // Account already exists — silently switch to login
         setMode("login");
         setError("An account with this email already exists. Please sign in instead.");
       } else {
@@ -51,13 +62,24 @@ export default function ConsultationAuth() {
     setLoading(false);
   };
 
+  const titles: Record<Mode, string> = {
+    signup: "CREATE ACCOUNT",
+    login: "SIGN IN",
+    forgot: "RESET PASSWORD",
+  };
+
+  const subtitles: Record<Mode, string> = {
+    signup: "Create a free account to start your consultation. Your progress will be saved across devices.",
+    login: "Welcome back — sign in to continue your consultation.",
+    forgot: "Enter your email and we'll send you a link to reset your password.",
+  };
+
   return (
     <main
       className="min-h-screen flex items-center justify-center px-6 py-16"
       style={{ backgroundColor: "hsl(var(--charcoal))" }}
     >
       <div className="w-full max-w-md">
-        {/* Header */}
         <p
           className="font-mono text-xs tracking-[0.3em] text-center mb-4"
           style={{ color: "hsl(var(--golden) / 0.5)" }}
@@ -68,27 +90,20 @@ export default function ConsultationAuth() {
           className="font-display text-5xl sm:text-6xl leading-none mb-2 text-center"
           style={{ color: "hsl(var(--golden))" }}
         >
-          {mode === "signup" ? "CREATE ACCOUNT" : "SIGN IN"}
+          {titles[mode]}
         </h1>
-        <div
-          className="w-16 h-0.5 mx-auto mt-4 mb-4"
-          style={{ backgroundColor: "hsl(var(--golden))" }}
-        />
+        <div className="w-16 h-0.5 mx-auto mt-4 mb-4" style={{ backgroundColor: "hsl(var(--golden))" }} />
         <p className="font-body text-sm text-center text-white/50 mb-10 leading-relaxed">
-          {mode === "signup"
-            ? "Create a free account to start your consultation. Your progress will be saved across devices."
-            : "Welcome back — sign in to continue your consultation."}
+          {subtitles[mode]}
         </p>
 
+        {/* Signup: check-your-email confirmation */}
         {checkEmail ? (
           <div
             className="text-center py-10 px-6 border"
             style={{ borderColor: "hsl(var(--golden) / 0.3)", backgroundColor: "hsl(var(--golden) / 0.05)" }}
           >
-            <h2
-              className="font-display text-3xl leading-none mb-4"
-              style={{ color: "hsl(var(--golden))" }}
-            >
+            <h2 className="font-display text-3xl leading-none mb-4" style={{ color: "hsl(var(--golden))" }}>
               CHECK YOUR EMAIL
             </h2>
             <p className="font-body text-sm text-white/60 leading-relaxed">
@@ -96,13 +111,37 @@ export default function ConsultationAuth() {
               Click it to verify your account, then come back here to sign in.
             </p>
             <button
-              onClick={() => { setCheckEmail(false); setMode("login"); }}
+              onClick={() => switchMode("login")}
               className="mt-6 font-body text-xs uppercase tracking-wider underline"
               style={{ color: "hsl(var(--golden))" }}
             >
               I've verified — sign in
             </button>
           </div>
+
+        /* Forgot: reset email sent confirmation */
+        ) : resetSent ? (
+          <div
+            className="text-center py-10 px-6 border"
+            style={{ borderColor: "hsl(var(--golden) / 0.3)", backgroundColor: "hsl(var(--golden) / 0.05)" }}
+          >
+            <h2 className="font-display text-3xl leading-none mb-4" style={{ color: "hsl(var(--golden))" }}>
+              CHECK YOUR EMAIL
+            </h2>
+            <p className="font-body text-sm text-white/60 leading-relaxed">
+              A reset link has been sent to <span className="text-white/90">{email}</span>.
+              Click it to set a new password.
+            </p>
+            <button
+              onClick={() => switchMode("login")}
+              className="mt-6 font-body text-xs uppercase tracking-wider underline"
+              style={{ color: "hsl(var(--golden))" }}
+            >
+              Back to sign in
+            </button>
+          </div>
+
+        /* Main form */
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
@@ -120,30 +159,43 @@ export default function ConsultationAuth() {
               />
             </div>
 
-            <div>
-              <label className={labelCls} style={{ color: "hsl(var(--golden))" }}>
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  required
-                  minLength={8}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={`${inputCls} pr-12`}
-                  placeholder="Min. 8 characters"
-                  autoComplete={mode === "signup" ? "new-password" : "current-password"}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
+            {mode !== "forgot" && (
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className={labelCls} style={{ color: "hsl(var(--golden))" }}>
+                    Password
+                  </label>
+                  {mode === "login" && (
+                    <button
+                      type="button"
+                      onClick={() => switchMode("forgot")}
+                      className="font-body text-xs text-white/40 hover:text-white/70 transition-colors underline"
+                    >
+                      Forgot password?
+                    </button>
+                  )}
+                </div>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    minLength={8}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={`${inputCls} pr-12`}
+                    placeholder="Min. 8 characters"
+                    autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {error && <p className="font-body text-xs text-red-400">{error}</p>}
 
@@ -153,27 +205,39 @@ export default function ConsultationAuth() {
               className="w-full py-4 font-display text-2xl tracking-wider transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-60"
               style={{ backgroundColor: "hsl(var(--golden))", color: "hsl(var(--charcoal))" }}
               onMouseEnter={(e) => {
-                if (!loading)
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--golden-dark))";
+                if (!loading) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--golden-dark))";
               }}
               onMouseLeave={(e) => {
                 (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--golden))";
               }}
             >
               {loading && <Loader2 size={20} className="animate-spin" />}
-              {loading ? "..." : mode === "signup" ? "CREATE ACCOUNT" : "SIGN IN"}
+              {loading ? "..." : mode === "signup" ? "CREATE ACCOUNT" : mode === "login" ? "SIGN IN" : "SEND RESET LINK"}
             </button>
 
             <p className="text-center font-body text-xs text-white/40 pt-2">
-              {mode === "signup" ? "Already have an account?" : "Don't have an account?"}{" "}
-              <button
-                type="button"
-                onClick={() => { setMode(mode === "signup" ? "login" : "signup"); setError(""); }}
-                className="underline"
-                style={{ color: "hsl(var(--golden))" }}
-              >
-                {mode === "signup" ? "Sign in" : "Create one"}
-              </button>
+              {mode === "forgot" ? (
+                <>
+                  Remember your password?{" "}
+                  <button type="button" onClick={() => switchMode("login")} className="underline" style={{ color: "hsl(var(--golden))" }}>
+                    Sign in
+                  </button>
+                </>
+              ) : mode === "signup" ? (
+                <>
+                  Already have an account?{" "}
+                  <button type="button" onClick={() => switchMode("login")} className="underline" style={{ color: "hsl(var(--golden))" }}>
+                    Sign in
+                  </button>
+                </>
+              ) : (
+                <>
+                  Don't have an account?{" "}
+                  <button type="button" onClick={() => switchMode("signup")} className="underline" style={{ color: "hsl(var(--golden))" }}>
+                    Create one
+                  </button>
+                </>
+              )}
             </p>
           </form>
         )}
