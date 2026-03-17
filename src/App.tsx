@@ -11,6 +11,7 @@ import TrainingTips from "./pages/TrainingTips";
 import Terms from "./pages/Terms";
 import Consultation from "./pages/Consultation";
 import NotFound from "./pages/NotFound";
+import BookPage from "./pages/Book";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
