@@ -1,6 +1,8 @@
-import { useState, type FormEvent } from "react";
-import { Loader2 } from "lucide-react";
+import { useState, useEffect, type FormEvent } from "react";
+import { Loader2, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+
+const DRAFT_KEY = "consultation_draft";
 
 type FormData = {
   firstName: string;
@@ -85,10 +87,24 @@ const Field = ({ label, required, hint, children }: FieldProps) => (
 // ── Main Component ─────────────────────────────────────────────────────────
 
 const ConsultationPage = () => {
-  const [form, setForm] = useState<FormData>(initialForm);
+  const [form, setForm] = useState<FormData>(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      return saved ? { ...initialForm, ...JSON.parse(saved) } : initialForm;
+    } catch {
+      return initialForm;
+    }
+  });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Auto-save draft to localStorage on every change
+  useEffect(() => {
+    if (!submitted) {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
+    }
+  }, [form, submitted]);
 
   const set = (field: keyof FormData, value: unknown) =>
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -142,6 +158,7 @@ const ConsultationPage = () => {
       return;
     }
 
+    localStorage.removeItem(DRAFT_KEY);
     setSubmitted(true);
   };
 
@@ -151,6 +168,24 @@ const ConsultationPage = () => {
       <div className="pt-16" style={{ backgroundColor: "hsl(var(--charcoal))" }} />
 
       <div className="max-w-2xl mx-auto px-6 py-16">
+        {/* Draft saved indicator */}
+        {!submitted && (
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2 font-mono text-xs" style={{ color: "hsl(var(--golden) / 0.5)" }}>
+              <Save size={12} />
+              <span>Draft auto-saved — your progress is safe if you close the tab</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => { localStorage.removeItem(DRAFT_KEY); setForm(initialForm); }}
+              className="font-mono text-xs underline opacity-40 hover:opacity-70 transition-opacity"
+              style={{ color: "hsl(var(--golden))" }}
+            >
+              Clear draft
+            </button>
+          </div>
+        )}
+
         {/* Title */}
         <h1
           className="font-display text-5xl sm:text-6xl leading-none mb-2 text-center"
@@ -176,6 +211,7 @@ const ConsultationPage = () => {
             </p>
             <button
               onClick={() => {
+                localStorage.removeItem(DRAFT_KEY);
                 setSubmitted(false);
                 setForm(initialForm);
               }}
