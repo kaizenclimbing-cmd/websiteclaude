@@ -115,7 +115,7 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") ?? "Info@kaizenclimbing.co.uk";
+    const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") ?? "admin@kaizenclimbing.com";
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const payload: AdminNotificationPayload = await req.json();

@@ -188,7 +188,7 @@ serve(async (req) => {
         label: "consultation-admin-notification",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: email,
-        to: "Info@kaizenclimbing.co.uk",
+        to: "admin@kaizenclimbing.com",
         subject: `New consultation: ${firstName} ${lastName}`,
         html: renderAdminEmail(firstName, lastName, email),
         text: `New consultation submission from ${firstName} ${lastName} (${email}).\n\nView in dashboard: https://kaizen-climb-coach.lovable.app/admin`,
