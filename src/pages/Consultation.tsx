@@ -98,7 +98,6 @@ const ConsultationPage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [draftSaved, setDraftSaved] = useState(false);
 
   // Auto-save draft to localStorage on every change
   useEffect(() => {
