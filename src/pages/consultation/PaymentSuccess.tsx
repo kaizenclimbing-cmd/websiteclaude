@@ -23,8 +23,9 @@ export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const plan = searchParams.get("plan") ?? "";
+  const isPreview = searchParams.get("preview") === "1";
 
-  const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
+  const [status, setStatus] = useState<"verifying" | "success" | "error">(isPreview ? "success" : "verifying");
 
   const refundDeadline = format(addDays(new Date(), 14), "d MMMM yyyy");
   const planDetails = PLAN_DETAILS[plan] ?? null;
