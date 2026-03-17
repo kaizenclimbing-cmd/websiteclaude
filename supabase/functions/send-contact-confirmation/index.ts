@@ -62,7 +62,7 @@ const renderEmail = (firstName: string, interests: string[]): string => {
                  style="display:inline-block;background-color:#5C5435;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:14px 28px;margin-right:12px;">
                 FILL OUT THE FORM
               </a>
-              <a href="https://kaizenclimbing.co.uk/plans"
+              <a href="https://kaizenclimbing.co.uk/consultation"
                  style="display:inline-block;background-color:#1A1A1A;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:14px 28px;margin-top:12px;">
                 SEE TRAINING DETAILS
               </a>
