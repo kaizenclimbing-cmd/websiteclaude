@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -97,39 +96,36 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") ?? "admin@kaizenclimbing.com";
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+    if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY is not configured");
 
     const payload: AdminNotificationPayload = await req.json();
     const { firstName, lastName, email, message, interests = [] } = payload;
 
-    const messageId = `admin-notify-${crypto.randomUUID()}`;
-    const html = renderEmail(payload);
     const interestText = interests.length > 0 ? `Interested in: ${interests.join(", ")}\n` : "";
     const messageText = message ? `Message: "${message}"\n` : "";
     const text = `New enquiry from ${firstName} ${lastName}\nEmail: ${email}\n${interestText}${messageText}`;
 
-    const { error } = await supabase.rpc("enqueue_email", {
-      queue_name: "transactional_emails",
-      payload: {
-        message_id: messageId,
-        label: "admin-contact-notification",
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: email,
-        to: adminEmail,
+        to: ["admin@kaizenclimbing.com"],
         subject: `New enquiry from ${firstName} ${lastName}`,
-        html,
+        html: renderEmail(payload),
         text,
-        purpose: "transactional",
-        queued_at: new Date().toISOString(),
-      },
+      }),
     });
 
-    if (error) throw error;
+    const data = await res.json();
+    if (!res.ok) throw new Error(`Resend error [${res.status}]: ${JSON.stringify(data)}`);
 
-    return new Response(JSON.stringify({ success: true, messageId }), {
+    return new Response(JSON.stringify({ success: true, id: data.id }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
