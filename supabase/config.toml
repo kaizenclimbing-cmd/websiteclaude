@@ -19,3 +19,5 @@ project_id = "znoglbzwopnlgyemwwvn"
     verify_jwt = false
   [functions.admin-clients]
     verify_jwt = false
+  [functions.client-billing]
+    verify_jwt = false
