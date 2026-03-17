@@ -244,7 +244,7 @@ Deno.serve(async (req) => {
       try {
         await sendLovableEmail(
           {
-            ...(payload.run_id ? { run_id: payload.run_id } : {}),
+            run_id: payload.run_id ?? crypto.randomUUID(),
             to: payload.to,
             from: payload.from,
             sender_domain: payload.sender_domain,
