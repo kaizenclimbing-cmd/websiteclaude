@@ -18,6 +18,7 @@ import ResetPassword from "./pages/consultation/ResetPassword";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PaymentSuccess from "./pages/consultation/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
           <Route path="/consultation/auth" element={<ConsultationAuth />} />
           <Route path="/consultation/form" element={<ConsultationForm />} />
           <Route path="/consultation/next" element={<ConsultationNext />} />
+          <Route path="/consultation/payment-success" element={<PaymentSuccess />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Hidden booking page (no nav link) */}

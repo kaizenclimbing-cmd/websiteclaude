@@ -1,0 +1,99 @@
+import { useEffect, useState } from "react";
+import { useSearchParams, Link } from "react-router-dom";
+import { CheckCircle, Loader2, XCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+export default function PaymentSuccess() {
+  const [searchParams] = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+  const plan = searchParams.get("plan");
+
+  const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
+
+  useEffect(() => {
+    if (!sessionId) { setStatus("error"); return; }
+
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("verify-payment", {
+          body: { session_id: sessionId },
+        });
+        if (error || !data?.paid) throw new Error("Payment not confirmed");
+        setStatus("success");
+      } catch {
+        setStatus("error");
+      }
+    })();
+  }, [sessionId]);
+
+  const planLabel =
+    plan === "kaizen_plan" ? "The Kaizen Plan" :
+    plan === "six_week_peak" ? "6 Week Peak Plan" :
+    "your plan";
+
+  return (
+    <main className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: "hsl(var(--charcoal))" }}>
+      <div className="max-w-md w-full text-center">
+        {status === "verifying" && (
+          <>
+            <Loader2 size={40} className="animate-spin mx-auto mb-6" style={{ color: "hsl(var(--golden))" }} />
+            <p className="font-body text-white/60">Confirming your payment…</p>
+          </>
+        )}
+
+        {status === "success" && (
+          <>
+            <CheckCircle size={48} className="mx-auto mb-6" style={{ color: "hsl(var(--golden))" }} />
+            <h1 className="font-display text-4xl sm:text-5xl leading-none mb-4" style={{ color: "hsl(var(--golden))" }}>
+              PAYMENT CONFIRMED
+            </h1>
+            <div className="w-12 h-0.5 mx-auto mb-6" style={{ backgroundColor: "hsl(var(--golden))" }} />
+            <p className="font-body text-white/70 mb-2 leading-relaxed">
+              You're signed up for <span className="text-white font-semibold">{planLabel}</span>.
+            </p>
+            <p className="font-body text-white/50 text-sm mb-10 leading-relaxed">
+              A confirmation email is on its way. Now book your onboarding call to get started.
+            </p>
+            <Link
+              to="/consultation/next"
+              className="inline-flex items-center gap-2 font-display text-sm tracking-wider px-6 py-3 transition-all duration-150"
+              style={{ backgroundColor: "hsl(var(--golden))", color: "hsl(var(--charcoal))" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden-dark))"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden))"; }}
+            >
+              BOOK YOUR CALL →
+            </Link>
+          </>
+        )}
+
+        {status === "error" && (
+          <>
+            <XCircle size={48} className="mx-auto mb-6 text-red-400" />
+            <h1 className="font-display text-3xl leading-none mb-4 text-white">
+              PAYMENT NOT CONFIRMED
+            </h1>
+            <p className="font-body text-white/60 mb-8 leading-relaxed">
+              We couldn't verify your payment. If you completed checkout, please contact us and we'll sort it out.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                to="/consultation/next"
+                className="font-display text-sm tracking-wider px-5 py-2.5 transition-all duration-150"
+                style={{ border: "1px solid hsl(var(--golden) / 0.4)", color: "hsl(var(--golden))" }}
+              >
+                BACK TO STEPS
+              </Link>
+              <a
+                href="mailto:Info@kaizenclimbing.co.uk"
+                className="font-body text-sm underline pt-2.5"
+                style={{ color: "hsl(var(--golden) / 0.6)" }}
+              >
+                Contact us
+              </a>
+            </div>
+          </>
+        )}
+      </div>
+    </main>
+  );
+}
