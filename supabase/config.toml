@@ -21,3 +21,5 @@ project_id = "znoglbzwopnlgyemwwvn"
     verify_jwt = false
   [functions.client-billing]
     verify_jwt = false
+  [functions.calcom-webhook]
+    verify_jwt = false

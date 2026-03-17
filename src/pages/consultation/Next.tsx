@@ -53,6 +53,7 @@ interface Submission {
   hardest_boulder_flash: string | null;
   hardest_boulder_in_a_day: string | null;
   onboarding_stage: string;
+  call_scheduled_at: string | null;
 }
 
 type BillingData = {
