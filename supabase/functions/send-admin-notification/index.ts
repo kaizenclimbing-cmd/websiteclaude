@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { sendLovableEmail } from "npm:@lovable.dev/email-js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -97,31 +97,39 @@ serve(async (req) => {
   }
 
   try {
-    const apiKey = Deno.env.get("LOVABLE_API_KEY")!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL") ?? "admin@kaizenclimbing.com";
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const payload: AdminNotificationPayload = await req.json();
     const { firstName, lastName, email, message, interests = [] } = payload;
 
+    const messageId = `admin-notify-${crypto.randomUUID()}`;
+    const html = renderEmail(payload);
     const interestText = interests.length > 0 ? `Interested in: ${interests.join(", ")}\n` : "";
     const messageText = message ? `Message: "${message}"\n` : "";
     const text = `New enquiry from ${firstName} ${lastName}\nEmail: ${email}\n${interestText}${messageText}`;
 
-    await sendLovableEmail(
-      {
-        run_id: crypto.randomUUID(),
-        to: adminEmail,
+    const { error } = await supabase.rpc("enqueue_email", {
+      queue_name: "transactional_emails",
+      payload: {
+        message_id: messageId,
+        label: "admin-contact-notification",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: email,
+        to: adminEmail,
         subject: `New enquiry from ${firstName} ${lastName}`,
-        html: renderEmail(payload),
+        html,
         text,
         purpose: "transactional",
+        queued_at: new Date().toISOString(),
       },
-      { apiKey }
-    );
+    });
 
-    return new Response(JSON.stringify({ success: true }), {
+    if (error) throw error;
+
+    return new Response(JSON.stringify({ success: true, messageId }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {

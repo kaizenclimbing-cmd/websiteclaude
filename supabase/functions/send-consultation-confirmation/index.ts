@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { sendLovableEmail } from "npm:@lovable.dev/email-js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -137,39 +137,53 @@ serve(async (req) => {
   }
 
   try {
-    const apiKey = Deno.env.get("LOVABLE_API_KEY")!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
     const payload: ConsultationConfirmationPayload = await req.json();
     const { firstName, lastName, email } = payload;
 
+    const clientMsgId = `consultation-confirm-${crypto.randomUUID()}`;
+    const adminMsgId = `consultation-admin-${crypto.randomUUID()}`;
+
     // Send confirmation to client
-    await sendLovableEmail(
-      {
-        run_id: crypto.randomUUID(),
-        to: email,
+    const { error: clientError } = await supabase.rpc("enqueue_email", {
+      queue_name: "transactional_emails",
+      payload: {
+        message_id: clientMsgId,
+        label: "consultation-confirmation",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: "admin@kaizenclimbing.com",
+        to: email,
         subject: "Consultation received — Kaizen Climbing Coaching",
         html: renderClientEmail(firstName),
         text: `Hey ${firstName}, thanks for completing your consultation form. We'll review everything and be in touch within 72 hours.\n\nWhat happens next:\n01 — Consultation reviewed, we'll reply within 72 hours\n02 — Complete payment, a payment link will be sent to you\n03 — Book your onboarding call, link sent after payment confirmed\n\nIn the meantime, feel free to reach out: admin@kaizenclimbing.com`,
         purpose: "transactional",
+        queued_at: new Date().toISOString(),
       },
-      { apiKey }
-    );
+    });
+
+    if (clientError) throw clientError;
 
     // Send lead notification to admin
-    await sendLovableEmail(
-      {
-        run_id: crypto.randomUUID(),
-        to: "admin@kaizenclimbing.com",
+    const { error: adminError } = await supabase.rpc("enqueue_email", {
+      queue_name: "transactional_emails",
+      payload: {
+        message_id: adminMsgId,
+        label: "consultation-admin-notification",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: email,
+        to: "admin@kaizenclimbing.com",
         subject: `New consultation: ${firstName} ${lastName}`,
         html: renderAdminEmail(firstName, lastName, email),
         text: `New consultation submission from ${firstName} ${lastName} (${email}).\n\nView in dashboard: https://kaizenclimbing.com/admin`,
         purpose: "transactional",
+        queued_at: new Date().toISOString(),
       },
-      { apiKey }
-    );
+    });
+
+    if (adminError) throw adminError;
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

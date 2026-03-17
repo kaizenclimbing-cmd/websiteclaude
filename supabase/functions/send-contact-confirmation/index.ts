@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { sendLovableEmail } from "npm:@lovable.dev/email-js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -82,28 +82,37 @@ serve(async (req) => {
   }
 
   try {
-    const apiKey = Deno.env.get("LOVABLE_API_KEY")!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
     const payload: ContactConfirmationPayload = await req.json();
     const { firstName, lastName, email, interests = [] } = payload;
 
+    const messageId = `contact-confirm-${crypto.randomUUID()}`;
+    const html = renderEmail(firstName, interests);
     const interestText = interests.length > 0 ? `\nYou expressed interest in: ${interests.join(", ")}\n` : "";
     const text = `Hey ${firstName}, thanks for your enquiry. We've received it and will be in touch shortly.${interestText}\nFill out the form or see training details: https://kaizenclimbing.com/consultation\n\nQuestions? Contact us at admin@kaizenclimbing.com`;
 
-    await sendLovableEmail(
-      {
-        run_id: crypto.randomUUID(),
-        to: email,
+    const { error } = await supabase.rpc("enqueue_email", {
+      queue_name: "transactional_emails",
+      payload: {
+        message_id: messageId,
+        label: "contact-confirmation",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: "admin@kaizenclimbing.com",
+        to: email,
         subject: "We've received your enquiry — Kaizen Climbing Coaching",
-        html: renderEmail(firstName, interests),
+        html,
         text,
         purpose: "transactional",
+        queued_at: new Date().toISOString(),
       },
-      { apiKey }
-    );
+    });
 
-    return new Response(JSON.stringify({ success: true }), {
+    if (error) throw error;
+
+    return new Response(JSON.stringify({ success: true, messageId }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
