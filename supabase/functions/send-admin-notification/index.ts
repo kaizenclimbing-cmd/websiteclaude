@@ -123,6 +123,9 @@ serve(async (req) => {
 
     const messageId = `admin-notify-${crypto.randomUUID()}`;
     const html = renderEmail(payload);
+    const interestText = interests.length > 0 ? `Interested in: ${interests.join(", ")}\n` : "";
+    const messageText = message ? `Message: "${message}"\n` : "";
+    const text = `New enquiry from ${firstName} ${lastName}\nEmail: ${email}\n${interestText}${messageText}\nReply: mailto:${email}`;
 
     const runId = crypto.randomUUID();
     const { error } = await supabase.rpc("enqueue_email", {
@@ -135,6 +138,7 @@ serve(async (req) => {
         to: adminEmail,
         subject: `New enquiry from ${firstName} ${lastName}`,
         html,
+        text,
         purpose: "transactional",
         queued_at: new Date().toISOString(),
       },
