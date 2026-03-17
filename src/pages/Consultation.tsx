@@ -212,6 +212,7 @@ const ConsultationPage = () => {
             </p>
             <button
               onClick={() => {
+                localStorage.removeItem(DRAFT_KEY);
                 setSubmitted(false);
                 setForm(initialForm);
               }}
