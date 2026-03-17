@@ -68,7 +68,7 @@ const renderClientEmail = (firstName: string): string => `<!DOCTYPE html>
               <p style="margin:0 0 28px 0;font-family:'Inter',sans-serif;font-size:14px;color:#1A1A1A;line-height:1.6;">
                 In the meantime, feel free to reach out with any questions.
               </p>
-              <a href="mailto:admin@kaizenclimbing.com"
+              <a href="mailto:admin@kaizenclimbing.co.uk"
                  style="display:inline-block;background-color:#5C5435;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:14px 28px;">
                 GET IN TOUCH
               </a>
