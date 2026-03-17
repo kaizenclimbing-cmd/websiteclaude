@@ -40,7 +40,7 @@ export default function ConsultationAuth() {
       if (signInError) {
         setError(signInError.message);
       } else {
-        navigate("/consultation/form");
+        navigate("/consultation/next");
       }
     }
 

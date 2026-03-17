@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { CheckCircle2, CreditCard, CalendarDays, ArrowRight, ClipboardList, Loader2 } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { CheckCircle2, CreditCard, CalendarDays, ArrowRight, ClipboardList, Loader2, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-type Stage = "submitted" | "reviewed" | "paid" | "booked";
+type Stage = "not_started" | "submitted" | "reviewed" | "paid" | "booked";
 type StepStatus = "done" | "current" | "locked";
 
 interface Submission {
@@ -11,7 +11,7 @@ interface Submission {
   onboarding_stage: Stage;
 }
 
-const STAGE_ORDER: Stage[] = ["submitted", "reviewed", "paid", "booked"];
+const STAGE_ORDER: Stage[] = ["not_started", "submitted", "reviewed", "paid", "booked"];
 
 function getStepStatus(stepIndex: number, stage: Stage): StepStatus {
   const stageIndex = STAGE_ORDER.indexOf(stage);
@@ -22,10 +22,11 @@ function getStepStatus(stepIndex: number, stage: Stage): StepStatus {
 
 const STEPS = [
   {
-    icon: CheckCircle2,
+    icon: FileText,
     number: "01",
-    title: "SUBMITTED",
-    description: "Your consultation form has been received. We'll review everything carefully before getting back to you.",
+    title: "COMPLETE YOUR FORM",
+    description: "Fill out the consultation form so we can understand your climbing background, goals, and experience. Takes around 10–15 minutes.",
+    cta: { label: "START FORM", href: "/consultation/form" },
   },
   {
     icon: ClipboardList,
@@ -51,13 +52,16 @@ const STEPS = [
 
 export default function ConsultationNext() {
   const navigate = useNavigate();
-  const [submission, setSubmission] = useState<Submission | null>(null);
+  const [submission, setSubmission] = useState<Submission | null | "not_started">(null);
+  const [userEmail, setUserEmail] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { navigate("/consultation/auth"); return; }
+
+      setUserEmail(user.email ?? "");
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase as any)
@@ -68,8 +72,7 @@ export default function ConsultationNext() {
         .limit(1)
         .maybeSingle();
 
-      if (!data) { navigate("/consultation/form"); return; }
-      setSubmission(data as Submission);
+      setSubmission(data ? (data as Submission) : "not_started");
       setLoading(false);
     })();
   }, [navigate]);
@@ -82,7 +85,10 @@ export default function ConsultationNext() {
     );
   }
 
-  const stage = submission!.onboarding_stage;
+  const isNotStarted = submission === "not_started";
+  const stage: Stage = isNotStarted ? "not_started" : (submission as Submission).onboarding_stage;
+  const firstName = isNotStarted ? null : (submission as Submission).first_name;
+  const greeting = firstName ? firstName.toUpperCase() : (userEmail ? userEmail.split("@")[0].toUpperCase() : "THERE");
 
   return (
     <main className="min-h-screen px-6 py-16" style={{ backgroundColor: "hsl(var(--charcoal))" }}>
@@ -93,12 +99,14 @@ export default function ConsultationNext() {
           // KAIZEN CLIMBING COACHING
         </p>
         <h1 className="font-display text-5xl sm:text-6xl leading-none mb-2 text-center" style={{ color: "hsl(var(--golden))" }}>
-          HEY, {submission!.first_name.toUpperCase()}
+          HEY, {greeting}
         </h1>
         <div className="w-16 h-0.5 mx-auto mt-4 mb-4" style={{ backgroundColor: "hsl(var(--golden))" }} />
 
         <p className="font-body text-sm text-center text-white/50 mb-14 leading-relaxed max-w-md mx-auto">
-          Here's where you are in the onboarding process.
+          {isNotStarted
+            ? "Complete the steps below to get started with your coaching journey."
+            : "Here's where you are in the onboarding process."}
         </p>
 
         {/* Timeline */}
@@ -193,18 +201,31 @@ export default function ConsultationNext() {
                   </p>
 
                   {step.cta && isCurrent && (
-                    <a
-                      href={step.cta.href}
-                      target={step.cta.href.startsWith("http") ? "_blank" : undefined}
-                      rel={step.cta.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                      className="inline-flex items-center gap-2 font-display text-sm tracking-wider px-5 py-2.5 transition-all duration-150"
-                      style={{ backgroundColor: "hsl(var(--golden))", color: "hsl(var(--charcoal))" }}
-                      onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden-dark))"; }}
-                      onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden))"; }}
-                    >
-                      {step.cta.label}
-                      <ArrowRight size={14} />
-                    </a>
+                    step.cta.href.startsWith("http") ? (
+                      <a
+                        href={step.cta.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 font-display text-sm tracking-wider px-5 py-2.5 transition-all duration-150"
+                        style={{ backgroundColor: "hsl(var(--golden))", color: "hsl(var(--charcoal))" }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden-dark))"; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden))"; }}
+                      >
+                        {step.cta.label}
+                        <ArrowRight size={14} />
+                      </a>
+                    ) : (
+                      <Link
+                        to={step.cta.href}
+                        className="inline-flex items-center gap-2 font-display text-sm tracking-wider px-5 py-2.5 transition-all duration-150"
+                        style={{ backgroundColor: "hsl(var(--golden))", color: "hsl(var(--charcoal))" }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden-dark))"; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden))"; }}
+                      >
+                        {step.cta.label}
+                        <ArrowRight size={14} />
+                      </Link>
+                    )
                   )}
 
                   {step.cta && isLocked && (
@@ -236,3 +257,4 @@ export default function ConsultationNext() {
     </main>
   );
 }
+
