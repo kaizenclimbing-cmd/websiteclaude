@@ -179,10 +179,12 @@ serve(async (req) => {
     if (clientError) throw clientError;
 
     // Send lead notification to admin
+    const adminMsgId = `consultation-admin-${crypto.randomUUID()}`;
     const { error: adminError } = await supabase.rpc("enqueue_email", {
       queue_name: "transactional_emails",
       payload: {
-        message_id: `consultation-admin-${crypto.randomUUID()}`,
+        run_id: adminMsgId,
+        message_id: adminMsgId,
         label: "consultation-admin-notification",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: email,
