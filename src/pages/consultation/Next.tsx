@@ -238,6 +238,11 @@ export default function ConsultationNext() {
                                   <p className="font-body text-xs leading-relaxed" style={{ color: "hsl(255 255 255 / 0.45)" }}>
                                     {plan.description}
                                   </p>
+                                  {plan.notice && (
+                                    <p className="font-body text-xs leading-relaxed mt-2 pt-2" style={{ color: "hsl(var(--golden) / 0.55)", borderTop: "1px solid hsl(var(--golden) / 0.12)" }}>
+                                      {plan.notice}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
                               <span className="font-mono text-xs flex-shrink-0 pt-0.5" style={{ color: active ? "hsl(var(--golden))" : "hsl(255 255 255 / 0.4)" }}>
