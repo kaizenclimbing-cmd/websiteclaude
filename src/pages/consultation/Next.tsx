@@ -687,6 +687,7 @@ function StepsTab({
   payError: string;
   handlePay: () => void;
   planStartDate: string | null;
+  callScheduledAt: string | null;
 }) {
   const allDone = stage === "booked";
 
