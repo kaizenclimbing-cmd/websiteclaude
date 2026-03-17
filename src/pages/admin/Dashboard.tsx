@@ -281,11 +281,13 @@ const AdminDashboard = () => {
   const [adminEmail, setAdminEmail] = useState("");
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<"all" | "contact" | "consultation">("all");
-  const [activeTab, setActiveTab] = useState<"enquiries" | "pipeline" | "analytics" | "templates">("enquiries");
+  const [activeTab, setActiveTab] = useState<"enquiries" | "pipeline" | "analytics" | "templates" | "clients">("enquiries");
   const [advancingId, setAdvancingId] = useState<string | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [expandedTemplate, setExpandedTemplate] = useState<string | null>(null);
+  const [clients, setClients] = useState<ClientBillingData[] | null>(null);
+  const [clientsLoading, setClientsLoading] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
