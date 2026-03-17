@@ -48,6 +48,7 @@ const App = () => (
           <Route path="/consultation/auth" element={<ConsultationAuth />} />
           <Route path="/consultation/form" element={<ConsultationForm />} />
           <Route path="/consultation/next" element={<ConsultationNext />} />
+          <Route path="/consultation/payment-success" element={<PaymentSuccess />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Hidden booking page (no nav link) */}
