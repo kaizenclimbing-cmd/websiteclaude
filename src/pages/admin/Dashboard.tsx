@@ -757,6 +757,276 @@ const AdminDashboard = () => {
           </>
         )}
 
+        {/* ── ACTIVE CLIENTS TAB ── */}
+        {activeTab === "clients" && (
+          <>
+            <div className="flex flex-wrap items-baseline justify-between gap-4 mb-8">
+              <div>
+                <h1 className="font-display text-5xl tracking-wider" style={{ color: "hsl(var(--golden))" }}>
+                  ACTIVE CLIENTS
+                </h1>
+                <p className="font-body text-sm text-white/40 mt-2">
+                  Live billing timelines from Stripe — payment dates, plan cycles &amp; notice deadlines.
+                </p>
+              </div>
+              <button
+                onClick={() => { setClients(null); fetchClients(); }}
+                disabled={clientsLoading}
+                className="font-body text-xs font-semibold uppercase tracking-wider px-4 py-2 transition-colors disabled:opacity-50"
+                style={{ border: "1px solid hsl(var(--golden))", color: "hsl(var(--golden))" }}
+              >
+                {clientsLoading ? "Loading…" : "↻ Refresh"}
+              </button>
+            </div>
+
+            {clientsLoading && !clients ? (
+              <div className="flex justify-center py-24">
+                <div className="w-8 h-8 border-2 animate-spin" style={{ borderColor: "hsl(var(--golden))", borderTopColor: "transparent" }} />
+              </div>
+            ) : clients && clients.length === 0 ? (
+              <div className="text-center py-24">
+                <Users size={40} className="mx-auto mb-4 opacity-20 text-white" />
+                <p className="font-body text-white opacity-30">No active subscriptions found in Stripe.</p>
+              </div>
+            ) : clients ? (
+              <div className="space-y-5">
+                {clients.map((client) => {
+                  const today = new Date();
+                  const noticeDeadline = new Date(client.noticeDeadlineDate);
+                  const commitmentEnd = new Date(client.commitmentEndDate);
+                  const currentPeriodEnd = new Date(client.currentPeriodEnd);
+                  const daysUntilNotice = Math.ceil((noticeDeadline.getTime() - today.getTime()) / 86400000);
+                  const daysUntilCommitmentEnd = Math.ceil((commitmentEnd.getTime() - today.getTime()) / 86400000);
+                  const pastCommitment = daysUntilCommitmentEnd <= 0;
+                  const noticeUrgent = daysUntilNotice >= 0 && daysUntilNotice <= 7;
+                  const noticePast = daysUntilNotice < 0;
+
+                  const fmtDate = (iso: string) =>
+                    new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+
+                  const fmtAmount = (pence: number) =>
+                    new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(pence / 100);
+
+                  return (
+                    <div
+                      key={client.subscriptionId}
+                      className="border"
+                      style={{
+                        backgroundColor: "hsl(var(--golden-dark))",
+                        borderColor: client.cancelAtPeriodEnd
+                          ? "hsl(0 70% 55% / 0.5)"
+                          : "hsl(var(--golden-deep))",
+                      }}
+                    >
+                      {/* Client header */}
+                      <div className="p-6 flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                          <div className="flex items-center gap-3 flex-wrap mb-1">
+                            <p className="font-display text-2xl tracking-wider" style={{ color: "hsl(var(--golden))" }}>
+                              {client.customerName || client.customerEmail}
+                            </p>
+                            <span
+                              className="font-body text-xs font-semibold uppercase tracking-wider px-2 py-0.5"
+                              style={{
+                                backgroundColor: "hsl(142 60% 40% / 0.2)",
+                                color: "hsl(142 60% 65%)",
+                                border: "1px solid hsl(142 60% 40% / 0.4)",
+                              }}
+                            >
+                              {client.cancelAtPeriodEnd ? "Cancelling" : "Active"}
+                            </span>
+                            {client.cancelAtPeriodEnd && (
+                              <span
+                                className="font-body text-xs font-semibold uppercase tracking-wider px-2 py-0.5"
+                                style={{
+                                  backgroundColor: "hsl(0 70% 55% / 0.15)",
+                                  color: "hsl(0 70% 70%)",
+                                  border: "1px solid hsl(0 70% 55% / 0.4)",
+                                }}
+                              >
+                                Ends {fmtDate(client.currentPeriodEnd)}
+                              </span>
+                            )}
+                          </div>
+                          <a
+                            href={`mailto:${client.customerEmail}`}
+                            className="flex items-center gap-1.5 font-body text-sm text-white opacity-70 hover:opacity-100 transition-opacity"
+                          >
+                            <Mail size={12} />
+                            {client.customerEmail}
+                          </a>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-display text-2xl tracking-wider" style={{ color: "hsl(var(--golden))" }}>
+                            {fmtAmount(client.amountPence)}
+                          </p>
+                          <p className="font-body text-xs text-white/40 mt-0.5">{client.intervalLabel} · {client.planName}</p>
+                        </div>
+                      </div>
+
+                      {/* Timeline grid */}
+                      <div
+                        className="border-t px-6 py-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+                        style={{ borderColor: "hsl(var(--golden-deep))" }}
+                      >
+                        {/* First payment */}
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 p-1.5 rounded-sm" style={{ backgroundColor: "hsl(var(--golden) / 0.1)" }}>
+                            <CreditCard size={14} style={{ color: "hsl(var(--golden))" }} />
+                          </div>
+                          <div>
+                            <p className="font-body text-xs font-semibold uppercase tracking-wider opacity-40 text-white mb-0.5">
+                              First Payment
+                            </p>
+                            <p className="font-body text-sm text-white">
+                              {client.firstPaymentDate ? fmtDate(client.firstPaymentDate) : "—"}
+                            </p>
+                            <p className="font-body text-xs text-white/30 mt-0.5">Plan start date</p>
+                          </div>
+                        </div>
+
+                        {/* Current cycle */}
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 p-1.5 rounded-sm" style={{ backgroundColor: "hsl(var(--golden) / 0.1)" }}>
+                            <Calendar size={14} style={{ color: "hsl(var(--golden))" }} />
+                          </div>
+                          <div>
+                            <p className="font-body text-xs font-semibold uppercase tracking-wider opacity-40 text-white mb-0.5">
+                              Current Cycle
+                            </p>
+                            <p className="font-body text-sm text-white">
+                              {fmtDate(client.currentPeriodStart)} → {fmtDate(client.currentPeriodEnd)}
+                            </p>
+                            <p className="font-body text-xs text-white/30 mt-0.5">
+                              Next charge: {fmtDate(client.currentPeriodEnd)}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Notice deadline */}
+                        <div className="flex items-start gap-3">
+                          <div
+                            className="mt-0.5 p-1.5 rounded-sm"
+                            style={{
+                              backgroundColor: noticeUrgent
+                                ? "hsl(38 95% 55% / 0.15)"
+                                : noticePast
+                                ? "hsl(0 70% 55% / 0.12)"
+                                : "hsl(var(--golden) / 0.1)",
+                            }}
+                          >
+                            <AlertTriangle
+                              size={14}
+                              style={{
+                                color: noticeUrgent
+                                  ? "hsl(38 95% 65%)"
+                                  : noticePast
+                                  ? "hsl(0 70% 65%)"
+                                  : "hsl(var(--golden))",
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <p className="font-body text-xs font-semibold uppercase tracking-wider opacity-40 text-white mb-0.5">
+                              Cancellation Notice Deadline
+                            </p>
+                            <p
+                              className="font-body text-sm"
+                              style={{
+                                color: noticeUrgent
+                                  ? "hsl(38 95% 65%)"
+                                  : noticePast
+                                  ? "hsl(0 70% 65%)"
+                                  : "white",
+                              }}
+                            >
+                              {fmtDate(client.noticeDeadlineDate)}
+                            </p>
+                            <p className="font-body text-xs text-white/30 mt-0.5">
+                              {noticePast
+                                ? "Window passed — next cycle will bill"
+                                : daysUntilNotice === 0
+                                ? "Today is the last day to cancel"
+                                : `${daysUntilNotice} day${daysUntilNotice !== 1 ? "s" : ""} to give notice`}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* 3-month commitment end */}
+                        <div className="flex items-start gap-3">
+                          <div
+                            className="mt-0.5 p-1.5 rounded-sm"
+                            style={{
+                              backgroundColor: pastCommitment
+                                ? "hsl(142 60% 40% / 0.15)"
+                                : "hsl(var(--golden) / 0.1)",
+                            }}
+                          >
+                            <CheckCircle2
+                              size={14}
+                              style={{
+                                color: pastCommitment ? "hsl(142 60% 65%)" : "hsl(var(--golden))",
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <p className="font-body text-xs font-semibold uppercase tracking-wider opacity-40 text-white mb-0.5">
+                              12-Week Commitment End
+                            </p>
+                            <p
+                              className="font-body text-sm"
+                              style={{ color: pastCommitment ? "hsl(142 60% 65%)" : "white" }}
+                            >
+                              {fmtDate(client.commitmentEndDate)}
+                            </p>
+                            <p className="font-body text-xs text-white/30 mt-0.5">
+                              {pastCommitment
+                                ? "✓ Minimum commitment met"
+                                : `${daysUntilCommitmentEnd} day${daysUntilCommitmentEnd !== 1 ? "s" : ""} remaining`}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Upcoming payments */}
+                        <div className="flex items-start gap-3 sm:col-span-2">
+                          <div className="mt-0.5 p-1.5 rounded-sm" style={{ backgroundColor: "hsl(var(--golden) / 0.1)" }}>
+                            <Clock size={14} style={{ color: "hsl(var(--golden))" }} />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-body text-xs font-semibold uppercase tracking-wider opacity-40 text-white mb-1.5">
+                              Upcoming Payment Dates
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {client.upcomingPayments.map((date, i) => (
+                                <span
+                                  key={date}
+                                  className="font-body text-xs px-2.5 py-1 border"
+                                  style={{
+                                    backgroundColor: i === 0 ? "hsl(var(--golden) / 0.12)" : "transparent",
+                                    borderColor: i === 0 ? "hsl(var(--golden) / 0.5)" : "hsl(var(--golden-deep))",
+                                    color: i === 0 ? "hsl(var(--golden))" : "rgba(255,255,255,0.5)",
+                                  }}
+                                >
+                                  {i === 0 ? "Next: " : ""}{fmtDate(date)}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-24">
+                <Users size={40} className="mx-auto mb-4 opacity-20 text-white" />
+                <p className="font-body text-white opacity-30">Click refresh to load client data.</p>
+              </div>
+            )}
+          </>
+        )}
+
         {/* ── ANALYTICS TAB ── */}
         {activeTab === "analytics" && (
           <>
