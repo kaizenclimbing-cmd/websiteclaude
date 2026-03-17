@@ -127,11 +127,9 @@ serve(async (req) => {
     const messageText = message ? `Message: "${message}"\n` : "";
     const text = `New enquiry from ${firstName} ${lastName}\nEmail: ${email}\n${interestText}${messageText}\nReply: mailto:${email}`;
 
-    const runId = crypto.randomUUID();
     const { error } = await supabase.rpc("enqueue_email", {
       queue_name: "transactional_emails",
       payload: {
-        run_id: runId,
         message_id: messageId,
         label: "admin-contact-notification",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",

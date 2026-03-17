@@ -105,11 +105,9 @@ serve(async (req) => {
     const interestText = interests.length > 0 ? `\nYou expressed interest in: ${interests.join(", ")}\n` : "";
     const text = `Hey ${firstName}, thanks for your enquiry. We've received it and will be in touch shortly.${interestText}\nIn the meantime, if you'd like to start the process, you can fill out a form so I can get to know a little more about you and your climbing — or see more details about the training.\n\nFill out the form: https://kaizenclimbing.co.uk/consultation\nSee training details: https://kaizenclimbing.co.uk/consultation\n\nQuestions? Contact us at Info@kaizenclimbing.co.uk`;
 
-    const runId = crypto.randomUUID();
     const { error } = await supabase.rpc("enqueue_email", {
       queue_name: "transactional_emails",
       payload: {
-        run_id: runId,
         message_id: messageId,
         label: "contact-confirmation",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
