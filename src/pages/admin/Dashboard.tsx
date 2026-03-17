@@ -87,6 +87,26 @@ type AnalyticsData = {
   stageBreakdown: Record<string, number>;
 };
 
+type ClientBillingData = {
+  subscriptionId: string;
+  customerId: string;
+  customerName: string;
+  customerEmail: string;
+  planName: string;
+  amountPence: number;
+  intervalLabel: string;
+  cycleDays: number;
+  planStartDate: string;
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  firstPaymentDate: string | null;
+  commitmentEndDate: string;
+  noticeDeadlineDate: string;
+  upcomingPayments: string[];
+  status: string;
+  cancelAtPeriodEnd: boolean;
+};
+
 // ── Email templates (read-only copies) ─────────────────────────────────────
 
 const EMAIL_TEMPLATES = [
