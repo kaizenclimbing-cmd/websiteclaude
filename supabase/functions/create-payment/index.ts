@@ -10,7 +10,7 @@ const corsHeaders = {
 
 // Price IDs
 const PRICES = {
-  kaizen_plan: "price_1TC4stRk0BQkOnjH9w8ZcpMJ",     // £200/month recurring
+  kaizen_plan: "price_1TC4weRk0BQkOnjHWeQV05T6",     // £200 every 4 weeks (recurring)
   six_week_peak: "price_1TC4tCRk0BQkOnjHJiubrAaA",   // £200 one-off
 } as const;
 
