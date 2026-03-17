@@ -49,18 +49,22 @@ const renderEmail = (firstName: string, interests: string[]): string => {
               <p style="margin:0 0 24px 0;font-family:'Arial Black',sans-serif;font-size:32px;font-weight:900;letter-spacing:0.03em;color:#1A1A1A;text-transform:uppercase;line-height:1;">RECEIVED!</p>
 
               <p style="margin:0 0 20px 0;font-family:'Inter',sans-serif;font-size:15px;color:#1A1A1A;line-height:1.6;">
-                Hey ${firstName}, thanks for getting in touch. We've received your enquiry and will be back in touch with you <strong>within a week</strong>.
+                Hey ${firstName}, thanks for your enquiry. We've received it and will be in touch shortly.
               </p>
 
               ${interestList}
 
-              <p style="margin:0 0 32px 0;font-family:'Inter',sans-serif;font-size:15px;color:#1A1A1A;line-height:1.6;">
-                In the meantime, feel free to follow us on Instagram for training tips and coaching updates.
+              <p style="margin:0 0 28px 0;font-family:'Inter',sans-serif;font-size:15px;color:#1A1A1A;line-height:1.6;">
+                In the meantime, if you'd like to start the process, you can fill out a form so I can get to know a little more about you and your climbing — or see more details about the training.
               </p>
 
-              <a href="https://instagram.com/kaizenclimbingcoaching"
-                 style="display:inline-block;background-color:#5C5435;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:14px 28px;">
-                @KAIZENCLIMBINGCOACHING
+              <a href="https://kaizenclimbing.co.uk/consultation"
+                 style="display:inline-block;background-color:#5C5435;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:14px 28px;margin-right:12px;">
+                FILL OUT THE FORM
+              </a>
+              <a href="https://kaizenclimbing.co.uk/plans"
+                 style="display:inline-block;background-color:#1A1A1A;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:14px 28px;margin-top:12px;">
+                SEE TRAINING DETAILS
               </a>
             </td>
           </tr>
