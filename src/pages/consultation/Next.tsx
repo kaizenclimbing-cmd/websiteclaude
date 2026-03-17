@@ -1,22 +1,29 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { CheckCircle2, CreditCard, CalendarDays, ArrowRight, ClipboardList, Loader2, FileText } from "lucide-react";
+import { CreditCard, CalendarDays, ArrowRight, FileText, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-type Stage = "not_started" | "submitted" | "reviewed" | "paid" | "booked";
+// Stages stored in DB (plus virtual "not_started")
+type Stage = "not_started" | "submitted" | "paid" | "booked";
 type StepStatus = "done" | "current" | "locked";
 
 interface Submission {
   first_name: string;
-  onboarding_stage: Stage;
+  onboarding_stage: string;
 }
 
-const STAGE_ORDER: Stage[] = ["not_started", "submitted", "reviewed", "paid", "booked"];
-
+// Map DB stage → which step index is "current"
+// Step 0 = Form, Step 1 = Payment, Step 2 = Book
 function getStepStatus(stepIndex: number, stage: Stage): StepStatus {
-  const stageIndex = STAGE_ORDER.indexOf(stage);
-  if (stepIndex < stageIndex) return "done";
-  if (stepIndex === stageIndex) return "current";
+  const stageToCurrentStep: Record<Stage, number> = {
+    not_started: 0,
+    submitted: 1,
+    paid: 2,
+    booked: 3, // all done
+  };
+  const currentStep = stageToCurrentStep[stage] ?? 0;
+  if (stepIndex < currentStep) return "done";
+  if (stepIndex === currentStep) return "current";
   return "locked";
 }
 
@@ -25,41 +32,42 @@ const STEPS = [
     icon: FileText,
     number: "01",
     title: "COMPLETE YOUR FORM",
-    description: "Fill out the consultation form so we can understand your climbing background, goals, and experience. Takes around 10–15 minutes.",
+    description:
+      "Fill out the consultation form so we can understand your climbing background, goals, and experience. Takes around 10–15 minutes.",
     cta: { label: "START FORM", href: "/consultation/form" },
   },
   {
-    icon: ClipboardList,
-    number: "02",
-    title: "UNDER REVIEW",
-    description: "We're reviewing your consultation in detail. You'll hear back within 72 hours with next steps and a personalised plan outline.",
-  },
-  {
     icon: CreditCard,
-    number: "03",
+    number: "02",
     title: "COMPLETE PAYMENT",
-    description: "Once you've heard back from us, complete payment to secure your coaching spot. You'll receive a payment link via email.",
+    description:
+      "Secure your coaching spot by completing payment. You'll receive instant confirmation and your onboarding call link.",
     cta: { label: "PAY NOW", href: "https://buy.stripe.com/kaizen" },
   },
   {
     icon: CalendarDays,
-    number: "04",
+    number: "03",
     title: "BOOK YOUR CALL",
-    description: "After payment is confirmed, book your onboarding call. Times sync with your local timezone automatically.",
+    description:
+      "Pick a time that works for you. Your onboarding call is where we map out your training plan together.",
     cta: { label: "BOOK YOUR CALL", href: "/book" },
   },
 ];
 
 export default function ConsultationNext() {
   const navigate = useNavigate();
-  const [submission, setSubmission] = useState<Submission | null | "not_started">(null);
+  const [submission, setSubmission] = useState<Submission | null | "loading">("loading");
   const [userEmail, setUserEmail] = useState("");
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { navigate("/consultation/auth"); return; }
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/consultation/auth");
+        return;
+      }
 
       setUserEmail(user.email ?? "");
 
@@ -72,48 +80,71 @@ export default function ConsultationNext() {
         .limit(1)
         .maybeSingle();
 
-      setSubmission(data ? (data as Submission) : "not_started");
-      setLoading(false);
+      setSubmission(data ?? null);
     })();
   }, [navigate]);
 
-  if (loading) {
+  if (submission === "loading") {
     return (
-      <main className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "hsl(var(--charcoal))" }}>
+      <main
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: "hsl(var(--charcoal))" }}
+      >
         <Loader2 size={28} className="animate-spin" style={{ color: "hsl(var(--golden))" }} />
       </main>
     );
   }
 
-  const isNotStarted = submission === "not_started";
-  const stage: Stage = isNotStarted ? "not_started" : (submission as Submission).onboarding_stage;
-  const firstName = isNotStarted ? null : (submission as Submission).first_name;
-  const greeting = firstName ? firstName.toUpperCase() : (userEmail ? userEmail.split("@")[0].toUpperCase() : "THERE");
+  const hasSubmission = submission !== null;
+  const stage: Stage = hasSubmission
+    ? ((submission as Submission).onboarding_stage as Stage)
+    : "not_started";
+  const firstName = hasSubmission ? (submission as Submission).first_name : null;
+
+  // Greeting: use first name if known, otherwise derive from email, otherwise "THERE"
+  const greeting = firstName
+    ? firstName.toUpperCase()
+    : userEmail
+    ? userEmail.split("@")[0].toUpperCase()
+    : "THERE";
+
+  const allDone = stage === "booked";
 
   return (
-    <main className="min-h-screen px-6 py-16" style={{ backgroundColor: "hsl(var(--charcoal))" }}>
+    <main
+      className="min-h-screen px-6 py-16"
+      style={{ backgroundColor: "hsl(var(--charcoal))" }}
+    >
       <div className="max-w-2xl mx-auto">
-
         {/* Header */}
-        <p className="font-mono text-xs tracking-[0.3em] text-center mb-4" style={{ color: "hsl(var(--golden) / 0.5)" }}>
+        <p
+          className="font-mono text-xs tracking-[0.3em] text-center mb-4"
+          style={{ color: "hsl(var(--golden) / 0.5)" }}
+        >
           // KAIZEN CLIMBING COACHING
         </p>
-        <h1 className="font-display text-5xl sm:text-6xl leading-none mb-2 text-center" style={{ color: "hsl(var(--golden))" }}>
+        <h1
+          className="font-display text-5xl sm:text-6xl leading-none mb-2 text-center"
+          style={{ color: "hsl(var(--golden))" }}
+        >
           HEY, {greeting}
         </h1>
-        <div className="w-16 h-0.5 mx-auto mt-4 mb-4" style={{ backgroundColor: "hsl(var(--golden))" }} />
+        <div
+          className="w-16 h-0.5 mx-auto mt-4 mb-4"
+          style={{ backgroundColor: "hsl(var(--golden))" }}
+        />
 
         <p className="font-body text-sm text-center text-white/50 mb-14 leading-relaxed max-w-md mx-auto">
-          {isNotStarted
-            ? "Complete the steps below to get started with your coaching journey."
-            : "Here's where you are in the onboarding process."}
+          {allDone
+            ? "You're all set. We'll be in touch before your call."
+            : "Complete each step below to get started with your coaching journey."}
         </p>
 
         {/* Timeline */}
         <div className="space-y-0">
           {STEPS.map((step, i) => {
             const Icon = step.icon;
-            const status: StepStatus = getStepStatus(i, stage);
+            const status: StepStatus = allDone ? "done" : getStepStatus(i, stage);
             const isDone = status === "done";
             const isCurrent = status === "current";
             const isLocked = status === "locked";
@@ -124,7 +155,11 @@ export default function ConsultationNext() {
                 {i < STEPS.length - 1 && (
                   <div
                     className="absolute left-5 top-12 bottom-0 w-px"
-                    style={{ backgroundColor: isDone ? "hsl(var(--golden) / 0.4)" : "hsl(var(--golden) / 0.15)" }}
+                    style={{
+                      backgroundColor: isDone
+                        ? "hsl(var(--golden) / 0.4)"
+                        : "hsl(var(--golden) / 0.15)",
+                    }}
                   />
                 )}
 
@@ -176,18 +211,20 @@ export default function ConsultationNext() {
                     <h3
                       className="font-display text-xl leading-none"
                       style={{
-                        color: isDone ? "hsl(var(--golden))" : isCurrent ? "white" : "hsl(255 255 255 / 0.3)",
+                        color: isDone
+                          ? "hsl(var(--golden))"
+                          : isCurrent
+                          ? "white"
+                          : "hsl(255 255 255 / 0.3)",
                       }}
                     >
                       {step.title}
                       {isDone && (
-                        <span className="ml-3 font-mono text-xs normal-case tracking-normal" style={{ color: "hsl(var(--golden) / 0.6)" }}>
+                        <span
+                          className="ml-3 font-mono text-xs normal-case tracking-normal"
+                          style={{ color: "hsl(var(--golden) / 0.6)" }}
+                        >
                           ✓ complete
-                        </span>
-                      )}
-                      {isLocked && (
-                        <span className="ml-3 font-mono text-xs normal-case tracking-normal" style={{ color: "hsl(var(--golden) / 0.3)" }}>
-                          — locked
                         </span>
                       )}
                     </h3>
@@ -195,21 +232,35 @@ export default function ConsultationNext() {
 
                   <p
                     className="font-body text-sm leading-relaxed mb-4"
-                    style={{ color: isLocked ? "hsl(255 255 255 / 0.3)" : "hsl(255 255 255 / 0.55)" }}
+                    style={{
+                      color: isLocked
+                        ? "hsl(255 255 255 / 0.25)"
+                        : "hsl(255 255 255 / 0.55)",
+                    }}
                   >
                     {step.description}
                   </p>
 
-                  {step.cta && isCurrent && (
-                    step.cta.href.startsWith("http") ? (
+                  {/* Active CTA */}
+                  {step.cta && isCurrent &&
+                    (step.cta.href.startsWith("http") ? (
                       <a
                         href={step.cta.href}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 font-display text-sm tracking-wider px-5 py-2.5 transition-all duration-150"
-                        style={{ backgroundColor: "hsl(var(--golden))", color: "hsl(var(--charcoal))" }}
-                        onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden-dark))"; }}
-                        onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden))"; }}
+                        style={{
+                          backgroundColor: "hsl(var(--golden))",
+                          color: "hsl(var(--charcoal))",
+                        }}
+                        onMouseEnter={(e) => {
+                          (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
+                            "hsl(var(--golden-dark))";
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
+                            "hsl(var(--golden))";
+                        }}
                       >
                         {step.cta.label}
                         <ArrowRight size={14} />
@@ -218,23 +269,32 @@ export default function ConsultationNext() {
                       <Link
                         to={step.cta.href}
                         className="inline-flex items-center gap-2 font-display text-sm tracking-wider px-5 py-2.5 transition-all duration-150"
-                        style={{ backgroundColor: "hsl(var(--golden))", color: "hsl(var(--charcoal))" }}
-                        onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden-dark))"; }}
-                        onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden))"; }}
+                        style={{
+                          backgroundColor: "hsl(var(--golden))",
+                          color: "hsl(var(--charcoal))",
+                        }}
+                        onMouseEnter={(e) => {
+                          (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
+                            "hsl(var(--golden-dark))";
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
+                            "hsl(var(--golden))";
+                        }}
                       >
                         {step.cta.label}
                         <ArrowRight size={14} />
                       </Link>
-                    )
-                  )}
+                    ))}
 
+                  {/* Locked CTA (greyed out) */}
                   {step.cta && isLocked && (
                     <div
                       className="inline-flex items-center gap-2 font-display text-sm tracking-wider px-5 py-2.5 cursor-not-allowed select-none"
                       style={{
-                        backgroundColor: "hsl(var(--golden) / 0.08)",
-                        color: "hsl(var(--golden) / 0.25)",
-                        border: "1px solid hsl(var(--golden) / 0.15)",
+                        backgroundColor: "hsl(var(--golden) / 0.06)",
+                        color: "hsl(var(--golden) / 0.2)",
+                        border: "1px solid hsl(var(--golden) / 0.12)",
                       }}
                     >
                       {step.cta.label}
@@ -249,7 +309,11 @@ export default function ConsultationNext() {
 
         <p className="font-body text-xs text-center text-white/30 mt-4">
           Questions?{" "}
-          <a href="mailto:Info@kaizenclimbing.co.uk" className="underline" style={{ color: "hsl(var(--golden) / 0.5)" }}>
+          <a
+            href="mailto:Info@kaizenclimbing.co.uk"
+            className="underline"
+            style={{ color: "hsl(var(--golden) / 0.5)" }}
+          >
             Info@kaizenclimbing.co.uk
           </a>
         </p>
@@ -257,4 +321,3 @@ export default function ConsultationNext() {
     </main>
   );
 }
-
