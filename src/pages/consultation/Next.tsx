@@ -97,12 +97,9 @@ export default function ConsultationNext() {
         </h1>
         <div className="w-16 h-0.5 mx-auto mt-4 mb-4" style={{ backgroundColor: "hsl(var(--golden))" }} />
 
-        {/* How it works intro */}
-        <p className="font-body text-sm text-center text-white/50 mb-3 leading-relaxed max-w-md mx-auto">
-          Here's where you are in the coaching onboarding process — four simple steps from consultation to your first session.
-        </p>
-        <p className="font-body text-sm text-center text-white/40 mb-14 leading-relaxed max-w-md mx-auto">
-          We review every consultation personally, build a plan around your schedule and goals, then check in regularly to adapt as you progress.
+        {/* Intro */}
+        <p className="font-body text-sm text-center text-white/50 mb-14 leading-relaxed max-w-md mx-auto">
+          Track where you are in the onboarding process below. Full details on how coaching works are at the bottom of this page.
         </p>
 
         {/* Timeline */}
