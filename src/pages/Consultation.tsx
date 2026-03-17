@@ -159,6 +159,7 @@ const ConsultationPage = () => {
       return;
     }
 
+    localStorage.removeItem(DRAFT_KEY);
     setSubmitted(true);
   };
 
