@@ -679,6 +679,7 @@ function StepsTab({
   payError,
   handlePay,
   planStartDate,
+  callScheduledAt,
 }: {
   stage: Stage;
   selectedPlan: Plan;
@@ -690,6 +691,12 @@ function StepsTab({
   callScheduledAt: string | null;
 }) {
   const allDone = stage === "booked";
+
+  const fmtDateTime = (iso: string) =>
+    new Date(iso).toLocaleString("en-GB", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric",
+      hour: "2-digit", minute: "2-digit",
+    });
 
   return (
     <div>
@@ -704,12 +711,21 @@ function StepsTab({
               <p className="font-display text-lg leading-none mb-2" style={{ color: "hsl(var(--golden))" }}>
                 ONBOARDING COMPLETE
               </p>
-              <p className="font-body text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
-                All steps are done — you're now waiting for your introductory call with Mackenzie.
-                {planStartDate && (
-                  <span> Your coaching officially began on <span style={{ color: "hsl(var(--golden))" }}>{fmtDate(planStartDate)}</span>.</span>
-                )}
-              </p>
+              {callScheduledAt ? (
+                <p className="font-body text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
+                  All steps are done — your introductory call with Mackenzie is booked for{" "}
+                  <span style={{ color: "hsl(var(--golden))" }}>{fmtDateTime(callScheduledAt)}</span>.
+                </p>
+              ) : (
+                <p className="font-body text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
+                  All steps are done — you're now waiting for your introductory call with Mackenzie.
+                  {planStartDate && (
+                    <span> Your coaching officially began on{" "}
+                      <span style={{ color: "hsl(var(--golden))" }}>{fmtDate(planStartDate)}</span>.
+                    </span>
+                  )}
+                </p>
+              )}
             </div>
           </div>
         </div>
