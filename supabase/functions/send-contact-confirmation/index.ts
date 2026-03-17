@@ -63,32 +63,9 @@ const renderEmail = (firstName: string, interests: string[]): string => {
             <td style="background-color:#4A442B;padding:24px 40px;">
               <p style="margin:0;font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">
                 You're receiving this email because you submitted an enquiry via kaizenclimbing.com.<br />
-                Questions? Reply to this email or contact us at <a href="mailto:admin@kaizenclimbing.com" style="color:#FFC93C;text-decoration:none;">admin@kaizenclimbing.com</a>
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
-};
-
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  try {
-    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-    if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY is not configured");
-
-    const payload: ContactConfirmationPayload = await req.json();
-    const { firstName, lastName, email, interests = [] } = payload;
-
-    const interestText = interests.length > 0 ? `\nYou expressed interest in: ${interests.join(", ")}\n` : "";
-    const text = `Hey ${firstName}, thanks for your enquiry. We've received it and will be in touch shortly.${interestText}\nFill out the form: https://kaizenclimbing.com/consultation\n\nQuestions? Contact us at admin@kaizenclimbing.com`;
+                Questions? Reply to this email or contact us at <a href="mailto:admin@kaizenclimbing.co.uk" style="color:#FFC93C;text-decoration:none;">admin@kaizenclimbing.co.uk</a>
+...
+    const text = `Hey ${firstName}, thanks for your enquiry. We've received it and will be in touch shortly.${interestText}\nFill out the form: https://kaizenclimbing.com/consultation\n\nQuestions? Contact us at admin@kaizenclimbing.co.uk`;
 
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
