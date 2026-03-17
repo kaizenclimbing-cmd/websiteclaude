@@ -41,8 +41,11 @@ const App = () => (
           <Route path="/training-tips" element={withNav(<TrainingTips />)} />
           <Route path="/terms" element={withNav(<Terms />)} />
 
-          {/* Hidden consultation form (no nav link) */}
-          <Route path="/consultation" element={<Consultation />} />
+          {/* Consultation onboarding flow (no nav link) */}
+          <Route path="/consultation" element={<ConsultationAuth />} />
+          <Route path="/consultation/auth" element={<ConsultationAuth />} />
+          <Route path="/consultation/form" element={<ConsultationForm />} />
+          <Route path="/consultation/next" element={<ConsultationNext />} />
 
           {/* Hidden booking page (no nav link) */}
           <Route path="/book" element={<BookPage />} />
