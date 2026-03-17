@@ -169,6 +169,24 @@ const ConsultationPage = () => {
       <div className="pt-16" style={{ backgroundColor: "hsl(var(--charcoal))" }} />
 
       <div className="max-w-2xl mx-auto px-6 py-16">
+        {/* Draft saved indicator */}
+        {!submitted && (
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2 font-mono text-xs" style={{ color: "hsl(var(--golden) / 0.5)" }}>
+              <Save size={12} />
+              <span>Draft auto-saved — your progress is safe if you close the tab</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => { localStorage.removeItem(DRAFT_KEY); setForm(initialForm); setDraftSaved(false); }}
+              className="font-mono text-xs underline opacity-40 hover:opacity-70 transition-opacity"
+              style={{ color: "hsl(var(--golden))" }}
+            >
+              Clear draft
+            </button>
+          </div>
+        )}
+
         {/* Title */}
         <h1
           className="font-display text-5xl sm:text-6xl leading-none mb-2 text-center"
