@@ -1,6 +1,8 @@
-import { useState, type FormEvent } from "react";
-import { Loader2 } from "lucide-react";
+import { useState, useEffect, type FormEvent } from "react";
+import { Loader2, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+
+const DRAFT_KEY = "consultation_draft";
 
 type FormData = {
   firstName: string;
