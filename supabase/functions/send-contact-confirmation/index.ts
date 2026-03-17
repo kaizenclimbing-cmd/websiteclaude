@@ -106,6 +106,7 @@ serve(async (req) => {
         run_id: runId,
         message_id: messageId,
         label: "contact-confirmation",
+        from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         to: email,
         subject: "We've received your enquiry — Kaizen Climbing Coaching",
         html,
