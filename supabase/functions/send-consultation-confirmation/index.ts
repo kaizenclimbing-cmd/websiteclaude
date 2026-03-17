@@ -184,6 +184,7 @@ serve(async (req) => {
         run_id: crypto.randomUUID(),
         message_id: `consultation-admin-${crypto.randomUUID()}`,
         label: "consultation-admin-notification",
+        from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         to: "Info@kaizenclimbing.co.uk",
         subject: `New consultation: ${firstName} ${lastName}`,
         html: renderAdminEmail(firstName, lastName, email),
