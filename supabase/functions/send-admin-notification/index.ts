@@ -135,6 +135,7 @@ serve(async (req) => {
         message_id: messageId,
         label: "admin-contact-notification",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
+        reply_to: email,
         to: adminEmail,
         subject: `New enquiry from ${firstName} ${lastName}`,
         html,
