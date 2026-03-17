@@ -189,6 +189,7 @@ serve(async (req) => {
         to: "Info@kaizenclimbing.co.uk",
         subject: `New consultation: ${firstName} ${lastName}`,
         html: renderAdminEmail(firstName, lastName, email),
+        text: `New consultation submission from ${firstName} ${lastName} (${email}).\n\nView in dashboard: https://kaizen-climb-coach.lovable.app/admin`,
         purpose: "transactional",
         queued_at: new Date().toISOString(),
       },
