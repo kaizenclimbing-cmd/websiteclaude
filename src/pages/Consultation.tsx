@@ -87,10 +87,25 @@ const Field = ({ label, required, hint, children }: FieldProps) => (
 // ── Main Component ─────────────────────────────────────────────────────────
 
 const ConsultationPage = () => {
-  const [form, setForm] = useState<FormData>(initialForm);
+  const [form, setForm] = useState<FormData>(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      return saved ? { ...initialForm, ...JSON.parse(saved) } : initialForm;
+    } catch {
+      return initialForm;
+    }
+  });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [draftSaved, setDraftSaved] = useState(false);
+
+  // Auto-save draft to localStorage on every change
+  useEffect(() => {
+    if (!submitted) {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
+    }
+  }, [form, submitted]);
 
   const set = (field: keyof FormData, value: unknown) =>
     setForm((prev) => ({ ...prev, [field]: value }));
