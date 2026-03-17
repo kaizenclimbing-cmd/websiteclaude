@@ -25,12 +25,13 @@ function getStepStatus(stepIndex: number, stage: Stage): StepStatus {
   return "locked";
 }
 
-const PLAN_OPTIONS: { id: Plan; name: string; price: string; description: string }[] = [
+const PLAN_OPTIONS: { id: Plan; name: string; price: string; description: string; notice?: string }[] = [
   {
     id: "kaizen_plan",
     name: "THE KAIZEN PLAN",
     price: "£200 / 4 weeks",
     description: "Full ongoing remote coaching — personalised programme, day-by-day sessions, instant messaging support.",
+    notice: "Minimum commitment: 12 weeks (3 billing cycles). To cancel, please give at least 2 weeks' notice before your next billing date — otherwise your next plan will be written and payment will be due.",
   },
   {
     id: "six_week_peak",
