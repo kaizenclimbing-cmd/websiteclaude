@@ -14,6 +14,10 @@ import {
   Users,
   BarChart3,
   Eye,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  CreditCard,
 } from "lucide-react";
 
 type Stage = "submitted" | "reviewed" | "paid" | "booked";
