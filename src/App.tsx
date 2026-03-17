@@ -14,6 +14,7 @@ import BookPage from "./pages/Book";
 import ConsultationAuth from "./pages/consultation/Auth";
 import ConsultationForm from "./pages/consultation/Form";
 import ConsultationNext from "./pages/consultation/Next";
+import ResetPassword from "./pages/consultation/ResetPassword";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";

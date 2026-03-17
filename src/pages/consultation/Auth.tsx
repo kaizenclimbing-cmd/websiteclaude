@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-type Mode = "signup" | "login";
+type Mode = "signup" | "login" | "forgot";
 
 const labelCls = "block font-body text-xs font-semibold uppercase tracking-wider mb-1.5";
 const inputCls =
