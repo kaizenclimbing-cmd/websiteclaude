@@ -167,7 +167,7 @@ serve(async (req) => {
         message_id: `consultation-confirm-${crypto.randomUUID()}`,
         label: "consultation-confirmation",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
-        reply_to: "Info@kaizenclimbing.co.uk",
+        reply_to: "admin@kaizenclimbing.com",
         to: email,
         subject: "Consultation received — Kaizen Climbing Coaching",
         html: renderClientEmail(firstName),
