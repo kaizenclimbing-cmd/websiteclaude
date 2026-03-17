@@ -177,7 +177,7 @@ const ConsultationPage = () => {
             </div>
             <button
               type="button"
-              onClick={() => { localStorage.removeItem(DRAFT_KEY); setForm(initialForm); setDraftSaved(false); }}
+              onClick={() => { localStorage.removeItem(DRAFT_KEY); setForm(initialForm); }}
               className="font-mono text-xs underline opacity-40 hover:opacity-70 transition-opacity"
               style={{ color: "hsl(var(--golden))" }}
             >
