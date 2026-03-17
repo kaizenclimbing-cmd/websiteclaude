@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { sendLovableEmail } from "npm:@lovable.dev/email-js";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -33,52 +33,41 @@ const renderEmail = (firstName: string, interests: string[]): string => {
     <tr>
       <td align="center">
         <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
-
-          <!-- Header -->
           <tr>
             <td style="background-color:#5C5435;padding:32px 40px;">
               <p style="margin:0;font-family:'Arial Black',sans-serif;font-size:28px;font-weight:900;letter-spacing:0.05em;color:#FFC93C;text-transform:uppercase;">KAIZEN</p>
               <p style="margin:4px 0 0 0;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:rgba(255,255,255,0.5);">Climbing Coaching</p>
             </td>
           </tr>
-
-          <!-- Body -->
           <tr>
             <td style="background-color:#FFC93C;padding:40px;">
               <p style="margin:0 0 4px 0;font-family:'Arial Black',sans-serif;font-size:32px;font-weight:900;letter-spacing:0.03em;color:#1A1A1A;text-transform:uppercase;line-height:1;">MESSAGE</p>
               <p style="margin:0 0 24px 0;font-family:'Arial Black',sans-serif;font-size:32px;font-weight:900;letter-spacing:0.03em;color:#1A1A1A;text-transform:uppercase;line-height:1;">RECEIVED!</p>
-
               <p style="margin:0 0 20px 0;font-family:'Inter',sans-serif;font-size:15px;color:#1A1A1A;line-height:1.6;">
                 Hey ${firstName}, thanks for your enquiry. We've received it and will be in touch shortly.
               </p>
-
               ${interestList}
-
               <p style="margin:0 0 28px 0;font-family:'Inter',sans-serif;font-size:15px;color:#1A1A1A;line-height:1.6;">
                 In the meantime, if you'd like to start the process, you can fill out a form so I can get to know a little more about you and your climbing — or see more details about the training.
               </p>
-
-              <a href="https://kaizenclimbing.co.uk/consultation"
+              <a href="https://kaizenclimbing.com/consultation"
                  style="display:inline-block;background-color:#5C5435;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:14px 28px;margin-right:12px;">
                 FILL OUT THE FORM
               </a>
-              <a href="https://kaizenclimbing.co.uk/consultation"
+              <a href="https://kaizenclimbing.com/consultation"
                  style="display:inline-block;background-color:#1A1A1A;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:14px 28px;margin-top:12px;">
                 SEE TRAINING DETAILS
               </a>
             </td>
           </tr>
-
-          <!-- Footer -->
           <tr>
             <td style="background-color:#4A442B;padding:24px 40px;">
               <p style="margin:0;font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">
-                You're receiving this email because you submitted an enquiry via kaizenclimbing.co.uk.<br />
-                Questions? Reply to this email or contact us at <a href="mailto:Info@kaizenclimbing.co.uk" style="color:#FFC93C;text-decoration:none;">Info@kaizenclimbing.co.uk</a>
+                You're receiving this email because you submitted an enquiry via kaizenclimbing.com.<br />
+                Questions? Reply to this email or contact us at <a href="mailto:admin@kaizenclimbing.com" style="color:#FFC93C;text-decoration:none;">admin@kaizenclimbing.com</a>
               </p>
             </td>
           </tr>
-
         </table>
       </td>
     </tr>
@@ -93,37 +82,28 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
+    const apiKey = Deno.env.get("LOVABLE_API_KEY")!;
     const payload: ContactConfirmationPayload = await req.json();
     const { firstName, lastName, email, interests = [] } = payload;
 
-    const messageId = `contact-confirm-${crypto.randomUUID()}`;
-    const html = renderEmail(firstName, interests);
     const interestText = interests.length > 0 ? `\nYou expressed interest in: ${interests.join(", ")}\n` : "";
-    const text = `Hey ${firstName}, thanks for your enquiry. We've received it and will be in touch shortly.${interestText}\nIn the meantime, if you'd like to start the process, you can fill out a form so I can get to know a little more about you and your climbing — or see more details about the training.\n\nFill out the form: https://kaizenclimbing.co.uk/consultation\nSee training details: https://kaizenclimbing.co.uk/consultation\n\nQuestions? Contact us at Info@kaizenclimbing.co.uk`;
+    const text = `Hey ${firstName}, thanks for your enquiry. We've received it and will be in touch shortly.${interestText}\nFill out the form or see training details: https://kaizenclimbing.com/consultation\n\nQuestions? Contact us at admin@kaizenclimbing.com`;
 
-    const { error } = await supabase.rpc("enqueue_email", {
-      queue_name: "transactional_emails",
-      payload: {
-        message_id: messageId,
-        label: "contact-confirmation",
+    await sendLovableEmail(
+      {
+        run_id: crypto.randomUUID(),
+        to: email,
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: "admin@kaizenclimbing.com",
-        to: email,
         subject: "We've received your enquiry — Kaizen Climbing Coaching",
-        html,
+        html: renderEmail(firstName, interests),
         text,
         purpose: "transactional",
-        queued_at: new Date().toISOString(),
       },
-    });
+      { apiKey }
+    );
 
-    if (error) throw error;
-
-    return new Response(JSON.stringify({ success: true, messageId }), {
+    return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {

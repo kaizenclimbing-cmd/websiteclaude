@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { sendLovableEmail } from "npm:@lovable.dev/email-js";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -24,30 +24,22 @@ const renderClientEmail = (firstName: string): string => `<!DOCTYPE html>
     <tr>
       <td align="center">
         <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
-
-          <!-- Header -->
           <tr>
             <td style="background-color:#5C5435;padding:32px 40px;">
               <p style="margin:0;font-family:'Arial Black',sans-serif;font-size:28px;font-weight:900;letter-spacing:0.05em;color:#FFC93C;text-transform:uppercase;">KAIZEN</p>
               <p style="margin:4px 0 0 0;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:rgba(255,255,255,0.5);">Climbing Coaching</p>
             </td>
           </tr>
-
-          <!-- Body -->
           <tr>
             <td style="background-color:#FFC93C;padding:40px;">
               <p style="margin:0 0 4px 0;font-family:'Arial Black',sans-serif;font-size:32px;font-weight:900;letter-spacing:0.03em;color:#1A1A1A;text-transform:uppercase;line-height:1;">CONSULTATION</p>
               <p style="margin:0 0 24px 0;font-family:'Arial Black',sans-serif;font-size:32px;font-weight:900;letter-spacing:0.03em;color:#1A1A1A;text-transform:uppercase;line-height:1;">RECEIVED!</p>
-
               <p style="margin:0 0 20px 0;font-family:'Inter',sans-serif;font-size:15px;color:#1A1A1A;line-height:1.6;">
                 Hey ${firstName}, thanks for completing your consultation form. We'll review everything and be in touch with you <strong>within 72 hours</strong>.
               </p>
-
               <p style="margin:0 0 16px 0;font-family:'Inter',sans-serif;font-size:14px;color:#1A1A1A;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">
                 Here's what happens next:
               </p>
-
-              <!-- Steps -->
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
                 <tr>
                   <td style="padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.1);">
@@ -74,28 +66,23 @@ const renderClientEmail = (firstName: string): string => `<!DOCTYPE html>
                   </td>
                 </tr>
               </table>
-
               <p style="margin:0 0 28px 0;font-family:'Inter',sans-serif;font-size:14px;color:#1A1A1A;line-height:1.6;">
                 In the meantime, feel free to reach out with any questions.
               </p>
-
-              <a href="mailto:Info@kaizenclimbing.co.uk"
+              <a href="mailto:admin@kaizenclimbing.com"
                  style="display:inline-block;background-color:#5C5435;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:14px 28px;">
                 GET IN TOUCH
               </a>
             </td>
           </tr>
-
-          <!-- Footer -->
           <tr>
             <td style="background-color:#4A442B;padding:24px 40px;">
               <p style="margin:0;font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">
-                You're receiving this email because you submitted a consultation via kaizenclimbing.co.uk.<br />
-                Questions? Reply to this email or contact us at <a href="mailto:Info@kaizenclimbing.co.uk" style="color:#FFC93C;text-decoration:none;">Info@kaizenclimbing.co.uk</a>
+                You're receiving this email because you submitted a consultation via kaizenclimbing.com.<br />
+                Questions? Reply to this email or contact us at <a href="mailto:admin@kaizenclimbing.com" style="color:#FFC93C;text-decoration:none;">admin@kaizenclimbing.com</a>
               </p>
             </td>
           </tr>
-
         </table>
       </td>
     </tr>
@@ -124,7 +111,7 @@ const renderAdminEmail = (firstName: string, lastName: string, email: string): s
               <p style="margin:0 0 8px 0;font-family:'Inter',sans-serif;font-size:14px;color:#1A1A1A;">
                 Email: <a href="mailto:${email}" style="color:#5C5435;">${email}</a>
               </p>
-              <a href="https://kaizen-climb-coach.lovable.app/admin"
+              <a href="https://kaizenclimbing.com/admin"
                  style="display:inline-block;margin-top:20px;background-color:#5C5435;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:12px 24px;">
                 VIEW IN DASHBOARD
               </a>
@@ -150,52 +137,39 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
+    const apiKey = Deno.env.get("LOVABLE_API_KEY")!;
     const payload: ConsultationConfirmationPayload = await req.json();
     const { firstName, lastName, email } = payload;
 
     // Send confirmation to client
-    const clientMsgId = `consultation-confirm-${crypto.randomUUID()}`;
-    const { error: clientError } = await supabase.rpc("enqueue_email", {
-      queue_name: "transactional_emails",
-      payload: {
-        message_id: clientMsgId,
-        label: "consultation-confirmation",
+    await sendLovableEmail(
+      {
+        run_id: crypto.randomUUID(),
+        to: email,
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: "admin@kaizenclimbing.com",
-        to: email,
         subject: "Consultation received — Kaizen Climbing Coaching",
         html: renderClientEmail(firstName),
-        text: `Hey ${firstName}, thanks for completing your consultation form. We'll review everything and be in touch within 72 hours.\n\nWhat happens next:\n01 — Consultation reviewed, we'll reply within 72 hours\n02 — Complete payment, a payment link will be sent to you\n03 — Book your onboarding call, link sent after payment confirmed\n\nIn the meantime, feel free to reach out: Info@kaizenclimbing.co.uk`,
+        text: `Hey ${firstName}, thanks for completing your consultation form. We'll review everything and be in touch within 72 hours.\n\nWhat happens next:\n01 — Consultation reviewed, we'll reply within 72 hours\n02 — Complete payment, a payment link will be sent to you\n03 — Book your onboarding call, link sent after payment confirmed\n\nIn the meantime, feel free to reach out: admin@kaizenclimbing.com`,
         purpose: "transactional",
-        queued_at: new Date().toISOString(),
       },
-    });
-
-    if (clientError) throw clientError;
+      { apiKey }
+    );
 
     // Send lead notification to admin
-    const adminMsgId = `consultation-admin-${crypto.randomUUID()}`;
-    const { error: adminError } = await supabase.rpc("enqueue_email", {
-      queue_name: "transactional_emails",
-      payload: {
-        message_id: adminMsgId,
-        label: "consultation-admin-notification",
+    await sendLovableEmail(
+      {
+        run_id: crypto.randomUUID(),
+        to: "admin@kaizenclimbing.com",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: email,
-        to: "admin@kaizenclimbing.com",
         subject: `New consultation: ${firstName} ${lastName}`,
         html: renderAdminEmail(firstName, lastName, email),
-        text: `New consultation submission from ${firstName} ${lastName} (${email}).\n\nView in dashboard: https://kaizen-climb-coach.lovable.app/admin`,
+        text: `New consultation submission from ${firstName} ${lastName} (${email}).\n\nView in dashboard: https://kaizenclimbing.com/admin`,
         purpose: "transactional",
-        queued_at: new Date().toISOString(),
       },
-    });
-
-    if (adminError) throw adminError;
+      { apiKey }
+    );
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
