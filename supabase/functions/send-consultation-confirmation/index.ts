@@ -158,10 +158,12 @@ serve(async (req) => {
     const { firstName, lastName, email } = payload;
 
     // Send confirmation to client
+    const clientMsgId = `consultation-confirm-${crypto.randomUUID()}`;
     const { error: clientError } = await supabase.rpc("enqueue_email", {
       queue_name: "transactional_emails",
       payload: {
-        message_id: `consultation-confirm-${crypto.randomUUID()}`,
+        run_id: clientMsgId,
+        message_id: clientMsgId,
         label: "consultation-confirmation",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: "admin@kaizenclimbing.com",
