@@ -310,9 +310,24 @@ const AdminDashboard = () => {
     setAnalyticsLoading(false);
   }, []);
 
+  const fetchClients = useCallback(async () => {
+    setClientsLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const resp = await supabase.functions.invoke("admin-clients", {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      if (resp.data?.clients) setClients(resp.data.clients as ClientBillingData[]);
+    } catch (e) {
+      console.error(e);
+    }
+    setClientsLoading(false);
+  }, []);
+
   useEffect(() => {
     if (activeTab === "analytics" && !analytics) fetchAnalytics();
-  }, [activeTab, analytics, fetchAnalytics]);
+    if (activeTab === "clients" && !clients) fetchClients();
+  }, [activeTab, analytics, fetchAnalytics, clients, fetchClients]);
 
   const fetchSubmissions = async () => {
     setLoading(true);
