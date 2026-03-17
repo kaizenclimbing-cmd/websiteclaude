@@ -487,6 +487,7 @@ export default function ConsultationNext() {
             payLoading={payLoading}
             payError={payError}
             handlePay={handlePay}
+            planStartDate={billing?.planStartDate ?? null}
           />
         )}
 
