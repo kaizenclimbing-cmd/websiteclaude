@@ -53,6 +53,7 @@ export type Database = {
           last_name: string
           location: string | null
           occupation: string | null
+          onboarding_stage: string
           perceived_strengths: string | null
           perceived_weaknesses: string | null
           phone: string | null
@@ -80,6 +81,7 @@ export type Database = {
           last_name: string
           location?: string | null
           occupation?: string | null
+          onboarding_stage?: string
           perceived_strengths?: string | null
           perceived_weaknesses?: string | null
           phone?: string | null
@@ -107,6 +109,7 @@ export type Database = {
           last_name?: string
           location?: string | null
           occupation?: string | null
+          onboarding_stage?: string
           perceived_strengths?: string | null
           perceived_weaknesses?: string | null
           phone?: string | null
