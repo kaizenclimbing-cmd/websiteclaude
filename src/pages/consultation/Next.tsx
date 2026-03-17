@@ -676,6 +676,7 @@ function StepsTab({
   payLoading,
   payError,
   handlePay,
+  planStartDate,
 }: {
   stage: Stage;
   selectedPlan: Plan;
@@ -683,6 +684,7 @@ function StepsTab({
   payLoading: boolean;
   payError: string;
   handlePay: () => void;
+  planStartDate: string | null;
 }) {
   const allDone = stage === "booked";
 
@@ -690,11 +692,23 @@ function StepsTab({
     <div>
       {allDone && (
         <div
-          className="flex items-center gap-3 px-4 py-3 mb-8 border"
-          style={{ backgroundColor: "hsl(142 60% 40% / 0.1)", borderColor: "hsl(142 60% 40% / 0.35)", color: "hsl(142 60% 65%)" }}
+          className="p-5 mb-8 border"
+          style={{ backgroundColor: "hsl(var(--golden) / 0.06)", borderColor: "hsl(var(--golden) / 0.3)" }}
         >
-          <CheckCircle2 size={16} />
-          <p className="font-body text-sm">All onboarding steps complete — your coaching is active.</p>
+          <div className="flex items-start gap-3">
+            <CheckCircle2 size={18} className="flex-shrink-0 mt-0.5" style={{ color: "hsl(142 60% 65%)" }} />
+            <div>
+              <p className="font-display text-lg leading-none mb-2" style={{ color: "hsl(var(--golden))" }}>
+                ONBOARDING COMPLETE
+              </p>
+              <p className="font-body text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
+                All steps are done — you're now waiting for your introductory call with Mackenzie.
+                {planStartDate && (
+                  <span> Your coaching officially began on <span style={{ color: "hsl(var(--golden))" }}>{fmtDate(planStartDate)}</span>.</span>
+                )}
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
