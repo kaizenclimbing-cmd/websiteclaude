@@ -25,12 +25,13 @@ function getStepStatus(stepIndex: number, stage: Stage): StepStatus {
   return "locked";
 }
 
-const PLAN_OPTIONS: { id: Plan; name: string; price: string; description: string }[] = [
+const PLAN_OPTIONS: { id: Plan; name: string; price: string; description: string; notice?: string }[] = [
   {
     id: "kaizen_plan",
     name: "THE KAIZEN PLAN",
     price: "£200 / 4 weeks",
     description: "Full ongoing remote coaching — personalised programme, day-by-day sessions, instant messaging support.",
+    notice: "Minimum commitment: 12 weeks (3 billing cycles). To cancel, please give at least 2 weeks' notice before your next billing date — otherwise your next plan will be written and payment will be due.",
   },
   {
     id: "six_week_peak",
@@ -237,6 +238,11 @@ export default function ConsultationNext() {
                                   <p className="font-body text-xs leading-relaxed" style={{ color: "hsl(255 255 255 / 0.45)" }}>
                                     {plan.description}
                                   </p>
+                                  {plan.notice && (
+                                    <p className="font-body text-xs leading-relaxed mt-2 pt-2" style={{ color: "hsl(var(--golden) / 0.55)", borderTop: "1px solid hsl(var(--golden) / 0.12)" }}>
+                                      {plan.notice}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
                               <span className="font-mono text-xs flex-shrink-0 pt-0.5" style={{ color: active ? "hsl(var(--golden))" : "hsl(255 255 255 / 0.4)" }}>
