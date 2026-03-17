@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      consultation_drafts: {
+        Row: {
+          draft_data: Json
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          draft_data?: Json
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          draft_data?: Json
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       consultation_submissions: {
         Row: {
           climbing_training_history: string | null
@@ -39,6 +60,7 @@ export type Database = {
           submitted_at: string
           training_facilities: string | null
           training_time_per_week: string | null
+          user_id: string | null
           years_climbing: string | null
         }
         Insert: {
@@ -65,6 +87,7 @@ export type Database = {
           submitted_at?: string
           training_facilities?: string | null
           training_time_per_week?: string | null
+          user_id?: string | null
           years_climbing?: string | null
         }
         Update: {
@@ -91,6 +114,7 @@ export type Database = {
           submitted_at?: string
           training_facilities?: string | null
           training_time_per_week?: string | null
+          user_id?: string | null
           years_climbing?: string | null
         }
         Relationships: []

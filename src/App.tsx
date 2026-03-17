@@ -9,9 +9,11 @@ import Plans from "./pages/Plans";
 import Contact from "./pages/Contact";
 import TrainingTips from "./pages/TrainingTips";
 import Terms from "./pages/Terms";
-import Consultation from "./pages/Consultation";
 import NotFound from "./pages/NotFound";
 import BookPage from "./pages/Book";
+import ConsultationAuth from "./pages/consultation/Auth";
+import ConsultationForm from "./pages/consultation/Form";
+import ConsultationNext from "./pages/consultation/Next";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -39,8 +41,11 @@ const App = () => (
           <Route path="/training-tips" element={withNav(<TrainingTips />)} />
           <Route path="/terms" element={withNav(<Terms />)} />
 
-          {/* Hidden consultation form (no nav link) */}
-          <Route path="/consultation" element={<Consultation />} />
+          {/* Consultation onboarding flow (no nav link) */}
+          <Route path="/consultation" element={<ConsultationAuth />} />
+          <Route path="/consultation/auth" element={<ConsultationAuth />} />
+          <Route path="/consultation/form" element={<ConsultationForm />} />
+          <Route path="/consultation/next" element={<ConsultationNext />} />
 
           {/* Hidden booking page (no nav link) */}
           <Route path="/book" element={<BookPage />} />
