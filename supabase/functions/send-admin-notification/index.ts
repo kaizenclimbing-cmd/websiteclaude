@@ -130,7 +130,6 @@ serve(async (req) => {
     const { error } = await supabase.rpc("enqueue_email", {
       queue_name: "transactional_emails",
       payload: {
-        run_id: messageId,
         message_id: messageId,
         label: "admin-contact-notification",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
