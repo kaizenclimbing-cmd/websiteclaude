@@ -489,7 +489,7 @@ export default function ConsultationNext() {
             payError={payError}
             handlePay={handlePay}
             planStartDate={billing?.planStartDate ?? (isBooked ? new Date().toISOString() : null)}
-            callScheduledAt={submission && submission !== "loading" ? (submission as Submission).call_scheduled_at : null}
+            callScheduledAt={submission && typeof submission !== "string" ? (submission as Submission).call_scheduled_at : null}
           />
         )}
 
