@@ -113,7 +113,7 @@ serve(async (req) => {
         message_id: messageId,
         label: "contact-confirmation",
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
-        reply_to: "Info@kaizenclimbing.co.uk",
+        reply_to: "admin@kaizenclimbing.com",
         to: email,
         subject: "We've received your enquiry — Kaizen Climbing Coaching",
         html,
