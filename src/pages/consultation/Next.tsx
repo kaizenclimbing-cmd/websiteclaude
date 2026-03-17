@@ -1,90 +1,126 @@
-import { CheckCircle2, CreditCard, CalendarDays, ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CheckCircle2, CreditCard, CalendarDays, ArrowRight, ClipboardList, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
-const steps = [
+type Stage = "submitted" | "reviewed" | "paid" | "booked";
+type StepStatus = "done" | "current" | "locked";
+
+interface Submission {
+  first_name: string;
+  onboarding_stage: Stage;
+}
+
+const STAGE_ORDER: Stage[] = ["submitted", "reviewed", "paid", "booked"];
+
+function getStepStatus(stepIndex: number, stage: Stage): StepStatus {
+  const stageIndex = STAGE_ORDER.indexOf(stage);
+  if (stepIndex < stageIndex) return "done";
+  if (stepIndex === stageIndex) return "current";
+  return "locked";
+}
+
+const STEPS = [
   {
     icon: CheckCircle2,
     number: "01",
-    title: "CONSULTATION SUBMITTED",
-    description:
-      "Your consultation form has been received. We'll review everything and be in touch within 72 hours.",
-    status: "done" as const,
+    title: "SUBMITTED",
+    description: "Your consultation form has been received. We'll review everything carefully before getting back to you.",
+  },
+  {
+    icon: ClipboardList,
+    number: "02",
+    title: "UNDER REVIEW",
+    description: "We're reviewing your consultation in detail. You'll hear back within 72 hours with next steps and a personalised plan outline.",
   },
   {
     icon: CreditCard,
-    number: "02",
+    number: "03",
     title: "COMPLETE PAYMENT",
-    description:
-      "Once you've heard back from us, complete payment to secure your coaching spot. You'll receive a payment link via email.",
-    status: "next" as const,
-    cta: {
-      label: "PAY NOW",
-      href: "https://buy.stripe.com/kaizen", // placeholder — update with real link
-    },
+    description: "Once you've heard back from us, complete payment to secure your coaching spot. You'll receive a payment link via email.",
+    cta: { label: "PAY NOW", href: "https://buy.stripe.com/kaizen" },
   },
   {
     icon: CalendarDays,
-    number: "03",
+    number: "04",
     title: "BOOK YOUR CALL",
-    description:
-      "After payment is confirmed, use the link below to book your onboarding call. Times sync with your local time zone automatically.",
-    status: "locked" as const,
-    cta: {
-      label: "BOOK YOUR CALL",
-      href: "/book",
-    },
+    description: "After payment is confirmed, book your onboarding call. Times sync with your local timezone automatically.",
+    cta: { label: "BOOK YOUR CALL", href: "/book" },
   },
 ];
 
 export default function ConsultationNext() {
   const navigate = useNavigate();
+  const [submission, setSubmission] = useState<Submission | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { navigate("/consultation/auth"); return; }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data } = await (supabase as any)
+        .from("consultation_submissions")
+        .select("first_name, onboarding_stage")
+        .eq("user_id", user.id)
+        .order("submitted_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!data) { navigate("/consultation/form"); return; }
+      setSubmission(data as Submission);
+      setLoading(false);
+    })();
+  }, [navigate]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "hsl(var(--charcoal))" }}>
+        <Loader2 size={28} className="animate-spin" style={{ color: "hsl(var(--golden))" }} />
+      </main>
+    );
+  }
+
+  const stage = submission!.onboarding_stage;
 
   return (
-    <main
-      className="min-h-screen px-6 py-16"
-      style={{ backgroundColor: "hsl(var(--charcoal))" }}
-    >
+    <main className="min-h-screen px-6 py-16" style={{ backgroundColor: "hsl(var(--charcoal))" }}>
       <div className="max-w-2xl mx-auto">
+
         {/* Header */}
-        <p
-          className="font-mono text-xs tracking-[0.3em] text-center mb-4"
-          style={{ color: "hsl(var(--golden) / 0.5)" }}
-        >
+        <p className="font-mono text-xs tracking-[0.3em] text-center mb-4" style={{ color: "hsl(var(--golden) / 0.5)" }}>
           // KAIZEN CLIMBING COACHING
         </p>
-        <h1
-          className="font-display text-5xl sm:text-6xl leading-none mb-2 text-center"
-          style={{ color: "hsl(var(--golden))" }}
-        >
-          WHAT'S NEXT
+        <h1 className="font-display text-5xl sm:text-6xl leading-none mb-2 text-center" style={{ color: "hsl(var(--golden))" }}>
+          HEY, {submission!.first_name.toUpperCase()}
         </h1>
-        <div
-          className="w-16 h-0.5 mx-auto mt-4 mb-4"
-          style={{ backgroundColor: "hsl(var(--golden))" }}
-        />
-        <p className="font-body text-sm text-center text-white/50 mb-14 leading-relaxed max-w-md mx-auto">
-          Your consultation has been submitted. Here's what happens from here — three simple steps to get your coaching underway.
+        <div className="w-16 h-0.5 mx-auto mt-4 mb-4" style={{ backgroundColor: "hsl(var(--golden))" }} />
+
+        {/* How it works intro */}
+        <p className="font-body text-sm text-center text-white/50 mb-3 leading-relaxed max-w-md mx-auto">
+          Here's where you are in the coaching onboarding process — four simple steps from consultation to your first session.
+        </p>
+        <p className="font-body text-sm text-center text-white/40 mb-14 leading-relaxed max-w-md mx-auto">
+          We review every consultation personally, build a plan around your schedule and goals, then check in regularly to adapt as you progress.
         </p>
 
         {/* Timeline */}
         <div className="space-y-0">
-          {steps.map((step, i) => {
+          {STEPS.map((step, i) => {
             const Icon = step.icon;
-            const isDone = step.status === "done";
-            const isNext = step.status === "next";
-            const isLocked = step.status === "locked";
+            const status: StepStatus = getStepStatus(i, stage);
+            const isDone = status === "done";
+            const isCurrent = status === "current";
+            const isLocked = status === "locked";
 
             return (
               <div key={step.number} className="relative flex gap-6">
                 {/* Vertical connector */}
-                {i < steps.length - 1 && (
+                {i < STEPS.length - 1 && (
                   <div
                     className="absolute left-5 top-12 bottom-0 w-px"
-                    style={{
-                      backgroundColor: isDone
-                        ? "hsl(var(--golden) / 0.4)"
-                        : "hsl(var(--golden) / 0.15)",
-                    }}
+                    style={{ backgroundColor: isDone ? "hsl(var(--golden) / 0.4)" : "hsl(var(--golden) / 0.15)" }}
                   />
                 )}
 
@@ -94,13 +130,13 @@ export default function ConsultationNext() {
                   style={{
                     backgroundColor: isDone
                       ? "hsl(var(--golden))"
-                      : isNext
+                      : isCurrent
                       ? "hsl(var(--golden) / 0.15)"
                       : "hsl(var(--golden) / 0.06)",
                     border: `1.5px solid ${
                       isDone
                         ? "hsl(var(--golden))"
-                        : isNext
+                        : isCurrent
                         ? "hsl(var(--golden) / 0.5)"
                         : "hsl(var(--golden) / 0.2)"
                     }`,
@@ -111,7 +147,7 @@ export default function ConsultationNext() {
                     style={{
                       color: isDone
                         ? "hsl(var(--charcoal))"
-                        : isNext
+                        : isCurrent
                         ? "hsl(var(--golden))"
                         : "hsl(var(--golden) / 0.3)",
                     }}
@@ -126,7 +162,7 @@ export default function ConsultationNext() {
                       style={{
                         color: isDone
                           ? "hsl(var(--golden))"
-                          : isNext
+                          : isCurrent
                           ? "hsl(var(--golden) / 0.7)"
                           : "hsl(var(--golden) / 0.25)",
                       }}
@@ -136,28 +172,18 @@ export default function ConsultationNext() {
                     <h3
                       className="font-display text-xl leading-none"
                       style={{
-                        color: isDone
-                          ? "hsl(var(--golden))"
-                          : isNext
-                          ? "white"
-                          : "hsl(var(--charcoal-light, 255 255 255 / 0.3))",
+                        color: isDone ? "hsl(var(--golden))" : isCurrent ? "white" : "hsl(255 255 255 / 0.3)",
                       }}
                     >
                       {step.title}
                       {isDone && (
-                        <span
-                          className="ml-3 font-mono text-xs normal-case tracking-normal"
-                          style={{ color: "hsl(var(--golden) / 0.6)" }}
-                        >
+                        <span className="ml-3 font-mono text-xs normal-case tracking-normal" style={{ color: "hsl(var(--golden) / 0.6)" }}>
                           ✓ complete
                         </span>
                       )}
                       {isLocked && (
-                        <span
-                          className="ml-3 font-mono text-xs normal-case tracking-normal"
-                          style={{ color: "hsl(var(--golden) / 0.3)" }}
-                        >
-                          — unlocks after payment
+                        <span className="ml-3 font-mono text-xs normal-case tracking-normal" style={{ color: "hsl(var(--golden) / 0.3)" }}>
+                          — locked
                         </span>
                       )}
                     </h3>
@@ -165,31 +191,20 @@ export default function ConsultationNext() {
 
                   <p
                     className="font-body text-sm leading-relaxed mb-4"
-                    style={{
-                      color: isLocked ? "hsl(255 255 255 / 0.3)" : "hsl(255 255 255 / 0.55)",
-                    }}
+                    style={{ color: isLocked ? "hsl(255 255 255 / 0.3)" : "hsl(255 255 255 / 0.55)" }}
                   >
                     {step.description}
                   </p>
 
-                  {step.cta && !isLocked && (
+                  {step.cta && isCurrent && (
                     <a
                       href={step.cta.href}
                       target={step.cta.href.startsWith("http") ? "_blank" : undefined}
                       rel={step.cta.href.startsWith("http") ? "noopener noreferrer" : undefined}
                       className="inline-flex items-center gap-2 font-display text-sm tracking-wider px-5 py-2.5 transition-all duration-150"
-                      style={{
-                        backgroundColor: "hsl(var(--golden))",
-                        color: "hsl(var(--charcoal))",
-                      }}
-                      onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
-                          "hsl(var(--golden-dark))";
-                      }}
-                      onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
-                          "hsl(var(--golden))";
-                      }}
+                      style={{ backgroundColor: "hsl(var(--golden))", color: "hsl(var(--charcoal))" }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden-dark))"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "hsl(var(--golden))"; }}
                     >
                       {step.cta.label}
                       <ArrowRight size={14} />
@@ -215,15 +230,12 @@ export default function ConsultationNext() {
           })}
         </div>
 
-        {/* What to expect section */}
+        {/* What to expect */}
         <div
           className="mt-4 p-6 border"
           style={{ borderColor: "hsl(var(--golden) / 0.2)", backgroundColor: "hsl(var(--golden) / 0.04)" }}
         >
-          <h4
-            className="font-display text-lg mb-3"
-            style={{ color: "hsl(var(--golden))" }}
-          >
+          <h4 className="font-display text-lg mb-3" style={{ color: "hsl(var(--golden))" }}>
             WHAT TO EXPECT
           </h4>
           <ul className="space-y-2">
@@ -234,9 +246,7 @@ export default function ConsultationNext() {
               "Video analysis on request for movement and climbing-specific drills.",
             ].map((item) => (
               <li key={item} className="flex items-start gap-2">
-                <span style={{ color: "hsl(var(--golden))" }} className="mt-0.5 flex-shrink-0">
-                  —
-                </span>
+                <span style={{ color: "hsl(var(--golden))" }} className="mt-0.5 flex-shrink-0">—</span>
                 <span className="font-body text-sm text-white/60 leading-relaxed">{item}</span>
               </li>
             ))}
@@ -245,11 +255,7 @@ export default function ConsultationNext() {
 
         <p className="font-body text-xs text-center text-white/30 mt-8">
           Questions?{" "}
-          <a
-            href="mailto:Info@kaizenclimbing.co.uk"
-            className="underline"
-            style={{ color: "hsl(var(--golden) / 0.5)" }}
-          >
+          <a href="mailto:Info@kaizenclimbing.co.uk" className="underline" style={{ color: "hsl(var(--golden) / 0.5)" }}>
             Info@kaizenclimbing.co.uk
           </a>
         </p>
