@@ -23,7 +23,7 @@ const sections = [
   },
   {
     title: "Refund Policy",
-    body: "You have the right to a refund within 14 days of signing up. The cost of any work already done, such as personalised training plans, will be excluded from the refund.",
+    body: "Once your onboarding call has been booked and your training programme has started, no refund is available. Prior to that, you may request a refund within 14 days of payment. The cost of any work already done, such as personalised training plans, will be excluded from the refund.",
   },
   {
     title: "Governing Law",
