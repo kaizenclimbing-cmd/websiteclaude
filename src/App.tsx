@@ -18,6 +18,7 @@ import ResetPassword from "./pages/consultation/ResetPassword";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PaymentSuccess from "./pages/consultation/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
