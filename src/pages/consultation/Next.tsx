@@ -327,9 +327,9 @@ export default function ConsultationNext() {
   }, []);
 
   useEffect(() => {
-    if (activeTab === "plan" && !billing) fetchBilling();
+    if ((activeTab === "plan" || activeTab === "steps") && !billing && isBooked) fetchBilling();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, billing]);
+  }, [activeTab, billing, isBooked]);
 
   // ── Settings handlers ─────────────────────────────────────────────────────
 
