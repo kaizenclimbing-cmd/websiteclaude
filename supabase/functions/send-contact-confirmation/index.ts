@@ -63,7 +63,7 @@ const renderEmail = (firstName: string, interests: string[]): string => {
             <td style="background-color:#4A442B;padding:24px 40px;">
               <p style="margin:0;font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">
                 You're receiving this email because you submitted an enquiry via kaizenclimbing.com.<br />
-                Questions? Reply to this email or contact us at <a href="mailto:admin@kaizenclimbing.com" style="color:#FFC93C;text-decoration:none;">admin@kaizenclimbing.com</a>
+                Questions? Reply to this email or contact us at <a href="mailto:admin@kaizenclimbing.co.uk" style="color:#FFC93C;text-decoration:none;">admin@kaizenclimbing.co.uk</a>
               </p>
             </td>
           </tr>
@@ -88,7 +88,7 @@ serve(async (req) => {
     const { firstName, lastName, email, interests = [] } = payload;
 
     const interestText = interests.length > 0 ? `\nYou expressed interest in: ${interests.join(", ")}\n` : "";
-    const text = `Hey ${firstName}, thanks for your enquiry. We've received it and will be in touch shortly.${interestText}\nFill out the form: https://kaizenclimbing.com/consultation\n\nQuestions? Contact us at admin@kaizenclimbing.com`;
+    const text = `Hey ${firstName}, thanks for your enquiry. We've received it and will be in touch shortly.${interestText}\nFill out the form: https://kaizenclimbing.com/consultation\n\nQuestions? Contact us at admin@kaizenclimbing.co.uk`;
 
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -98,7 +98,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
-        reply_to: "admin@kaizenclimbing.com",
+        reply_to: "admin@kaizenclimbing.co.uk",
         to: [email],
         subject: "We've received your enquiry — Kaizen Climbing Coaching",
         html: renderEmail(firstName, interests),

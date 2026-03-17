@@ -68,7 +68,7 @@ const renderClientEmail = (firstName: string): string => `<!DOCTYPE html>
               <p style="margin:0 0 28px 0;font-family:'Inter',sans-serif;font-size:14px;color:#1A1A1A;line-height:1.6;">
                 In the meantime, feel free to reach out with any questions.
               </p>
-              <a href="mailto:admin@kaizenclimbing.com"
+              <a href="mailto:admin@kaizenclimbing.co.uk"
                  style="display:inline-block;background-color:#5C5435;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:14px 28px;">
                 GET IN TOUCH
               </a>
@@ -78,7 +78,7 @@ const renderClientEmail = (firstName: string): string => `<!DOCTYPE html>
             <td style="background-color:#4A442B;padding:24px 40px;">
               <p style="margin:0;font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">
                 You're receiving this email because you submitted a consultation via kaizenclimbing.com.<br />
-                Questions? Reply to this email or contact us at <a href="mailto:admin@kaizenclimbing.com" style="color:#FFC93C;text-decoration:none;">admin@kaizenclimbing.com</a>
+                Questions? Reply to this email or contact us at <a href="mailto:admin@kaizenclimbing.co.uk" style="color:#FFC93C;text-decoration:none;">admin@kaizenclimbing.co.uk</a>
               </p>
             </td>
           </tr>
@@ -151,11 +151,11 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
-        reply_to: "admin@kaizenclimbing.com",
+        reply_to: "admin@kaizenclimbing.co.uk",
         to: [email],
         subject: "Consultation received — Kaizen Climbing Coaching",
         html: renderClientEmail(firstName),
-        text: `Hey ${firstName}, thanks for completing your consultation form. We'll review everything and be in touch within 72 hours.\n\nWhat happens next:\n01 — Consultation reviewed, we'll reply within 72 hours\n02 — Complete payment, a payment link will be sent to you\n03 — Book your onboarding call, link sent after payment confirmed\n\nIn the meantime, feel free to reach out: admin@kaizenclimbing.com`,
+        text: `Hey ${firstName}, thanks for completing your consultation form. We'll review everything and be in touch within 72 hours.\n\nWhat happens next:\n01 — Consultation reviewed, we'll reply within 72 hours\n02 — Complete payment, a payment link will be sent to you\n03 — Book your onboarding call, link sent after payment confirmed\n\nIn the meantime, feel free to reach out: admin@kaizenclimbing.co.uk`,
       }),
     });
 
@@ -172,7 +172,7 @@ serve(async (req) => {
       body: JSON.stringify({
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: email,
-        to: ["admin@kaizenclimbing.com"],
+        to: ["admin@kaizenclimbing.co.uk"],
         subject: `New consultation: ${firstName} ${lastName}`,
         html: renderAdminEmail(firstName, lastName, email),
         text: `New consultation submission from ${firstName} ${lastName} (${email}).\n\nView in dashboard: https://kaizenclimbing.com/admin`,

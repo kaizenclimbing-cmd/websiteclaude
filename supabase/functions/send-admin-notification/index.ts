@@ -115,7 +115,7 @@ serve(async (req) => {
       body: JSON.stringify({
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: email,
-        to: ["admin@kaizenclimbing.com"],
+        to: ["admin@kaizenclimbing.co.uk"],
         subject: `New enquiry from ${firstName} ${lastName}`,
         html: renderEmail(payload),
         text,
