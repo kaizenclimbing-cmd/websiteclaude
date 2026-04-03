@@ -1,4 +1,4 @@
-project_id = "znoglbzwopnlgyemwwvn"
+project_id = "fkxxzkgpytxyvfwesvyt"
 
 [functions]
   [functions.auth-email-hook]
@@ -24,4 +24,10 @@ project_id = "znoglbzwopnlgyemwwvn"
   [functions.calcom-webhook]
     verify_jwt = false
   [functions.create-sixweek-payment]
+    verify_jwt = false
+  [functions.submit-application]
+    verify_jwt = false
+  [functions.accept-application]
+    verify_jwt = false
+  [functions.decline-application]
     verify_jwt = false
