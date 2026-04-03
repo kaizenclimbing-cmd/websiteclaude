@@ -19,6 +19,7 @@ export default function ConsultationAuth() {
   const [error, setError] = useState("");
   const [checkEmail, setCheckEmail] = useState(false);
   const [resetSent, setResetSent] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(false);
 
   const switchMode = (next: Mode) => { setMode(next); setError(""); setCheckEmail(false); setResetSent(false); };
 
@@ -60,6 +61,23 @@ export default function ConsultationAuth() {
     }
 
     setLoading(false);
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError("");
+    setOauthLoading(true);
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/consultation/oauth-callback`,
+      },
+    });
+
+    if (error) {
+      setError(error.message);
+      setOauthLoading(false);
+    }
   };
 
   const titles: Record<Mode, string> = {
@@ -240,6 +258,57 @@ export default function ConsultationAuth() {
               )}
             </p>
           </form>
+        )}
+
+        {/* OAuth */}
+        {!checkEmail && !resetSent && (
+          <div className="mt-6 space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="flex-1 h-px bg-white/10" />
+              <span className="font-body text-[10px] tracking-[0.2em] uppercase text-white/40">
+                OR CONTINUE WITH
+              </span>
+              <div className="flex-1 h-px bg-white/10" />
+            </div>
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={oauthLoading}
+              className="w-full py-3 font-body text-sm tracking-wider border border-white/15 flex items-center justify-center gap-2 rounded-sm bg-[#111111] hover:bg-[#181818] transition-colors disabled:opacity-60"
+            >
+              {oauthLoading ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Connecting to Google...
+                </>
+              ) : (
+                <>
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-[2px] bg-white">
+                    <svg viewBox="0 0 48 48" className="h-4 w-4">
+                      <path
+                        fill="#EA4335"
+                        d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.02 17.74 9.5 24 9.5z"
+                      />
+                      <path
+                        fill="#4285F4"
+                        d="M46.98 24.55c0-1.57-.14-3.09-.39-4.55H24v9.02h12.94c-.56 2.9-2.25 5.36-4.79 7.01l7.73 6c4.52-4.18 7.1-10.34 7.1-17.48z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M10.54 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.12.79-4.54l-7.98-6.19A23.89 23.89 0 0 0 0 24c0 3.82.92 7.42 2.56 10.63l7.98-6.04z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M24 48c6.48 0 11.93-2.13 15.9-5.86l-7.73-6c-2.15 1.45-4.92 2.3-8.17 2.3-6.26 0-11.57-4.22-13.47-9.85l-7.98 6.04C6.51 42.62 14.62 48 24 48z"
+                      />
+                      <path fill="none" d="M0 0h48v48H0z" />
+                    </svg>
+                  </span>
+                  <span>Continue with Google</span>
+                </>
+              )}
+            </button>
+          </div>
         )}
       </div>
     </main>

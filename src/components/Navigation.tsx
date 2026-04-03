@@ -18,8 +18,8 @@ const Navigation = () => {
   }, [location.pathname]);
 
   const navLinks = [
-    { label: "About", to: "/" },
-    { label: "Plans", to: "/plans" },
+    { label: "Home", to: "/home" },
+    { label: "Coaching", to: "/coaching" },
     { label: "Training Tips", to: "/training-tips" },
   ];
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2, Save, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -80,6 +80,11 @@ const Field = ({ label, required, hint, children }: FieldProps) => (
 
 export default function ConsultationForm() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const plan = searchParams.get("plan") ?? "";
+  const sessionId = searchParams.get("session_id") ?? "";
+  const isSixWeek = plan === "six_week_peak";
+
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>(initialForm);
@@ -93,7 +98,10 @@ export default function ConsultationForm() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
-        navigate("/consultation/auth");
+        const redirect = plan && sessionId
+          ? `/consultation/form?plan=${plan}&session_id=${sessionId}`
+          : "/consultation/form";
+        navigate(`/consultation/auth?redirect=${encodeURIComponent(redirect)}`);
         return;
       }
       setUserId(session.user.id);
@@ -197,12 +205,25 @@ export default function ConsultationForm() {
         hardest_boulder_redpoint: form.hardestBoulderRedpoint || null,
         hardest_boulder_flash: form.hardestBoulderFlash || null,
         hardest_boulder_in_a_day: form.hardestBoulderInADay || null,
+        ...(plan ? { plan } : {}),
+        ...(isSixWeek && sessionId ? { stripe_session_id: sessionId } : {}),
       });
 
     if (insertError) {
       setError("Something went wrong. Please try again.");
       setLoading(false);
       return;
+    }
+
+    // For 6-week plan: verify payment now that the form is submitted
+    if (isSixWeek && sessionId) {
+      const { error: verifyError } = await supabase.functions.invoke("verify-payment", {
+        body: { session_id: sessionId },
+      });
+      if (verifyError) {
+        // Non-fatal: submission is saved, payment can be reconciled manually
+        console.error("Payment verification failed:", verifyError);
+      }
     }
 
     // Delete draft from DB
@@ -213,7 +234,6 @@ export default function ConsultationForm() {
       .eq("user_id", userId);
 
     // Send confirmation emails (fire-and-forget)
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
     fetch(
       `https://${projectId}.supabase.co/functions/v1/send-consultation-confirmation`,

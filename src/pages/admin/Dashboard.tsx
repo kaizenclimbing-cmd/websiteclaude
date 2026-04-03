@@ -78,6 +78,31 @@ type ConsultationSubmission = {
 
 type Submission = ContactSubmission | ConsultationSubmission;
 
+type ApplicationStatus = "pending" | "accepted" | "declined";
+
+type Application = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  current_grade: string;
+  target_grade: string;
+  years_climbing: string;
+  preferred_discipline: string;
+  goals: string;
+  training_history: string;
+  currently_injured: boolean;
+  injury_details: string | null;
+  hours_per_week: string;
+  budget_confirmed: boolean;
+  why_now: string;
+  status: ApplicationStatus;
+  admin_notes: string | null;
+  submitted_at: string;
+  reviewed_at: string | null;
+};
+
 type AnalyticsData = {
   enquiries: { thisMonth: number; lastMonth: number };
   newClients: { thisMonth: number; lastMonth: number };
@@ -281,13 +306,16 @@ const AdminDashboard = () => {
   const [adminEmail, setAdminEmail] = useState("");
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<"all" | "contact" | "consultation">("all");
-  const [activeTab, setActiveTab] = useState<"enquiries" | "pipeline" | "analytics" | "templates" | "clients">("enquiries");
+  const [activeTab, setActiveTab] = useState<"applications" | "enquiries" | "pipeline" | "analytics" | "templates" | "clients">("applications");
   const [advancingId, setAdvancingId] = useState<string | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [expandedTemplate, setExpandedTemplate] = useState<string | null>(null);
   const [clients, setClients] = useState<ClientBillingData[] | null>(null);
   const [clientsLoading, setClientsLoading] = useState(false);
+  const [applications, setApplications] = useState<Application[] | null>(null);
+  const [applicationsLoading, setApplicationsLoading] = useState(false);
+  const [actioningId, setActioningId] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -324,10 +352,48 @@ const AdminDashboard = () => {
     setClientsLoading(false);
   }, []);
 
+  const fetchApplications = useCallback(async () => {
+    setApplicationsLoading(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data } = await (supabase as any)
+      .from("applications")
+      .select("*")
+      .order("submitted_at", { ascending: false });
+    setApplications(data ?? []);
+    setApplicationsLoading(false);
+  }, []);
+
+  const handleAccept = async (app: Application) => {
+    setActioningId(app.id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      await supabase.functions.invoke("accept-application", {
+        body: { application_id: app.id },
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      setApplications(prev => prev?.map(a => a.id === app.id ? { ...a, status: "accepted" as ApplicationStatus } : a) ?? null);
+    } catch (e) { console.error(e); }
+    setActioningId(null);
+  };
+
+  const handleDecline = async (app: Application) => {
+    setActioningId(app.id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      await supabase.functions.invoke("decline-application", {
+        body: { application_id: app.id },
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      setApplications(prev => prev?.map(a => a.id === app.id ? { ...a, status: "declined" as ApplicationStatus } : a) ?? null);
+    } catch (e) { console.error(e); }
+    setActioningId(null);
+  };
+
   useEffect(() => {
     if (activeTab === "analytics" && !analytics) fetchAnalytics();
     if (activeTab === "clients" && !clients) fetchClients();
-  }, [activeTab, analytics, fetchAnalytics, clients, fetchClients]);
+    if (activeTab === "applications" && !applications) fetchApplications();
+  }, [activeTab, analytics, fetchAnalytics, clients, fetchClients, applications, fetchApplications]);
 
   const fetchSubmissions = async () => {
     setLoading(true);
@@ -385,6 +451,7 @@ const AdminDashboard = () => {
   const consultations = submissions.filter((s): s is ConsultationSubmission => s.type === "consultation");
 
   const TABS = [
+    { id: "applications" as const, label: "Applications" },
     { id: "enquiries" as const, label: "All Enquiries" },
     { id: "pipeline" as const, label: "Pipeline" },
     { id: "clients" as const, label: "Active Clients" },
@@ -438,6 +505,149 @@ const AdminDashboard = () => {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-10">
+
+        {/* ── APPLICATIONS TAB ── */}
+        {activeTab === "applications" && (
+          <>
+            <div className="flex flex-wrap items-baseline justify-between gap-4 mb-8">
+              <h1 className="font-display text-5xl tracking-wider" style={{ color: "hsl(var(--golden))" }}>
+                APPLICATIONS
+              </h1>
+              <div className="flex items-center gap-3">
+                {applications && (
+                  <>
+                    <span className="font-body text-xs text-white opacity-40">
+                      {applications.filter(a => a.status === "pending").length} pending
+                    </span>
+                    <span className="font-body text-xs text-white opacity-40">·</span>
+                    <span className="font-body text-xs text-white opacity-40">
+                      {applications.filter(a => a.status === "accepted").length} accepted
+                    </span>
+                    <span className="font-body text-xs text-white opacity-40">·</span>
+                    <span className="font-body text-xs text-white opacity-40">
+                      {applications.filter(a => a.status === "declined").length} declined
+                    </span>
+                  </>
+                )}
+                <button
+                  onClick={fetchApplications}
+                  className="font-body text-xs font-semibold uppercase tracking-wider px-3 py-1.5"
+                  style={{ border: "1px solid hsl(var(--golden))", color: "hsl(var(--golden))" }}
+                >
+                  Refresh
+                </button>
+              </div>
+            </div>
+
+            {applicationsLoading ? (
+              <div className="flex justify-center py-24">
+                <div className="w-8 h-8 border-2 animate-spin" style={{ borderColor: "hsl(var(--golden))", borderTopColor: "transparent" }} />
+              </div>
+            ) : !applications || applications.length === 0 ? (
+              <div className="text-center py-24">
+                <p className="font-body text-white opacity-30">No applications yet.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {applications.map((app) => {
+                  const isOpen = expanded.has(app.id);
+                  const statusColour = app.status === "accepted"
+                    ? { bg: "hsl(142 60% 40% / 0.2)", text: "hsl(142 60% 65%)" }
+                    : app.status === "declined"
+                    ? { bg: "hsl(0 60% 40% / 0.2)", text: "hsl(0 60% 65%)" }
+                    : { bg: "hsl(var(--golden) / 0.15)", text: "hsl(var(--golden) / 0.9)" };
+
+                  return (
+                    <div
+                      key={app.id}
+                      className="border"
+                      style={{ backgroundColor: "hsl(var(--golden-dark))", borderColor: "hsl(var(--golden-deep))" }}
+                    >
+                      <div className="p-6">
+                        <div className="flex flex-wrap items-start justify-between gap-4">
+                          <div>
+                            <div className="flex items-center gap-3 mb-1 flex-wrap">
+                              <p className="font-display text-2xl tracking-wider" style={{ color: "hsl(var(--golden))" }}>
+                                {app.first_name} {app.last_name}
+                              </p>
+                              <span
+                                className="font-body text-xs font-semibold uppercase tracking-wider px-2 py-0.5"
+                                style={{ backgroundColor: statusColour.bg, color: statusColour.text, border: `1px solid ${statusColour.text}` }}
+                              >
+                                {app.status}
+                              </span>
+                              <span className="font-body text-xs text-white opacity-40">
+                                {app.current_grade} → {app.target_grade}
+                              </span>
+                            </div>
+                            <a
+                              href={`mailto:${app.email}`}
+                              className="flex items-center gap-1.5 font-body text-sm text-white opacity-70 hover:opacity-100 transition-opacity"
+                            >
+                              <Mail size={12} />
+                              {app.email}
+                            </a>
+                            <p className="font-body text-xs text-white opacity-30 mt-1">
+                              {formatDate(app.submitted_at)} · {app.preferred_discipline} · {app.years_climbing}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {app.status === "pending" && (
+                              <>
+                                <button
+                                  onClick={() => handleAccept(app)}
+                                  disabled={actioningId === app.id}
+                                  className="font-body text-xs font-semibold uppercase tracking-wider px-4 py-2 transition-all"
+                                  style={{ backgroundColor: "hsl(142 60% 40%)", color: "#fff", opacity: actioningId === app.id ? 0.5 : 1 }}
+                                >
+                                  {actioningId === app.id ? "..." : "✓ Accept"}
+                                </button>
+                                <button
+                                  onClick={() => handleDecline(app)}
+                                  disabled={actioningId === app.id}
+                                  className="font-body text-xs font-semibold uppercase tracking-wider px-4 py-2 transition-all"
+                                  style={{ backgroundColor: "transparent", color: "hsl(0 60% 65%)", border: "1px solid hsl(0 60% 65%)", opacity: actioningId === app.id ? 0.5 : 1 }}
+                                >
+                                  ✗ Decline
+                                </button>
+                              </>
+                            )}
+                            <button
+                              onClick={() => toggleExpand(app.id)}
+                              className="flex items-center gap-1.5 font-body text-xs font-semibold uppercase tracking-wider px-3 py-2 transition-all"
+                              style={{ border: "1px solid hsl(var(--golden-deep))", color: "rgba(255,255,255,0.5)" }}
+                            >
+                              <Eye size={12} />
+                              {isOpen ? "Hide" : "View"}
+                              {isOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                            </button>
+                          </div>
+                        </div>
+
+                        {isOpen && (
+                          <div
+                            className="mt-6 pt-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
+                            style={{ borderTop: "1px solid hsl(var(--golden-deep))" }}
+                          >
+                            <Field label="Goals" value={app.goals} />
+                            <Field label="Training history" value={app.training_history} />
+                            <Field label="Why now?" value={app.why_now} />
+                            <Field label="Hours/week" value={app.hours_per_week} />
+                            <Field label="Injuries" value={app.currently_injured ? (app.injury_details || "Yes — no details") : "None"} />
+                            <Field label="Budget confirmed" value={app.budget_confirmed ? "Yes" : "No"} />
+                            {app.phone && <Field label="Phone" value={app.phone} />}
+                            {app.admin_notes && <Field label="Admin notes" value={app.admin_notes} />}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
+        )}
 
         {/* ── ALL ENQUIRIES TAB ── */}
         {activeTab === "enquiries" && (

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kaizen — Media Mock-up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --neon-green:   hsl(100 8% 52%);
+      --neon-orange:  hsl(22 18% 48%);
+      --void-black:   hsl(210 8% 8%);
+      --void-dark:    hsl(210 7% 11%);
+      --void-mid:     hsl(210 6% 16%);
+      --void-light:   hsl(210 5% 22%);
+      --chalk-white:  hsl(40 10% 88%);
+    }
+
+    body {
+      background: var(--void-black);
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--chalk-white);
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--void-dark);
+      border-bottom: 1px solid var(--void-light);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+    .nav-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      color: var(--chalk-white);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: hsl(40 10% 88% / 0.5);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--neon-green); }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: var(--void-dark);
+      border-bottom: 2px solid var(--void-light);
+      padding: 3.5rem 2rem 3rem;
+      text-align: center;
+    }
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--neon-orange);
+      margin-bottom: 0.75rem;
+    }
+    .page-header h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      letter-spacing: 0.05em;
+      color: var(--chalk-white);
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+    .divider {
+      width: 4rem;
+      height: 2px;
+      background: var(--neon-green);
+      margin: 0 auto 1.25rem;
+    }
+    .page-header p {
+      font-size: 0.75rem;
+      color: hsl(40 10% 88% / 0.45);
+      max-width: 420px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      background: var(--void-mid);
+      border-bottom: 1px solid var(--void-light);
+      padding: 0 2rem;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+    }
+    .filter-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 1rem 1.25rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: hsl(40 10% 88% / 0.4);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover { color: var(--chalk-white); }
+    .filter-btn.active {
+      color: var(--neon-green);
+      border-bottom-color: var(--neon-green);
+    }
+
+    /* ── GRID ── */
+    .grid-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--void-mid);
+      border: 1px solid var(--void-light);
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+    .card:hover { border-color: var(--neon-green); }
+
+    .card-thumb {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: var(--void-dark);
+    }
+    .card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(0.75) contrast(1.05);
+      transition: filter 0.3s;
+    }
+    .card:hover .card-thumb img { filter: saturate(0.9) contrast(1.05); }
+
+    /* play icon overlay */
+    .play-icon {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: hsl(210 8% 8% / 0.35);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .card:hover .play-icon { opacity: 1; }
+    .play-icon svg { width: 44px; height: 44px; }
+
+    /* badges */
+    .badges {
+      position: absolute;
+      top: 0.6rem;
+      left: 0.6rem;
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 0.5rem;
+      letter-spacing: 0.15em;
+      padding: 0.2rem 0.45rem;
+      text-transform: uppercase;
+    }
+    .badge-video    { background: var(--void-black); color: var(--neon-green);  border: 1px solid var(--neon-green); }
+    .badge-podcast  { background: var(--void-black); color: var(--neon-orange); border: 1px solid var(--neon-orange); }
+    .badge-featured { background: var(--void-black); color: hsl(205 12% 65%);   border: 1px solid hsl(205 12% 42%); }
+    .badge-press    { background: var(--void-black); color: hsl(330 10% 65%);   border: 1px solid hsl(330 10% 46%); }
+
+    .card-body {
+      padding: 1rem 1.25rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .card-date {
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      color: hsl(40 10% 88% / 0.3);
+      margin-bottom: 0.5rem;
+    }
+    .card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.05rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--chalk-white);
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+    }
+    .card-desc {
+      font-size: 0.65rem;
+      line-height: 1.7;
+      color: hsl(40 10% 88% / 0.45);
+      flex: 1;
+      margin-bottom: 1rem;
+    }
+
+    /* link buttons */
+    .card-links {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .card-link {
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      padding: 0.4rem 0.75rem;
+      border: 1px solid;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: opacity 0.2s;
+    }
+    .card-link:hover { opacity: 0.7; }
+    .card-link.yt    { color: var(--neon-green);  border-color: var(--neon-green); }
+    .card-link.sp    { color: var(--neon-orange); border-color: var(--neon-orange); }
+    .card-link.ext   { color: hsl(40 10% 88% / 0.5); border-color: var(--void-light); }
+
+    /* ── HIGHLIGHT CARD (featured/wide) ── */
+    .card.wide {
+      grid-column: 1 / -1;
+      flex-direction: row;
+    }
+    .card.wide .card-thumb {
+      width: 45%;
+      aspect-ratio: auto;
+      flex-shrink: 0;
+    }
+    .card.wide .card-body { padding: 2rem; justify-content: center; }
+    .card.wide .card-title { font-size: 1.4rem; }
+    .card.wide .card-desc  { font-size: 0.7rem; }
+
+    @media (max-width: 640px) {
+      .card.wide { flex-direction: column; }
+      .card.wide .card-thumb { width: 100%; aspect-ratio: 16/9; }
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 2px solid var(--neon-orange);
+      background: var(--void-mid);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+    footer p { font-size: 0.6rem; letter-spacing: 0.15em; color: hsl(40 10% 88% / 0.25); }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">KAIZEN CLIMBING</a>
+    <ul class="nav-links">
+      <li><a href="#">ABOUT</a></li>
+      <li><a href="#">COACHING</a></li>
+      <li><a href="#" class="active">MEDIA</a></li>
+      <li><a href="#">CONTACT</a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <p class="section-label">// MEDIA</p>
+    <h1>Videos &amp; Podcasts</h1>
+    <div class="divider"></div>
+    <p>Training tips, podcast appearances, and press features — everything in one place.</p>
+  </header>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <button class="filter-btn active">ALL</button>
+    <button class="filter-btn">▶ VIDEOS</button>
+    <button class="filter-btn">🎙 PODCAST</button>
+    <button class="filter-btn">★ FEATURED</button>
+    <button class="filter-btn">◈ PRESS</button>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid-wrap">
+    <div class="grid">
+
+      <!-- WIDE / LATEST VIDEO — video + podcast -->
+      <a href="https://youtube.com/watch?v=nhPzD7iJd7I" target="_blank" class="card wide">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/nhPzD7iJd7I/maxresdefault.jpg" alt="You're Probably Missing These Exercises" />
+          <div class="play-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="hsl(100 8% 52%)" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="hsl(100 8% 52%)" stroke="none"/>
+            </svg>
+          </div>
+          <div class="badges">
+            <span class="badge badge-video">VIDEO</span>
+            <span class="badge badge-podcast">PODCAST</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-date">NOV 2024 · MOST VIEWED</p>
+          <h2 class="card-title">You're Probably Missing These Exercises for Climbing Gains</h2>
+          <p class="card-desc">The exercises most climbers skip — and why they're holding your grade back. Fingerboarding, antagonist work, and the shoulder prep that changed everything.</p>
+          <div class="card-links">
+            <a href="#" class="card-link yt">▶ WATCH ON YOUTUBE</a>
+            <a href="https://open.spotify.com/show/5pCUdSf6p9Q3j9lBHjnhZQ" target="_blank" class="card-link sp">🎙 LISTEN ON SPOTIFY</a>
+          </div>
+        </div>
+      </a>
+
+      <!-- VIDEO ONLY -->
+      <a href="https://youtube.com/watch?v=32DmME_5bR0" target="_blank" class="card">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/32DmME_5bR0/maxresdefault.jpg" alt="Should Climbers Hangboard Twice a Day?" />
+          <div class="play-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="hsl(100 8% 52%)" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="hsl(100 8% 52%)" stroke="none"/>
+            </svg>
+          </div>
+          <div class="badges">
+            <span class="badge badge-video">VIDEO</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-date">JAN 2026</p>
+          <h2 class="card-title">Should Climbers Hangboard Twice a Day?</h2>
+          <p class="card-desc">More isn't always better. Breaking down the science of fingerboard frequency and recovery for climbing-specific gains.</p>
+          <div class="card-links">
+            <a href="#" class="card-link yt">▶ WATCH ON YOUTUBE</a>
+          </div>
+        </div>
+      </a>
+
+      <!-- PODCAST GUEST APPEARANCE -->
+      <a href="#" class="card">
+        <div class="card-thumb" style="background: hsl(210 7% 11%); display:flex; align-items:center; justify-content:center;">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/168px-Spotify_logo_without_text.svg.png"
+               alt="Spotify" style="width:64px; height:64px; object-fit:contain; filter:none; opacity:0.35;" />
+          <div class="badges">
+            <span class="badge badge-featured">FEATURED</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-date">JAN 2025</p>
+          <h2 class="card-title">The Climbing Coach Podcast — Buster Martin on Training Specificity</h2>
+          <p class="card-desc">Joined the team at TCC to talk about what actually drives grade improvements, and why most climbers are training the wrong things.</p>
+          <div class="card-links">
+            <a href="https://open.spotify.com/show/5pCUdSf6p9Q3j9lBHjnhZQ" target="_blank" class="card-link sp">🎙 LISTEN ON SPOTIFY</a>
+          </div>
+        </div>
+      </a>
+
+      <!-- VIDEO + PODCAST -->
+      <a href="https://youtube.com/watch?v=IQri1-fmaoM" target="_blank" class="card">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/IQri1-fmaoM/maxresdefault.jpg" alt="Improve Your Climbing Instantly" />
+          <div class="play-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="hsl(100 8% 52%)" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="hsl(100 8% 52%)" stroke="none"/>
+            </svg>
+          </div>
+          <div class="badges">
+            <span class="badge badge-video">VIDEO</span>
+            <span class="badge badge-podcast">PODCAST</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-date">DEC 2025</p>
+          <h2 class="card-title">Improve Your Climbing Instantly</h2>
+          <p class="card-desc">A single movement fix that most climbers can apply immediately — and see the difference on the wall within a session.</p>
+          <div class="card-links">
+            <a href="#" class="card-link yt">▶ WATCH ON YOUTUBE</a>
+            <a href="https://open.spotify.com/show/5pCUdSf6p9Q3j9lBHjnhZQ" target="_blank" class="card-link sp">🎙 LISTEN ON SPOTIFY</a>
+          </div>
+        </div>
+      </a>
+
+      <!-- PRESS -->
+      <a href="#" class="card">
+        <div class="card-thumb" style="background: hsl(210 6% 13%); position:relative; overflow:hidden;">
+          <img src="https://images.squarespace-cdn.com/content/v1/5eecbef0263fed5b408a2c0f/9ec57a7a-cd1d-47f3-b6a7-741d64c98ed9/Buster_ActionDirecte-8.jpg"
+               alt="Press feature" style="width:100%; height:100%; object-fit:cover; filter: saturate(0.3) contrast(1.1) brightness(0.6);" />
+          <div class="badges">
+            <span class="badge badge-press">PRESS</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-date">NOV 2024 · CLIMBING MAGAZINE</p>
+          <h2 class="card-title">The Science of Climbing Stronger</h2>
+          <p class="card-desc">Featured in Climbing Magazine discussing evidence-based training approaches for intermediate and advanced climbers.</p>
+          <div class="card-links">
+            <a href="#" class="card-link ext">→ READ ARTICLE</a>
+          </div>
+        </div>
+      </a>
+
+      <!-- VIDEO ONLY -->
+      <a href="https://youtube.com/watch?v=QovM_THXvMs" target="_blank" class="card">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/QovM_THXvMs/maxresdefault.jpg" alt="Get Better at Bouldering Q&A" />
+          <div class="play-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="hsl(100 8% 52%)" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="hsl(100 8% 52%)" stroke="none"/>
+            </svg>
+          </div>
+          <div class="badges">
+            <span class="badge badge-video">VIDEO</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-date">NOV 2024</p>
+          <h2 class="card-title">Get Better at Bouldering — Q&A with an Olympic Coach</h2>
+          <p class="card-desc">8 training questions answered directly — technique, strength, periodisation, and what most boulderers are getting wrong.</p>
+          <div class="card-links">
+            <a href="#" class="card-link yt">▶ WATCH ON YOUTUBE</a>
+          </div>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- LOAD MORE -->
+    <div style="text-align:center; margin-top: 3rem;">
+      <button style="
+        background: none;
+        border: 1px solid hsl(210 5% 22%);
+        color: hsl(40 10% 88% / 0.4);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        padding: 0.9rem 2.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      " onmouseover="this.style.borderColor='hsl(100 8% 52%)'; this.style.color='hsl(100 8% 52%)'"
+         onmouseout="this.style.borderColor='hsl(210 5% 22%)'; this.style.color='hsl(40 10% 88% / 0.4)'">
+        LOAD MORE
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 KAIZEN CLIMBING COACHING — MOCK-UP ONLY</p>
+  </footer>
+
+  <!-- Filter interaction -->
+  <script>
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

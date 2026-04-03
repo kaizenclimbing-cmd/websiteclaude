@@ -1,3 +1,8 @@
+.env
+.env.local
+.env.*.local
+.claude/worktrees/
+
 # Logs
 logs
 *.log
