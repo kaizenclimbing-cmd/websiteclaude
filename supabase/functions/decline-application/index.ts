@@ -74,6 +74,20 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
+    // Verify caller is an authenticated admin
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) throw new Error("Unauthorized");
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user }, error: authErr } = await supabase.auth.getUser(token);
+    if (authErr || !user) throw new Error("Unauthorized");
+    const { data: roleRow } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .single();
+    if (!roleRow) throw new Error("Forbidden: admin only");
+
     const { application_id, reason, admin_notes } = await req.json();
     if (!application_id) throw new Error("application_id required");
 

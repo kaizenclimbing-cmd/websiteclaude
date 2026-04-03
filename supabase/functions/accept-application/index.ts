@@ -36,7 +36,7 @@ const renderEmail = (firstName: string): string => `<!DOCTYPE html>
             </p>
             <a href="${BOOKING_URL}"
                style="display:inline-block;background-color:#5C5435;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:16px 32px;">
-              BOOK YOUR DISCOVERY CALL →
+              BOOK YOUR CONSULTATION CALL →
             </a>
             <p style="margin:24px 0 0 0;font-family:'Inter',sans-serif;font-size:13px;color:rgba(26,26,26,0.6);line-height:1.6;">
               If none of the times work, reply to this email and we'll sort something out.
@@ -50,7 +50,7 @@ const renderEmail = (firstName: string): string => `<!DOCTYPE html>
               1. We talk — 30 minutes, free, no commitment
             </p>
             <p style="margin:0 0 6px 0;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;">
-              2. If we're both in, I'll send you a payment link (£600 full or 3 × £215)
+              2. If we're both in, I'll send you a payment link (£600 full or 3 × £200)
             </p>
             <p style="margin:0 0 6px 0;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;">
               3. Once paid, you'll set up your account and complete a detailed intake form
@@ -80,11 +80,24 @@ serve(async (req) => {
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
     if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY not configured");
 
-    // Verify caller is an authenticated admin
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
+
+    // Verify caller is an authenticated admin
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) throw new Error("Unauthorized");
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user }, error: authErr } = await supabase.auth.getUser(token);
+    if (authErr || !user) throw new Error("Unauthorized");
+    const { data: roleRow } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .single();
+    if (!roleRow) throw new Error("Forbidden: admin only");
 
     const { application_id } = await req.json();
     if (!application_id) throw new Error("application_id required");

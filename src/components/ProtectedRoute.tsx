@@ -5,17 +5,29 @@ import type { Session } from "@supabase/supabase-js";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
+  const [isAdmin, setIsAdmin] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
+    const checkAdmin = async (s: Session | null) => {
       setSession(s);
+      if (!s) { setIsAdmin(false); return; }
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", s.user.id)
+        .eq("role", "admin")
+        .single();
+      setIsAdmin(!!data);
+    };
+
+    supabase.auth.getSession().then(({ data: { session: s } }) => checkAdmin(s));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
+      checkAdmin(s);
     });
-    supabase.auth.getSession().then(({ data: { session: s } }) => setSession(s));
     return () => subscription.unsubscribe();
   }, []);
 
-  if (session === undefined) {
-    // Still loading
+  if (session === undefined || isAdmin === undefined) {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
@@ -32,9 +44,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (!session) {
-    return <Navigate to="/admin/login" replace />;
-  }
+  if (!session) return <Navigate to="/admin/login" replace />;
+  if (!isAdmin) return <Navigate to="/" replace />;
 
   return <>{children}</>;
 };
