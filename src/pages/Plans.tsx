@@ -117,8 +117,8 @@ const PlansPage = () => {
                 </p>
               </div>
               <div className="border-t pt-6 mt-auto" style={{ borderColor: "hsl(var(--void-light))" }}>
-                <Link to="/contact" className="btn-outline-neon inline-block">
-                  CONTACT US TO START YOUR PLAN
+                <Link to="/apply" className="btn-outline-neon inline-block">
+                  APPLY NOW
                 </Link>
               </div>
             </div>

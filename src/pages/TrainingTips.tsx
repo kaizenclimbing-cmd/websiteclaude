@@ -130,10 +130,12 @@ function MediaCard({ item }: { item: MediaItem }) {
       }}
     >
       {item.youtubeId && (
-        <img
-          src={`https://img.youtube.com/vi/${item.youtubeId}/maxresdefault.jpg`}
-          alt={item.title}
-          style={{ width: "100%", height: "100%", objectFit: "cover", filter: "saturate(0.75) contrast(1.05)" }}
+        <iframe
+          src={`https://www.youtube.com/embed/${item.youtubeId}?rel=0&modestbranding=1`}
+          title={item.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          style={{ width: "100%", height: "100%", border: "none", display: "block" }}
         />
       )}
       {item.spotifyThumb && (
@@ -149,20 +151,6 @@ function MediaCard({ item }: { item: MediaItem }) {
           alt="Press"
           style={{ width: "100%", height: "100%", objectFit: "cover", filter: "saturate(0.3) contrast(1.1) brightness(0.6)" }}
         />
-      )}
-      {/* Play icon — only for YouTube cards */}
-      {item.youtubeId && (
-        <div
-          className="play-overlay"
-          style={{
-            position: "absolute", inset: 0,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            backgroundColor: "hsl(210 8% 8% / 0.35)",
-            opacity: 0, transition: "opacity 0.2s",
-          }}
-        >
-          <PlayIcon />
-        </div>
       )}
       {/* Badges */}
       <div style={{ position: "absolute", top: "0.6rem", left: "0.6rem", display: "flex", gap: "0.35rem", flexWrap: "wrap" }}>
@@ -201,18 +189,6 @@ function MediaCard({ item }: { item: MediaItem }) {
         {item.desc}
       </p>
       <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-        {item.youtubeUrl && (
-          <a
-            href={item.youtubeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-mono"
-            onClick={e => e.stopPropagation()}
-            style={{ fontSize: "0.55rem", letterSpacing: "0.15em", padding: "0.4rem 0.75rem", border: "1px solid hsl(var(--neon-green))", color: "hsl(var(--neon-green))", textDecoration: "none" }}
-          >
-            ▶ WATCH ON YOUTUBE
-          </a>
-        )}
         {item.spotifyUrl && (
           <a
             href={item.spotifyUrl}
@@ -252,11 +228,11 @@ function MediaCard({ item }: { item: MediaItem }) {
     color: "inherit",
   };
 
-  if (item.youtubeUrl && !isWide) {
+  if (item.youtubeId && !isWide) {
     return (
-      <a href={item.youtubeUrl} target="_blank" rel="noopener noreferrer" style={cardStyle}>
+      <div style={cardStyle}>
         {thumb}{body}
-      </a>
+      </div>
     );
   }
 

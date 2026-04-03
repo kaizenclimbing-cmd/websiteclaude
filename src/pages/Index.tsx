@@ -93,7 +93,7 @@ const HomePage = () => {
           </h1>
 
           <div className="flex flex-col sm:flex-row gap-4 items-start mb-12">
-            <Link to="/contact" className="btn-neon px-10 py-4 text-base">
+            <Link to="/apply" className="btn-neon px-10 py-4 text-base">
               START YOUR JOURNEY
             </Link>
             <Link to="/plans" className="btn-outline-neon px-10 py-4 text-base">
@@ -381,7 +381,7 @@ const HomePage = () => {
         >
           Get in touch and let's build a plan around you.
         </p>
-        <Link to="/contact" className="btn-neon px-12 py-4 text-base">
+        <Link to="/apply" className="btn-neon px-12 py-4 text-base">
           GET STARTED TODAY
         </Link>
         <div
