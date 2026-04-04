@@ -120,7 +120,7 @@ function MediaCard({ item }: { item: MediaItem }) {
       style={{
         position: "relative",
         width: isWide ? undefined : "100%",
-        aspectRatio: isWide ? undefined : "16/9",
+        aspectRatio: (isWide || item.spotifyThumb) ? undefined : "16/9",
         flex: isWide ? "0 0 45%" : undefined,
         overflow: "hidden",
         backgroundColor: "hsl(var(--void-dark))",
@@ -139,10 +139,15 @@ function MediaCard({ item }: { item: MediaItem }) {
         />
       )}
       {item.spotifyThumb && (
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/168px-Spotify_logo_without_text.svg.png"
-          alt="Spotify"
-          style={{ width: 64, height: 64, objectFit: "contain", opacity: 0.35 }}
+        <iframe
+          src="https://open.spotify.com/embed/show/5pCUdSf6p9Q3j9lBHjnhZQ?utm_source=generator&theme=0"
+          width="100%"
+          height="152"
+          frameBorder={0}
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+          title="Kaizen Climbing Podcast on Spotify"
+          style={{ display: "block" }}
         />
       )}
       {item.pressThumb && (
@@ -188,18 +193,19 @@ function MediaCard({ item }: { item: MediaItem }) {
       >
         {item.desc}
       </p>
-      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-        {item.spotifyUrl && (
-          <a
-            href={item.spotifyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-mono"
-            onClick={e => e.stopPropagation()}
-            style={{ fontSize: "0.55rem", letterSpacing: "0.15em", padding: "0.4rem 0.75rem", border: "1px solid hsl(var(--neon-orange))", color: "hsl(var(--neon-orange))", textDecoration: "none" }}
-          >
-            🎙 LISTEN ON SPOTIFY
-          </a>
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        {/* Spotify embed — only for cards that don't already show it in the thumb area */}
+        {item.spotifyUrl && !item.spotifyThumb && (
+          <iframe
+            src="https://open.spotify.com/embed/show/5pCUdSf6p9Q3j9lBHjnhZQ?utm_source=generator&theme=0"
+            width="100%"
+            height="80"
+            frameBorder={0}
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+            title="Listen on Spotify"
+            style={{ display: "block" }}
+          />
         )}
         {item.externalUrl && (
           <a
@@ -208,7 +214,7 @@ function MediaCard({ item }: { item: MediaItem }) {
             rel="noopener noreferrer"
             className="font-mono"
             onClick={e => e.stopPropagation()}
-            style={{ fontSize: "0.55rem", letterSpacing: "0.15em", padding: "0.4rem 0.75rem", border: "1px solid hsl(var(--void-light))", color: "hsl(var(--chalk-white) / 0.5)", textDecoration: "none" }}
+            style={{ fontSize: "0.55rem", letterSpacing: "0.15em", padding: "0.4rem 0.75rem", border: "1px solid hsl(var(--void-light))", color: "hsl(var(--chalk-white) / 0.5)", textDecoration: "none", alignSelf: "flex-start" }}
           >
             → {item.externalLabel}
           </a>

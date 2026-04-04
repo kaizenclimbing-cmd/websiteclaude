@@ -26,6 +26,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PaymentSuccess from "./pages/consultation/PaymentSuccess";
 import SixWeekPlan from "./pages/SixWeekPlan";
 import SixWeekSignup from "./pages/SixWeekSignup";
+import Sends from "./pages/Sends";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
           <Route path="/coaching" element={withNav(<Coaching />)} />
           <Route path="/contact" element={withNav(<Contact />)} />
           <Route path="/training-tips" element={withNav(<TrainingTips />)} />
+          <Route path="/sends" element={withNav(<Sends />)} />
           <Route path="/terms" element={withNav(<Terms />)} />
 
           {/* Consultation onboarding flow (no nav link) */}
