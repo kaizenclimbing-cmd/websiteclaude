@@ -15,41 +15,25 @@ interface Send {
 // YouTube URL: https://youtube.com/watch?v=XXXXXXXXXXX  →  ID = XXXXXXXXXXX
 const SENDS: Send[] = [
   {
-    id: "send-1",
-    route: "Route Name",
-    grade: "8c",
-    location: "Location, Country",
-    year: "2024",
-    desc: "Brief story of the send — conditions, attempts, crux, how it felt.",
-    youtubeId: "nhPzD7iJd7I", // ← replace with real footage
+    id: "hubble",
+    route: "Hubble",
+    grade: "9a",
+    location: "Raven Tor, Peak District, UK",
+    year: "2020",
+    desc: "The world's first 9a — bolted and first ascended by Ben Moon in 1990. One of the most technical routes in the world, more boulder problem than route. 10th ascent.",
+    youtubeId: "lfL9_r5SIDA",
   },
   {
-    id: "send-2",
-    route: "Route Name",
-    grade: "8b+",
-    location: "Location, Country",
-    year: "2023",
-    desc: "Brief story of the send — conditions, attempts, crux, how it felt.",
-    youtubeId: "32DmME_5bR0", // ← replace with real footage
-  },
-  {
-    id: "send-3",
-    route: "Route Name",
-    grade: "8b",
-    location: "Location, Country",
-    year: "2023",
-    desc: "Brief story of the send — conditions, attempts, crux, how it felt.",
-    youtubeId: "IQri1-fmaoM", // ← replace with real footage
-  },
-  {
-    id: "send-4",
-    route: "Route Name",
-    grade: "8b",
-    location: "Location, Country",
+    id: "action-directe",
+    route: "Action Directe",
+    grade: "9a",
+    location: "Frankenjura, Germany",
     year: "2022",
-    desc: "Brief story of the send — conditions, attempts, crux, how it felt.",
-    youtubeId: "QovM_THXvMs", // ← replace with real footage
+    desc: "Wolfgang Güllich's 1991 masterpiece — a vision 30 years ahead of its time. Sent in four sessions over two trips. Only the second person to climb both Hubble and Action Directe.",
+    youtubeId: "M_r7yp_itLM",
   },
+  // ── ADD MORE SENDS BELOW ──────────────────────────────────────────────────
+  // { id: "send-3", route: "Route Name", grade: "8c+", location: "...", year: "...", desc: "...", youtubeId: "..." },
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 
