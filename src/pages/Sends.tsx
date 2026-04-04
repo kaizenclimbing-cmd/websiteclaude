@@ -21,7 +21,7 @@ const SENDS: Send[] = [
     location: "Raven Tor, Peak District, UK",
     year: "2020",
     desc: "The world's first 9a — bolted and first ascended by Ben Moon in 1990. One of the most technical routes in the world, more boulder problem than route. 10th ascent.",
-    youtubeId: "lfL9_r5SIDA",
+    youtubeId: "Y1p3bR6kZJ4",
   },
   {
     id: "action-directe",
@@ -29,8 +29,8 @@ const SENDS: Send[] = [
     grade: "9a",
     location: "Frankenjura, Germany",
     year: "2022",
-    desc: "Wolfgang Güllich's 1991 masterpiece — a vision 30 years ahead of its time. Sent in four sessions over two trips. Only the second person to climb both Hubble and Action Directe.",
-    youtubeId: "M_r7yp_itLM",
+    desc: "Wolfgang Güllich's 1991 masterpiece — a vision 30 years ahead of its time. First British ascent. Sent in four sessions over two trips. Only the second person to climb both Hubble and Action Directe.",
+    youtubeId: "UfZhJw3JKXM",
   },
   // ── ADD MORE SENDS BELOW ──────────────────────────────────────────────────
   // { id: "send-3", route: "Route Name", grade: "8c+", location: "...", year: "...", desc: "...", youtubeId: "..." },
