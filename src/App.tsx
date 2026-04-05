@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -26,7 +26,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PaymentSuccess from "./pages/consultation/PaymentSuccess";
 import SixWeekPlan from "./pages/SixWeekPlan";
 import SixWeekSignup from "./pages/SixWeekSignup";
-import Sends from "./pages/Sends";
+import FingerGuideSlideUp from "./components/FingerGuideSlideUp";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +43,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <FingerGuideSlideUp />
         <Routes>
           {/* Public routes with navigation */}
           <Route path="/" element={<Index />} />
@@ -53,7 +54,7 @@ const App = () => (
           <Route path="/coaching" element={withNav(<Coaching />)} />
           <Route path="/contact" element={withNav(<Contact />)} />
           <Route path="/training-tips" element={withNav(<TrainingTips />)} />
-          <Route path="/sends" element={withNav(<Sends />)} />
+          <Route path="/sends" element={<Navigate to="/training-tips" replace />} />
           <Route path="/terms" element={withNav(<Terms />)} />
 
           {/* Consultation onboarding flow (no nav link) */}

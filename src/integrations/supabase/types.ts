@@ -125,6 +125,30 @@ export type Database = {
         }
         Relationships: []
       }
+      finger_guide_leads: {
+        Row: {
+          consent_marketing: boolean
+          created_at: string
+          email: string
+          id: string
+          source: string
+        }
+        Insert: {
+          consent_marketing: boolean
+          created_at?: string
+          email: string
+          id?: string
+          source: string
+        }
+        Update: {
+          consent_marketing?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          source?: string
+        }
+        Relationships: []
+      }
       contact_submissions: {
         Row: {
           email: string

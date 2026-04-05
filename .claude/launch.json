@@ -2,22 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "Vite Dev Server",
+      "name": "kaizen-climb-coach",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "port": 8080
-    },
-    {
-      "name": "Supabase Local",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["supabase", "start"],
-      "port": 54321
-    },
-    {
-      "name": "mockup",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "-p", "3333", "."],
-      "port": 3333
+      "port": 5173
     }
   ]
 }

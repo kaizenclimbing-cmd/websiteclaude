@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import SixWeekModal from "@/components/SixWeekModal";
+import FingerGuideInlineCta from "@/components/FingerGuideInlineCta";
 
 const testimonials = [
   {
@@ -354,6 +355,8 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      <FingerGuideInlineCta source="inline_home" />
 
       {/* ── FOOTER ── */}
       <footer

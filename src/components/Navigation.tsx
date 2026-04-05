@@ -21,7 +21,6 @@ const Navigation = () => {
     { label: "Home", to: "/home" },
     { label: "Coaching", to: "/coaching" },
     { label: "Training Tips", to: "/training-tips" },
-    { label: "Sends", to: "/sends" },
   ];
 
   const isActive = (path: string) => location.pathname === path;

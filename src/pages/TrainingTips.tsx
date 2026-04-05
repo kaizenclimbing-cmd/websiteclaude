@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import FingerGuideInlineCta from "@/components/FingerGuideInlineCta";
 
 // ─── TRAINING CONTENT TYPES ───────────────────────────────────────────────────
 
-type MediaType = "video" | "podcast" | "featured";
+type MediaType = "video" | "podcast";
 
 interface MediaItem {
   id: string;
@@ -12,24 +13,26 @@ interface MediaItem {
   date: string;
   types: MediaType[];
   youtubeId?: string;
-  spotifyUrl?: string;
-  externalUrl?: string;
-  externalLabel?: string;
+  /** Spotify *episode* id from the share URL: open.spotify.com/episode/<this> — pairs the right audio with this video. */
+  spotifyEpisodeId?: string;
   wide?: boolean;
-  spotifyThumb?: boolean;
 }
 
-const SPOTIFY_SHOW = "https://open.spotify.com/show/5pCUdSf6p9Q3j9lBHjnhZQ";
+/** Show page when a card is marked podcast but has no episode id yet */
+const SPOTIFY_SHOW_URL = "https://open.spotify.com/show/5pCUdSf6p9Q3j9lBHjnhZQ";
 
+/**
+ * Each `spotifyEpisodeId` is the segment after /episode/ in a Spotify share link.
+ * Open the matching episode → Share → Copy link → …/episode/<id>
+ */
 const items: MediaItem[] = [
   {
     id: "missing-exercises",
     title: "You're Probably Missing These Exercises for Climbing Gains",
     desc: "The exercises most climbers skip — and why they're holding your grade back. Fingerboarding, antagonist work, and the shoulder prep that changed everything.",
     date: "NOV 2024 · MOST VIEWED",
-    types: ["video", "podcast"],
+    types: ["video"],
     youtubeId: "nhPzD7iJd7I",
-    spotifyUrl: SPOTIFY_SHOW,
     wide: true,
   },
   {
@@ -37,17 +40,9 @@ const items: MediaItem[] = [
     title: "Should Climbers Hangboard Twice a Day?",
     desc: "More isn't always better. Breaking down the science of fingerboard frequency and recovery for climbing-specific gains.",
     date: "JAN 2026",
-    types: ["video"],
+    types: ["video", "podcast"],
     youtubeId: "32DmME_5bR0",
-  },
-  {
-    id: "tcc-podcast",
-    title: "The Climbing Coach Podcast — Buster Martin on Training Specificity",
-    desc: "Joined the team at TCC to talk about what actually drives grade improvements, and why most climbers are training the wrong things.",
-    date: "JAN 2025",
-    types: ["featured"],
-    spotifyUrl: SPOTIFY_SHOW,
-    spotifyThumb: true,
+    spotifyEpisodeId: "1KOTlxElH3Dooyll2f6vVm",
   },
   {
     id: "improve-instantly",
@@ -56,15 +51,32 @@ const items: MediaItem[] = [
     date: "DEC 2025",
     types: ["video", "podcast"],
     youtubeId: "IQri1-fmaoM",
-    spotifyUrl: SPOTIFY_SHOW,
+    spotifyEpisodeId: "1aAbWm5kvs8IrsJm09wjNR",
   },
   {
     id: "bouldering-qa",
     title: "Get Better at Bouldering — Q&A with an Olympic Coach",
     desc: "8 training questions answered directly — technique, strength, periodisation, and what most boulderers are getting wrong.",
     date: "NOV 2024",
-    types: ["video"],
+    types: ["video", "podcast"],
     youtubeId: "QovM_THXvMs",
+    spotifyEpisodeId: "6yFSx7CHCuJKQWW7k4Ia37",
+  },
+  {
+    id: "hannah-morris-feature",
+    title: "9a+ Climber Reveals Secrets To Faster Climbing Progress",
+    desc: "Buster joins Hannah Morris Bouldering to break down the training principles behind elite performance — what actually moves the needle and what most climbers are wasting time on.",
+    date: "FEATURED ON · HANNAH MORRIS BOULDERING",
+    types: ["video"],
+    youtubeId: "zhDXksXQ0ak",
+  },
+  {
+    id: "moon-climbing-footwork",
+    title: "Essential Footwork Tips for Bouldering",
+    desc: "Buster teams up with Moon Climbing to cover the footwork fundamentals that separate good climbers from great ones — precision, trust, and how to train it intentionally.",
+    date: "FEATURED ON · MOON CLIMBING",
+    types: ["video"],
+    youtubeId: "VBbFZWS9pbc",
   },
 ];
 
@@ -72,24 +84,40 @@ const TRAINING_FILTERS = [
   { key: "all", label: "ALL" },
   { key: "video", label: "▶ VIDEOS" },
   { key: "podcast", label: "🎙 PODCAST" },
-  { key: "featured", label: "★ FEATURED" },
 ] as const;
 
 type TrainingFilterKey = typeof TRAINING_FILTERS[number]["key"];
 
 const badgeStyle: Record<MediaType, React.CSSProperties> = {
-  video:    { color: "hsl(var(--neon-green))",  border: "1px solid hsl(var(--neon-green))",  backgroundColor: "hsl(var(--void-black))" },
-  podcast:  { color: "hsl(var(--neon-orange))", border: "1px solid hsl(var(--neon-orange))", backgroundColor: "hsl(var(--void-black))" },
-  featured: { color: "hsl(205 12% 65%)",        border: "1px solid hsl(205 12% 42%)",        backgroundColor: "hsl(var(--void-black))" },
+  video:   { color: "hsl(var(--neon-green))",  border: "1px solid hsl(var(--neon-green))",  backgroundColor: "hsl(var(--void-black))" },
+  podcast: { color: "hsl(var(--neon-orange))", border: "1px solid hsl(var(--neon-orange))", backgroundColor: "hsl(var(--void-black))" },
 };
 
 const badgeLabel: Record<MediaType, string> = {
-  video: "VIDEO", podcast: "PODCAST", featured: "FEATURED",
+  video: "VIDEO",
+  podcast: "PODCAST",
 };
+
+const openInSpotifyLinkStyle: React.CSSProperties = {
+  fontSize: "0.5rem",
+  letterSpacing: "0.18em",
+  color: "hsl(var(--neon-orange))",
+  textDecoration: "none",
+  alignSelf: "flex-start",
+  marginTop: "0.25rem",
+};
+
+function OpenInSpotifyLink({ href }: { href: string }) {
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className="font-mono hover:opacity-80 transition-opacity" style={openInSpotifyLinkStyle}>
+      Open in Spotify ↗
+    </a>
+  );
+}
 
 // ─── CLIMBING DATA ────────────────────────────────────────────────────────────
 
-type ClimbingSection = "sends" | "press" | "podcasts";
+type ClimbingSection = "sends" | "press";
 
 const AS_SEEN_IN = [
   { label: "UKClimbing", url: "https://www.ukclimbing.com/news/athletes/buster-martin-73842" },
@@ -108,17 +136,40 @@ interface Send {
   location: string;
   year: string;
   desc: string;
-  youtubeId: string;
+  youtubeId?: string;
+  articleUrl?: string;
+  coverage?: { label: string; url: string }[];
 }
 
 const SENDS: Send[] = [
-  { id: "bat-route", route: "Bat Route", grade: "8c", location: "Malham Cove, UK", year: "2013", desc: "Youngest Briton to climb 8c at the time — 14 attempts across five sessions at age 16.", youtubeId: "FqxOvlhyBj0" },
-  { id: "rainshadow", route: "Rainshadow", grade: "9a", location: "Malham Cove, UK", year: "2018", desc: "The comeback send. After a four-year break from climbing, Rainshadow 9a was the statement that Buster was back — and stronger.", youtubeId: "FqxOvlhyBj0" },
-  { id: "first-ley", route: "First Ley", grade: "9a+", location: "Margalef, Spain", year: "2019", desc: "Chris Sharma's Margalef testpiece. The second Briton to tick a confirmed 9a+ — a landmark moment in British sport climbing.", youtubeId: "FqxOvlhyBj0" },
-  { id: "hubble", route: "Hubble", grade: "9a", location: "Raven Tor, Peak District, UK", year: "2020", desc: "Ben Moon's 1990 masterpiece — widely considered the world's first 9a. More boulder problem than route. Only the 10th ascent ever made.", youtubeId: "lfL9_r5SIDA" },
-  { id: "persian-dawn", route: "Persian Dawn", grade: "8c+ FA", location: "Raven Tor, Peak District, UK", year: "2021", desc: "First ascent — a direct finish to Make It Funky at Raven Tor. One of the hardest routes established on this iconic limestone wall.", youtubeId: "FqxOvlhyBj0" },
-  { id: "action-directe", route: "Action Directe", grade: "9a", location: "Frankenjura, Germany", year: "2022", desc: "Wolfgang Güllich's 1991 vision. First British ascent in just five days. One of only two people alongside Alex Megos to have climbed both Hubble and Action Directe.", youtubeId: "UfZhJw3JKXM" },
-  { id: "super-crackinette", route: "Super Crackinette", grade: "9a+", location: "Saint Léger du Ventoux, France", year: "2024", desc: "One of the most coveted 9a+ routes in Europe — combining raw power and precision on perfect limestone.", youtubeId: "UfZhJw3JKXM" },
+  { id: "bat-route", route: "Bat Route", grade: "8c", location: "Malham Cove, UK", year: "2013", desc: "Youngest Briton to climb 8c at the time — 14 attempts across five sessions at age 16.", articleUrl: "https://www.ukclimbing.com/news/2013/07/8c_at_16_for_buster_martin-68204" },
+  { id: "rainshadow", route: "Rainshadow", grade: "9a", location: "Malham Cove, UK", year: "2018", desc: "The comeback send. After a four-year break from climbing, Rainshadow 9a was the statement that Buster was back — and stronger." },
+  { id: "first-ley", route: "First Ley", grade: "9a+", location: "Margalef, Spain", year: "2019", desc: "Chris Sharma's Margalef testpiece. The second Briton to tick a confirmed 9a+ — a landmark moment in British sport climbing." },
+  {
+    id: "hubble", route: "Hubble", grade: "9a", location: "Raven Tor, Peak District, UK", year: "2020",
+    desc: "Ben Moon's 1990 masterpiece — widely considered the world's first 9a. More boulder problem than route. Only the 10th ascent ever made.",
+    youtubeId: "M_r7yp_itLM",
+    coverage: [
+      { label: "Climbing Mag", url: "https://www.climbing.com/news/hubble-or-action-directe-the-first-9a-buster-martin/" },
+      { label: "Lacrux", url: "https://www.lacrux.com/en/klettern/first-hubble-now-action-direct-thats-what-buster-martin-says-about-the-9a-classics/" },
+      { label: "Power Company Podcast", url: "https://powercompanyclimbing.podbean.com/e/hubble-vs-action-directe-the-world-s-first-14d-9a-featuring-alex-megos-and-buster-martin/" },
+      { label: "Written in Stone Podcast", url: "https://written-in-stone.podbean.com/e/buster-martin-on-ben-moon-and-hubble/" },
+    ],
+  },
+  { id: "persian-dawn", route: "Persian Dawn", grade: "8c+ FA", location: "Raven Tor, Peak District, UK", year: "2021", desc: "First ascent — a direct finish to Make It Funky at Raven Tor. One of the hardest routes established on this iconic limestone wall.", articleUrl: "https://www.ukclimbing.com/news/2021/04/first_ascent_of_persian_dawn_8c+_by_buster_martin-72760" },
+  {
+    id: "action-directe", route: "Action Directe", grade: "9a", location: "Frankenjura, Germany", year: "2022",
+    desc: "Wolfgang Güllich's 1991 vision. First British ascent in just five days. One of only two people alongside Alex Megos to have climbed both Hubble and Action Directe.",
+    youtubeId: "lfL9_r5SIDA",
+    coverage: [
+      { label: "UKClimbing", url: "https://www.ukclimbing.com/news/2022/10/action_directe_9a_by_buster_martin-73164" },
+      { label: "GearJunkie", url: "https://gearjunkie.com/news/video-buster-martin-action-directe" },
+      { label: "Planet Mountain", url: "https://www.planetmountain.com/en/news/climbing/buster-martin-climbing-action-directe-frankenjura.html" },
+      { label: "Careless Talk Podcast", url: "https://open.spotify.com/episode/5W9M6ROWRu6DX2Sq8egI07" },
+    ],
+  },
+  { id: "the-journey", route: "The Journey", grade: "9a+", location: "Margalef, Spain", year: "2024", desc: "Tom Bolger's 18-metre pocket and crimp testpiece at El Racó de La Finestra. Buster's third 9a+ — his second in under a month — on some of the finest overhanging limestone in Europe.", youtubeId: "O90iAsdq7lo" },
+  { id: "super-crackinette", route: "Super Crackinette", grade: "9a+", location: "Saint Léger du Ventoux, France", year: "2024", desc: "One of the most coveted 9a+ routes in Europe — combining raw power and precision on perfect limestone.", articleUrl: "https://www.ukclimbing.com/news/2024/12/buster_martin_talks_about_his_ascent_of_super_crackinette_9a+-73862" },
 ];
 
 interface PressItem {
@@ -164,9 +215,11 @@ function Grid({ children }: { children: React.ReactNode }) {
 function MediaCard({ item }: { item: MediaItem }) {
   const isWide = item.wide;
   const thumb = (
-    <div style={{ position: "relative", width: isWide ? undefined : "100%", aspectRatio: (isWide || item.spotifyThumb) ? undefined : "16/9", flex: isWide ? "0 0 45%" : undefined, overflow: "hidden", backgroundColor: "hsl(var(--void-dark))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div
+      className={isWide ? "w-full sm:w-auto sm:flex-none sm:basis-[45%]" : ""}
+      style={{ position: "relative", width: isWide ? undefined : "100%", aspectRatio: "16/9", overflow: "hidden", backgroundColor: "hsl(var(--void-dark))", display: "flex", alignItems: "center", justifyContent: "center" }}
+    >
       {item.youtubeId && <iframe src={`https://www.youtube.com/embed/${item.youtubeId}?rel=0&modestbranding=1`} title={item.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen style={{ width: "100%", height: "100%", border: "none", display: "block" }} />}
-      {item.spotifyThumb && <iframe src="https://open.spotify.com/embed/show/5pCUdSf6p9Q3j9lBHjnhZQ?utm_source=generator&theme=0" width="100%" height="152" frameBorder={0} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Kaizen Climbing Podcast on Spotify" style={{ display: "block" }} />}
       <div style={{ position: "absolute", top: "0.6rem", left: "0.6rem", display: "flex", gap: "0.35rem", flexWrap: "wrap" }}>
         {item.types.map(t => <span key={t} className="font-mono" style={{ fontSize: "0.5rem", letterSpacing: "0.15em", padding: "0.2rem 0.45rem", ...badgeStyle[t] }}>{badgeLabel[t]}</span>)}
       </div>
@@ -177,25 +230,71 @@ function MediaCard({ item }: { item: MediaItem }) {
       <p className="font-mono" style={{ fontSize: "0.55rem", letterSpacing: "0.15em", color: "hsl(var(--chalk-white) / 0.3)", marginBottom: "0.5rem" }}>{item.date}</p>
       <h2 className="font-display" style={{ fontSize: isWide ? "1.4rem" : "1.05rem", letterSpacing: "0.03em", textTransform: "uppercase", color: "hsl(var(--chalk-white))", lineHeight: 1.25, marginBottom: "0.5rem" }}>{item.title}</h2>
       <p className="font-mono" style={{ fontSize: isWide ? "0.7rem" : "0.65rem", lineHeight: 1.7, color: "hsl(var(--chalk-white) / 0.45)", flex: 1, marginBottom: "1rem" }}>{item.desc}</p>
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-        {item.spotifyUrl && !item.spotifyThumb && <iframe src="https://open.spotify.com/embed/show/5pCUdSf6p9Q3j9lBHjnhZQ?utm_source=generator&theme=0" width="100%" height="80" frameBorder={0} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Listen on Spotify" style={{ display: "block" }} />}
-      </div>
+      {item.types.includes("podcast") && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+          {item.spotifyEpisodeId ? (
+            <>
+              <iframe
+                src={`https://open.spotify.com/embed/episode/${item.spotifyEpisodeId}?utm_source=generator&theme=0`}
+                width="100%"
+                height={152}
+                frameBorder={0}
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                title={`${item.title} — podcast`}
+                style={{ display: "block", border: "none" }}
+              />
+              <OpenInSpotifyLink href={`https://open.spotify.com/episode/${item.spotifyEpisodeId}`} />
+            </>
+          ) : (
+            <a
+              href={SPOTIFY_SHOW_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono hover:opacity-80 transition-opacity"
+              style={openInSpotifyLinkStyle}
+            >
+              Podcast on Spotify ↗
+            </a>
+          )}
+        </div>
+      )}
     </div>
   );
-  return <div style={{ backgroundColor: "hsl(var(--void-mid))", border: "1px solid hsl(var(--void-light))", display: "flex", flexDirection: isWide ? "row" : "column", gridColumn: isWide ? "1 / -1" : undefined }}>{thumb}{body}</div>;
+  return <div className={isWide ? "flex flex-col sm:flex-row" : "flex flex-col"} style={{ backgroundColor: "hsl(var(--void-mid))", border: "1px solid hsl(var(--void-light))", gridColumn: isWide ? "1 / -1" : undefined }}>{thumb}{body}</div>;
 }
 
 function SendCard({ send }: { send: Send }) {
   return (
     <div style={{ backgroundColor: "hsl(var(--void-mid))", border: "1px solid hsl(var(--void-light))", display: "flex", flexDirection: "column" }}>
-      <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", overflow: "hidden", backgroundColor: "hsl(var(--void-dark))" }}>
-        <iframe src={`https://www.youtube.com/embed/${send.youtubeId}?rel=0&modestbranding=1`} title={send.route} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen style={{ width: "100%", height: "100%", border: "none", display: "block" }} />
+      <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", overflow: "hidden", backgroundColor: "hsl(var(--void-dark))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {send.youtubeId ? (
+          <iframe src={`https://www.youtube.com/embed/${send.youtubeId}?rel=0&modestbranding=1`} title={send.route} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen style={{ width: "100%", height: "100%", border: "none", display: "block" }} />
+        ) : send.articleUrl ? (
+          <a href={send.articleUrl} target="_blank" rel="noopener noreferrer" style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.6rem", textDecoration: "none" }}>
+            <span className="font-mono" style={{ fontSize: "0.48rem", letterSpacing: "0.2em", color: "hsl(var(--chalk-white) / 0.2)" }}>UKCLIMBING</span>
+            <span className="font-mono" style={{ fontSize: "0.55rem", letterSpacing: "0.15em", color: "hsl(var(--neon-orange))", border: "1px solid hsl(var(--neon-orange))", padding: "0.35rem 0.75rem" }}>→ READ ARTICLE</span>
+          </a>
+        ) : (
+          <span className="font-mono" style={{ fontSize: "0.5rem", letterSpacing: "0.2em", color: "hsl(var(--chalk-white) / 0.2)" }}>FOOTAGE COMING SOON</span>
+        )}
         <span className="font-mono" style={{ position: "absolute", top: "0.6rem", right: "0.6rem", fontSize: "0.55rem", letterSpacing: "0.15em", padding: "0.2rem 0.55rem", backgroundColor: "hsl(var(--void-black))", color: "hsl(var(--neon-green))", border: "1px solid hsl(var(--neon-green))" }}>{send.grade}</span>
       </div>
       <div style={{ padding: "1rem 1.25rem 1.25rem", display: "flex", flexDirection: "column", flex: 1 }}>
         <p className="font-mono" style={{ fontSize: "0.5rem", letterSpacing: "0.15em", color: "hsl(var(--chalk-white) / 0.3)", marginBottom: "0.4rem" }}>{send.year} · {send.location}</p>
         <h3 className="font-display" style={{ fontSize: "1.1rem", letterSpacing: "0.04em", textTransform: "uppercase", color: "hsl(var(--chalk-white))", lineHeight: 1.25, marginBottom: "0.5rem" }}>{send.route}</h3>
-        <p className="font-mono" style={{ fontSize: "0.65rem", lineHeight: 1.7, color: "hsl(var(--chalk-white) / 0.45)" }}>{send.desc}</p>
+        <p className="font-mono" style={{ fontSize: "0.65rem", lineHeight: 1.7, color: "hsl(var(--chalk-white) / 0.45)", flex: 1 }}>{send.desc}</p>
+        {send.coverage && send.coverage.length > 0 && (
+          <div style={{ marginTop: "0.75rem", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.4rem" }}>
+            <span className="font-mono" style={{ fontSize: "0.45rem", letterSpacing: "0.15em", color: "hsl(var(--chalk-white) / 0.25)" }}>COVERAGE</span>
+            {send.coverage.map(c => (
+              <a key={c.label} href={c.url} target="_blank" rel="noopener noreferrer" className="font-mono hover:opacity-80 transition-opacity"
+                style={{ fontSize: "0.48rem", letterSpacing: "0.12em", color: "hsl(var(--chalk-white) / 0.5)", border: "1px solid hsl(var(--void-light))", padding: "0.2rem 0.45rem", textDecoration: "none" }}>
+                {c.label} ↗
+              </a>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -226,10 +325,39 @@ function PodcastCard({ item }: { item: PodcastItem }) {
       </div>
       <h3 className="font-display" style={{ fontSize: "1rem", letterSpacing: "0.03em", textTransform: "uppercase", color: "hsl(var(--chalk-white))", lineHeight: 1.3, marginBottom: "0.75rem" }}>{item.title}</h3>
       <p className="font-mono" style={{ fontSize: "0.62rem", lineHeight: 1.7, color: "hsl(var(--chalk-white) / 0.4)", flex: 1, marginBottom: "1rem" }}>{item.desc}</p>
-      {item.spotifyEpisodeId
-        ? <iframe src={`https://open.spotify.com/embed/episode/${item.spotifyEpisodeId}?utm_source=generator&theme=0`} width="100%" height="80" frameBorder={0} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title={item.title} style={{ display: "block" }} />
-        : <a href={item.url} target="_blank" rel="noopener noreferrer" className="font-mono" style={{ fontSize: "0.5rem", letterSpacing: "0.15em", padding: "0.5rem 0.75rem", border: "1px solid hsl(var(--void-light))", color: "hsl(var(--chalk-white) / 0.5)", textDecoration: "none", alignSelf: "flex-start" }}>→ LISTEN NOW</a>
-      }
+      {item.spotifyEpisodeId ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+          <iframe
+            src={`https://open.spotify.com/embed/episode/${item.spotifyEpisodeId}?utm_source=generator&theme=0`}
+            width="100%"
+            height={80}
+            frameBorder={0}
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+            title={item.title}
+            style={{ display: "block", border: "none" }}
+          />
+          <OpenInSpotifyLink href={item.url} />
+        </div>
+      ) : (
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-mono"
+          style={{
+            fontSize: "0.5rem",
+            letterSpacing: "0.15em",
+            padding: "0.5rem 0.75rem",
+            border: "1px solid hsl(var(--void-light))",
+            color: "hsl(var(--chalk-white) / 0.5)",
+            textDecoration: "none",
+            alignSelf: "flex-start",
+          }}
+        >
+          → LISTEN NOW
+        </a>
+      )}
     </div>
   );
 }
@@ -280,6 +408,17 @@ const TrainingTipsPage = () => {
           <div style={{ maxWidth: 1200, margin: "0 auto", padding: "3rem 1.5rem" }}>
             <Grid>{filteredTraining.map(item => <MediaCard key={item.id} item={item} />)}</Grid>
           </div>
+
+          {/* ── PODCAST APPEARANCES ── */}
+          <div style={{ borderTop: "1px solid hsl(var(--void-light))", backgroundColor: "hsl(var(--void-dark))" }}>
+            <div style={{ maxWidth: 1200, margin: "0 auto", padding: "3rem 1.5rem" }}>
+              <p className="font-mono" style={{ fontSize: "0.55rem", letterSpacing: "0.2em", color: "hsl(var(--neon-orange))", marginBottom: "0.5rem" }}>// PODCAST APPEARANCES</p>
+              <h2 className="font-display text-2xl mb-8" style={{ color: "hsl(var(--chalk-white))" }}>Featured On</h2>
+              <Grid>{CLIMBING_PODCASTS.map(p => <PodcastCard key={p.id} item={p} />)}</Grid>
+            </div>
+          </div>
+
+          <FingerGuideInlineCta source="inline_training" />
         </>
       )}
 
@@ -305,13 +444,11 @@ const TrainingTipsPage = () => {
           <div style={{ backgroundColor: "hsl(var(--void-mid))", borderBottom: "1px solid hsl(var(--void-light))", display: "flex", overflowX: "auto", padding: "0 1.5rem" }}>
             <TabButton active={climbingSection === "sends"} onClick={() => setClimbingSection("sends")}>▶ HARD SENDS</TabButton>
             <TabButton active={climbingSection === "press"} onClick={() => setClimbingSection("press")}>◈ PRESS</TabButton>
-            <TabButton active={climbingSection === "podcasts"} onClick={() => setClimbingSection("podcasts")}>🎙 PODCASTS</TabButton>
           </div>
 
           <div style={{ maxWidth: 1200, margin: "0 auto", padding: "3rem 1.5rem" }}>
             {climbingSection === "sends" && <Grid>{SENDS.map(s => <SendCard key={s.id} send={s} />)}</Grid>}
             {climbingSection === "press" && <Grid>{PRESS.map(p => <PressCard key={p.id} item={p} />)}</Grid>}
-            {climbingSection === "podcasts" && <Grid>{CLIMBING_PODCASTS.map(p => <PodcastCard key={p.id} item={p} />)}</Grid>}
           </div>
         </>
       )}
