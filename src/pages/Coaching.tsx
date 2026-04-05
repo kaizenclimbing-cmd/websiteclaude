@@ -5,7 +5,7 @@ import { useState } from "react";
 const BIO_IMAGE = "https://images.squarespace-cdn.com/content/v1/5eecbef0263fed5b408a2c0f/c352d997-4cbd-4edc-b788-3d3a5247238d/Topless_austria_resized_compressed.jpg";
 
 const kaizenBullets = [
-  "Initial consultation call to understand your goals, history and lifestyle",
+  "Initial onboarding call to understand your goals, history and lifestyle",
   "Fully personalised training programme — built around you, not a template",
   "Day-by-day session plans: structured climbing, fingerboarding, campusing, strength & conditioning",
   "Ongoing support via instant messaging — feedback, plan adjustments, advice",

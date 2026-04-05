@@ -7,7 +7,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const BOOKING_URL = "https://cal.com/kaizen-climbing/consultation-call";
+const DASHBOARD_URL = "https://kaizenclimbing.co.uk/consultation/next";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -59,11 +59,11 @@ serve(async (req) => {
     // Build email from DB template with fallback
     const tpl = await fetchTemplate("accept-application");
     const html = tpl
-      ? applyTokens(tpl.html_body, { firstName: app.first_name, bookingUrl: BOOKING_URL })
-      : `<p>Hey ${app.first_name} — you're accepted. Book your call: ${BOOKING_URL}</p>`;
+      ? applyTokens(tpl.html_body, { firstName: app.first_name, dashboardUrl: DASHBOARD_URL })
+      : `<p>Hey ${app.first_name} — you're accepted. Log in to your dashboard to complete payment and get started: <a href="${DASHBOARD_URL}">${DASHBOARD_URL}</a></p>`;
     const subject = tpl
       ? applyTokens(tpl.subject, { firstName: app.first_name })
-      : `You're in — let's book your consultation call`;
+      : `You're accepted — here's what happens next`;
 
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -74,7 +74,7 @@ serve(async (req) => {
         to: [app.email],
         subject,
         html,
-        text: `Hey ${app.first_name} — I've reviewed your application and I'd love to work with you. Book your free consultation call here: ${BOOKING_URL}\n\nAfter the call, if we're both in, I'll send a payment link. — Buster`,
+        text: `Hey ${app.first_name} — I've reviewed your application and I'd love to work with you. Log in to your dashboard to complete payment and get started: ${DASHBOARD_URL} — Buster`,
       }),
     });
 

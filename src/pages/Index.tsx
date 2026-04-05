@@ -26,7 +26,7 @@ const testimonials = [
 
 const kaizenBullets = [
   "Online coaching / mentoring",
-  "Initial consultation call",
+  "Initial onboarding call",
   "Fully personalized training programme",
   "Day by day session plans: structured climbing sessions, fingerboarding, campusing, strength and conditioning, and more",
   "Support via instant messaging; coach on hand for feedback, plan adjustments and advice",
@@ -94,12 +94,9 @@ const HomePage = () => {
           </h1>
 
           <div className="flex flex-col sm:flex-row gap-4 items-start mb-12">
-            <Link to="/apply" className="btn-neon px-10 py-4 text-base">
-              START YOUR JOURNEY
-            </Link>
-            <Link to="/plans" className="btn-outline-neon px-10 py-4 text-base">
+            <a href="#plans" className="btn-neon px-10 py-4 text-base">
               VIEW PLANS
-            </Link>
+            </a>
           </div>
 
           {/* Callout tags */}
@@ -235,16 +232,16 @@ const HomePage = () => {
                   Giving me the unique combination of academic knowledge in coaching and rehab, high-level climbing experience, and an understanding of the realities of juggling life's responsibilities and challenges around training and health.
                 </p>
               </div>
-              <Link to="/plans" className="btn-neon inline-block mt-8 px-8 py-4">
-                VIEW COACHING PLANS
-              </Link>
+              <a href="#plans" className="btn-neon inline-block mt-8 px-8 py-4">
+                VIEW PLANS
+              </a>
             </div>
           </div>
         </div>
       </section>
 
       {/* ── PLANS PREVIEW ── */}
-      <section className="py-24" style={{ backgroundColor: "hsl(var(--void-dark))" }}>
+      <section id="plans" className="py-24" style={{ backgroundColor: "hsl(var(--void-dark))" }}>
         <div className="max-w-7xl mx-auto px-6">
           <p
             className="font-mono text-xs tracking-[0.25em] mb-3"
@@ -275,7 +272,7 @@ const HomePage = () => {
                   </li>
                 ))}
               </ul>
-              <Link to="/apply" className="btn-outline-neon inline-block">
+              <Link to="/consultation" className="btn-outline-neon inline-block">
                 APPLY NOW
               </Link>
             </div>
@@ -384,9 +381,9 @@ const HomePage = () => {
         >
           Get in touch and let's build a plan around you.
         </p>
-        <Link to="/apply" className="btn-neon px-12 py-4 text-base">
-          GET STARTED TODAY
-        </Link>
+        <a href="#plans" className="btn-neon px-12 py-4 text-base">
+          VIEW PLANS
+        </a>
         <div
           className="mt-12 pt-6 text-xs font-mono"
           style={{

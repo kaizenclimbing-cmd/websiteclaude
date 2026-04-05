@@ -13,7 +13,7 @@ type FormData = {
 const INTEREST_OPTIONS = [
   "6 WEEK PERSONALISED PLAN",
   "REMOTE COACHING",
-  "CONSULTATION CALL",
+  "CONSULTATION",
   "NOT SURE",
 ];
 
@@ -132,13 +132,13 @@ const ContactPage = () => {
                 className="font-display text-xs mb-1"
                 style={{ color: "hsl(var(--neon-orange))" }}
               >
-                FREE CONSULTATION CALL
+                NOT SURE WHERE TO START?
               </p>
               <p
                 className="font-mono text-xs leading-relaxed"
                 style={{ color: "hsl(var(--chalk-white) / 0.55)" }}
               >
-                Not sure which plan is right for you? We offer a free initial call to talk through your goals and find the best fit — no commitment required.
+                Get in touch and tell us about your climbing. We'll point you in the right direction.
               </p>
             </div>
 

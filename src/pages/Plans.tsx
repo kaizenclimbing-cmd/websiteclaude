@@ -1,8 +1,13 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import SixWeekModal from "@/components/SixWeekModal";
 
 const PlansPage = () => {
+  const [sixWeekModalOpen, setSixWeekModalOpen] = useState(false);
+
   return (
     <main style={{ backgroundColor: "hsl(var(--void-black))" }}>
+      <SixWeekModal open={sixWeekModalOpen} onClose={() => setSixWeekModalOpen(false)} />
 
       {/* ── HERO ── */}
       <section
@@ -101,7 +106,7 @@ const PlansPage = () => {
                 <ul className="space-y-2">
                   {[
                     "Online coaching / mentoring",
-                    "Initial consultation call",
+                    "Initial onboarding call",
                     "Fully personalized training programme",
                     "Day by day session plans: structured climbing sessions, fingerboarding, campusing, strength and conditioning, and more",
                     "Support via instant messaging; coach on hand for feedback, plan adjustments and advice",
@@ -117,7 +122,7 @@ const PlansPage = () => {
                 </p>
               </div>
               <div className="border-t pt-6 mt-auto" style={{ borderColor: "hsl(var(--void-light))" }}>
-                <Link to="/apply" className="btn-outline-neon inline-block">
+                <Link to="/consultation" className="btn-outline-neon inline-block">
                   APPLY NOW
                 </Link>
               </div>
@@ -166,9 +171,9 @@ const PlansPage = () => {
                 </p>
               </div>
               <div className="border-t pt-6 mt-auto" style={{ borderColor: "hsl(var(--void-light))" }}>
-                <Link to="/contact" className="btn-outline-orange inline-block">
-                  CONTACT US TO START YOUR PLAN
-                </Link>
+                <button onClick={() => setSixWeekModalOpen(true)} className="btn-outline-orange">
+                  GET YOUR PLAN
+                </button>
               </div>
             </div>
           </div>
@@ -201,7 +206,7 @@ const PlansPage = () => {
               className="font-mono text-sm leading-relaxed max-w-md"
               style={{ color: "hsl(var(--chalk-white) / 0.55)" }}
             >
-              Book a free initial consultation call with Buster. We'll talk through your goals, current level and lifestyle so we can recommend the right plan for you — no commitment required.
+              Not sure which plan is right for you? Get in touch and tell us about your climbing — we'll help you figure out the best fit.
             </p>
           </div>
           <div className="flex-shrink-0">

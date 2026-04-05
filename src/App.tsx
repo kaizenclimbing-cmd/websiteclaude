@@ -51,7 +51,7 @@ const App = () => (
           <Route path="/plans" element={withNav(<Plans />)} />
           <Route path="/kaizen" element={<Kaizen />} />
           <Route path="/apply" element={<Apply />} />
-          <Route path="/coaching" element={withNav(<Coaching />)} />
+          <Route path="/coaching" element={<Navigate to="/plans" replace />} />
           <Route path="/contact" element={withNav(<Contact />)} />
           <Route path="/training-tips" element={withNav(<TrainingTips />)} />
           <Route path="/sends" element={<Navigate to="/training-tips" replace />} />

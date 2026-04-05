@@ -19,7 +19,7 @@ const Navigation = () => {
 
   const navLinks = [
     { label: "Home", to: "/home" },
-    { label: "Coaching", to: "/coaching" },
+    { label: "Plans", to: "/plans" },
     { label: "Training Tips", to: "/training-tips" },
   ];
 

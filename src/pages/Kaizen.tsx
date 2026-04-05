@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const HERO_IMAGE = "https://images.squarespace-cdn.com/content/v1/5eecbef0263fed5b408a2c0f/9ec57a7a-cd1d-47f3-b6a7-741d64c98ed9/Buster_ActionDirecte-8.jpg";
 
 const included = [
-  "Initial consultation call to understand your goals and build your plan",
+  "Initial onboarding call to understand your goals and build your plan",
   "Fully personalised training programme — built around your life, not a template",
   "Day-by-day session plans: climbing, fingerboarding, campusing, strength & conditioning",
   "Ongoing support via instant messaging — feedback, adjustments, advice",

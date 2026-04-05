@@ -46,7 +46,7 @@ const renderApplicantEmail = (firstName: string): string => `<!DOCTYPE html>
               Hey ${firstName} — I've received your application for the Kaizen Plan and I'll review it within 48 hours.
             </p>
             <p style="margin:0 0 24px 0;font-family:'Inter',sans-serif;font-size:15px;color:#1A1A1A;line-height:1.6;">
-              If I think we're a good fit, I'll be in touch to book a free 30-minute discovery call. If I have any questions about your application first, I'll reach out by email.
+              If I think we're a good fit, I'll be in touch with next steps. If I have any questions about your application first, I'll reach out by email.
             </p>
             <p style="margin:0;font-family:'Inter',sans-serif;font-size:15px;color:#1A1A1A;line-height:1.6;">
               — Buster

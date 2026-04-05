@@ -313,27 +313,24 @@ INSERT INTO public.email_templates (template_id, name, description, subject, htm
               Hey {{firstName}} — I've reviewed your application and I'd love to work with you.
             </p>
             <p style="margin:0 0 16px 0;font-family:'Inter',sans-serif;font-size:15px;color:#1A1A1A;line-height:1.6;">
-              The next step is a free 30-minute consultation call — just us, no pressure. We'll talk through your goals, I'll explain exactly how the coaching works, and we can make sure we're both a good fit before anything else happens.
+              The next step is payment. Log in to your dashboard to complete your payment and get everything set up.
             </p>
             <p style="margin:0 0 28px 0;font-family:'Inter',sans-serif;font-size:15px;color:#1A1A1A;line-height:1.6;">
-              Book a time that works for you below. The calendar is synced to my availability.
+              Once payment is confirmed, we'll schedule your onboarding call and I'll start building your plan.
             </p>
-            <a href="{{bookingUrl}}"
+            <a href="{{dashboardUrl}}"
                style="display:inline-block;background-color:#5C5435;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:16px 32px;">
-              BOOK YOUR CONSULTATION CALL →
+              GO TO YOUR DASHBOARD →
             </a>
-            <p style="margin:24px 0 0 0;font-family:'Inter',sans-serif;font-size:13px;color:rgba(26,26,26,0.6);line-height:1.6;">
-              If none of the times work, reply to this email and we'll sort something out.
-            </p>
           </td>
         </tr>
         <tr>
           <td style="background-color:#2a2a2a;padding:24px 40px;">
-            <p style="margin:0 0 12px 0;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FFC93C;">What happens after the call</p>
-            <p style="margin:0 0 6px 0;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;">1. We talk — 30 minutes, free, no commitment</p>
-            <p style="margin:0 0 6px 0;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;">2. If we're both in, I'll send you a payment link (£600 full or 3 × £200)</p>
-            <p style="margin:0 0 6px 0;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;">3. Once paid, you'll set up your account and complete a detailed intake form</p>
-            <p style="margin:0;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;">4. I build your plan — coaching starts</p>
+            <p style="margin:0 0 12px 0;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FFC93C;">What happens next</p>
+            <p style="margin:0 0 6px 0;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;">1. Complete payment via your dashboard (£600 in full or 3 × £200)</p>
+            <p style="margin:0 0 6px 0;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;">2. Once payment is confirmed, we'll schedule your onboarding call</p>
+            <p style="margin:0 0 6px 0;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;">3. We map out your training plan together</p>
+            <p style="margin:0;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;">4. Coaching begins</p>
           </td>
         </tr>
         <tr>

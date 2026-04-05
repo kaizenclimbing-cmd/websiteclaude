@@ -97,23 +97,83 @@ export default function ConsultationAuth() {
       className="min-h-screen flex items-center justify-center px-6 py-16"
       style={{ backgroundColor: "hsl(var(--charcoal))" }}
     >
-      <div className="w-full max-w-md">
-        <p
-          className="font-mono text-xs tracking-[0.3em] text-center mb-4"
-          style={{ color: "hsl(var(--golden) / 0.5)" }}
-        >
-          // KAIZEN CLIMBING COACHING
-        </p>
-        <h1
-          className="font-display text-5xl sm:text-6xl leading-none mb-2 text-center"
-          style={{ color: "hsl(var(--golden))" }}
-        >
-          {titles[mode]}
-        </h1>
-        <div className="w-16 h-0.5 mx-auto mt-4 mb-4" style={{ backgroundColor: "hsl(var(--golden))" }} />
-        <p className="font-body text-sm text-center text-white/50 mb-10 leading-relaxed">
-          {subtitles[mode]}
-        </p>
+      <div className="w-full max-w-5xl flex flex-col lg:flex-row gap-16 lg:gap-24 items-start lg:items-center">
+
+        {/* ── Left: context panel ── */}
+        <div className="flex-1 lg:max-w-sm">
+          <p
+            className="font-mono text-xs tracking-[0.3em] mb-6"
+            style={{ color: "hsl(var(--golden) / 0.5)" }}
+          >
+            // KAIZEN CLIMBING COACHING
+          </p>
+          <h2
+            className="font-display text-5xl sm:text-6xl leading-none mb-6"
+            style={{ color: "hsl(var(--golden))" }}
+          >
+            HOW IT WORKS
+          </h2>
+          <p className="font-body text-sm text-white/55 leading-relaxed mb-10">
+            I work with a small number of athletes at a time. Before anything is committed, we go through a short process to make sure we're the right fit.
+          </p>
+
+          <div className="space-y-8">
+            {[
+              {
+                num: "01",
+                title: "Tell me about your climbing",
+                body: "Fill out a short form — your goals, current level, and what you're trying to improve. Takes about 5 minutes.",
+              },
+              {
+                num: "02",
+                title: "I review your application",
+                body: "I'll look everything over and get back to you within 72 hours. If it's a good fit, I'll unlock the next step.",
+              },
+              {
+                num: "03",
+                title: "Payment & plan starts",
+                body: "Once accepted, you'll receive payment details. After payment is confirmed, we schedule your onboarding call and your personalised plan begins.",
+              },
+            ].map(({ num, title, body }) => (
+              <div key={num} className="flex gap-5">
+                <span
+                  className="font-display text-4xl leading-none flex-shrink-0 w-10"
+                  style={{ color: "hsl(var(--golden) / 0.3)" }}
+                >
+                  {num}
+                </span>
+                <div>
+                  <p className="font-display text-lg leading-tight mb-1" style={{ color: "hsl(var(--golden))" }}>
+                    {title}
+                  </p>
+                  <p className="font-body text-sm text-white/45 leading-relaxed">{body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div
+            className="mt-10 pt-8 border-t"
+            style={{ borderColor: "hsl(var(--golden) / 0.15)" }}
+          >
+            <p className="font-body text-xs text-white/30 leading-relaxed">
+              Creating an account lets you save your progress and pick up where you left off. No payment is required to submit your application.
+            </p>
+          </div>
+        </div>
+
+        {/* ── Right: form panel ── */}
+        <div className="w-full lg:w-[400px] flex-shrink-0">
+          <h1
+            className="font-display text-4xl sm:text-5xl leading-none mb-2"
+            style={{ color: "hsl(var(--golden))" }}
+          >
+            {titles[mode]}
+          </h1>
+          <div className="w-12 h-0.5 mt-4 mb-4" style={{ backgroundColor: "hsl(var(--golden))" }} />
+          <p className="font-body text-sm text-white/50 mb-8 leading-relaxed">
+            {subtitles[mode]}
+          </p>
 
         {/* Signup: check-your-email confirmation */}
         {checkEmail ? (
@@ -310,7 +370,8 @@ export default function ConsultationAuth() {
             </button>
           </div>
         )}
-      </div>
+        </div> {/* end right panel */}
+      </div> {/* end flex container */}
     </main>
   );
 }
