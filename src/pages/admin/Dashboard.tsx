@@ -18,6 +18,9 @@ import {
   CheckCircle2,
   Clock,
   CreditCard,
+  Pencil,
+  Save,
+  X,
 } from "lucide-react";
 
 type Stage = "submitted" | "reviewed" | "paid" | "booked";
@@ -132,9 +135,41 @@ type ClientBillingData = {
   cancelAtPeriodEnd: boolean;
 };
 
-// ── Email templates (read-only copies) ─────────────────────────────────────
+// ── Email template type ──────────────────────────────────────────────────────
 
-const EMAIL_TEMPLATES = [
+type EmailTemplate = {
+  id: string;
+  template_id: string;
+  name: string;
+  description: string | null;
+  subject: string;
+  html_body: string;
+  updated_at: string;
+};
+
+// Sample tokens used for the live preview panel
+const PREVIEW_TOKENS: Record<string, string> = {
+  firstName: "Alex",
+  lastName: "Johnson",
+  email: "alex@example.com",
+  firstName_upper: "ALEX",
+  interests_block: `<p style="margin:0 0 8px 0;color:#5C5435;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">You expressed interest in:</p><ul style="margin:0 0 24px 0;padding-left:20px;"><li style="color:#1A1A1A;font-family:'Inter',sans-serif;font-size:14px;margin-bottom:4px;">Route Climbing</li><li style="color:#1A1A1A;font-family:'Inter',sans-serif;font-size:14px;margin-bottom:4px;">Bouldering</li></ul>`,
+  interests_badges: `<span style="display:inline-block;background-color:#FFC93C;color:#1A1A1A;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:4px 10px;margin:0 4px 4px 0;">Route Climbing</span><span style="display:inline-block;background-color:#FFC93C;color:#1A1A1A;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:4px 10px;margin:0 4px 4px 0;">Bouldering</span>`,
+  message_block: `<tr><td style="padding:0 0 24px 0;"><p style="margin:0 0 6px 0;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FFC93C;">Message</p><p style="margin:0;font-family:'Inter',sans-serif;font-size:14px;color:rgba(255,255,255,0.85);line-height:1.6;font-style:italic;">"I've been climbing for 3 years and really want to push past the 7a plateau."</p></td></tr>`,
+  bookingUrl: "https://cal.com/kaizen-climbing/consultation-call",
+  reason_block: `<p style="margin:0 0 16px 0;font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.85);line-height:1.6;">After reviewing your application, I don't think we're the right fit at this point in time. I only take on a small number of athletes and I want to make sure every coaching relationship is one I can fully commit to.</p>`,
+};
+
+function applyPreviewTokens(html: string): string {
+  return Object.entries(PREVIEW_TOKENS).reduce(
+    (result, [key, value]) => result.replaceAll(`{{${key}}}`, value),
+    html
+  );
+}
+
+// ── Unused legacy list removed — templates now live in email_templates table ──
+
+const _UNUSED_EMAIL_TEMPLATES_META = [
   {
     id: "contact-confirmation",
     name: "Contact Form Confirmation",
@@ -310,7 +345,13 @@ const AdminDashboard = () => {
   const [advancingId, setAdvancingId] = useState<string | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
-  const [expandedTemplate, setExpandedTemplate] = useState<string | null>(null);
+  const [emailTemplates, setEmailTemplates] = useState<EmailTemplate[] | null>(null);
+  const [emailTemplatesLoading, setEmailTemplatesLoading] = useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+  const [editSubject, setEditSubject] = useState("");
+  const [editHtml, setEditHtml] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   const [clients, setClients] = useState<ClientBillingData[] | null>(null);
   const [clientsLoading, setClientsLoading] = useState(false);
   const [applications, setApplications] = useState<Application[] | null>(null);
@@ -393,7 +434,50 @@ const AdminDashboard = () => {
     if (activeTab === "analytics" && !analytics) fetchAnalytics();
     if (activeTab === "clients" && !clients) fetchClients();
     if (activeTab === "applications" && !applications) fetchApplications();
-  }, [activeTab, analytics, fetchAnalytics, clients, fetchClients, applications, fetchApplications]);
+    if (activeTab === "templates" && !emailTemplates) fetchEmailTemplates();
+  }, [activeTab, analytics, fetchAnalytics, clients, fetchClients, applications, fetchApplications, emailTemplates]);
+
+  const fetchEmailTemplates = async () => {
+    setEmailTemplatesLoading(true);
+    const { data, error } = await supabase
+      .from("email_templates")
+      .select("*")
+      .order("name");
+    if (!error && data) {
+      setEmailTemplates(data as EmailTemplate[]);
+      if (data.length > 0 && !selectedTemplateId) {
+        selectTemplate(data[0] as EmailTemplate);
+      }
+    }
+    setEmailTemplatesLoading(false);
+  };
+
+  const selectTemplate = (tpl: EmailTemplate) => {
+    setSelectedTemplateId(tpl.template_id);
+    setEditSubject(tpl.subject);
+    setEditHtml(tpl.html_body);
+    setIsDirty(false);
+  };
+
+  const saveEmailTemplate = async () => {
+    if (!selectedTemplateId) return;
+    setIsSaving(true);
+    const { error } = await supabase
+      .from("email_templates")
+      .update({ subject: editSubject, html_body: editHtml })
+      .eq("template_id", selectedTemplateId);
+    if (!error) {
+      setEmailTemplates(prev =>
+        prev?.map(t =>
+          t.template_id === selectedTemplateId
+            ? { ...t, subject: editSubject, html_body: editHtml, updated_at: new Date().toISOString() }
+            : t
+        ) ?? null
+      );
+      setIsDirty(false);
+    }
+    setIsSaving(false);
+  };
 
   const fetchSubmissions = async () => {
     setLoading(true);
@@ -1355,75 +1439,141 @@ const AdminDashboard = () => {
         {/* ── EMAIL TEMPLATES TAB ── */}
         {activeTab === "templates" && (
           <>
-            <div className="mb-8">
+            <div className="mb-6">
               <h1 className="font-display text-5xl tracking-wider" style={{ color: "hsl(var(--golden))" }}>
                 EMAIL TEMPLATES
               </h1>
               <p className="font-body text-sm text-white/40 mt-2">
-                View-only copies of all system emails sent by Kaizen Climbing Coaching.
+                Edit email content and preview how it will look before it's sent.
               </p>
             </div>
 
-            <div className="space-y-3">
-              {EMAIL_TEMPLATES.map((tpl) => {
-                const isOpen = expandedTemplate === tpl.id;
-                return (
-                  <div
-                    key={tpl.id}
-                    className="border"
-                    style={{ backgroundColor: "hsl(var(--golden-dark))", borderColor: "hsl(var(--golden-deep))" }}
-                  >
-                    <button
-                      onClick={() => setExpandedTemplate(isOpen ? null : tpl.id)}
-                      className="w-full flex items-center justify-between p-5 text-left"
-                    >
-                      <div>
-                        <p className="font-display text-lg tracking-wide" style={{ color: "hsl(var(--golden))" }}>
+            {emailTemplatesLoading && (
+              <p className="font-body text-sm text-white/40">Loading templates…</p>
+            )}
+
+            {!emailTemplatesLoading && emailTemplates && (
+              <div className="flex gap-4" style={{ height: "calc(100vh - 280px)", minHeight: "500px" }}>
+
+                {/* ── Left: template list ── */}
+                <div className="flex-shrink-0 w-52 flex flex-col gap-1 overflow-y-auto pr-1">
+                  {emailTemplates.map((tpl) => {
+                    const isSelected = selectedTemplateId === tpl.template_id;
+                    return (
+                      <button
+                        key={tpl.template_id}
+                        onClick={() => { if (!isDirty || confirm("Discard unsaved changes?")) selectTemplate(tpl); }}
+                        className="text-left px-3 py-3 border transition-colors"
+                        style={{
+                          backgroundColor: isSelected ? "hsl(var(--golden-dark))" : "transparent",
+                          borderColor: isSelected ? "hsl(var(--golden))" : "hsl(var(--golden-deep))",
+                        }}
+                      >
+                        <p
+                          className="font-display text-sm tracking-wide leading-tight"
+                          style={{ color: isSelected ? "hsl(var(--golden))" : "rgba(255,255,255,0.6)" }}
+                        >
                           {tpl.name}
                         </p>
-                        <p className="font-body text-xs text-white/40 mt-0.5">{tpl.description}</p>
-                      </div>
-                      <div className="flex items-center gap-3 ml-4 flex-shrink-0">
-                        <span
-                          className="font-body text-xs font-semibold uppercase tracking-wider px-2.5 py-1 hidden sm:block"
-                          style={{ backgroundColor: "hsl(var(--golden) / 0.1)", color: "hsl(var(--golden) / 0.7)", border: "1px solid hsl(var(--golden) / 0.2)" }}
-                        >
-                          {tpl.id}
+                        {tpl.description && (
+                          <p className="font-body text-xs mt-0.5 leading-tight" style={{ color: "rgba(255,255,255,0.3)" }}>
+                            {tpl.description}
+                          </p>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* ── Right: editor + preview ── */}
+                {selectedTemplateId && (
+                  <div className="flex-1 flex flex-col gap-3 min-w-0">
+
+                    {/* Header row */}
+                    <div className="flex items-center justify-between gap-3 flex-shrink-0">
+                      <div className="flex items-center gap-2">
+                        <Pencil size={14} style={{ color: "hsl(var(--golden) / 0.5)" }} />
+                        <span className="font-body text-xs text-white/40 uppercase tracking-widest">
+                          {emailTemplates.find(t => t.template_id === selectedTemplateId)?.name}
                         </span>
-                        {isOpen ? (
-                          <ChevronUp size={16} style={{ color: "hsl(var(--golden))" }} />
-                        ) : (
-                          <Eye size={16} style={{ color: "hsl(var(--golden) / 0.5)" }} />
+                        {isDirty && (
+                          <span className="font-body text-xs px-2 py-0.5" style={{ backgroundColor: "hsl(var(--golden) / 0.15)", color: "hsl(var(--golden))" }}>
+                            unsaved
+                          </span>
                         )}
                       </div>
-                    </button>
-
-                    {isOpen && (
-                      <div className="border-t px-5 pb-5" style={{ borderColor: "hsl(var(--golden-deep))" }}>
-                        <div className="mt-4 mb-3">
-                          <p className="font-body text-xs font-semibold uppercase tracking-widest opacity-40 text-white mb-1">Subject line</p>
-                          <p
-                            className="font-body text-sm px-3 py-2 border"
-                            style={{ backgroundColor: "hsl(var(--charcoal))", borderColor: "hsl(var(--golden-deep))", color: "hsl(var(--golden))" }}
+                      <div className="flex items-center gap-2">
+                        {isDirty && (
+                          <button
+                            onClick={() => {
+                              const tpl = emailTemplates.find(t => t.template_id === selectedTemplateId);
+                              if (tpl) selectTemplate(tpl);
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 font-body text-xs text-white/50 border border-white/10 hover:border-white/20"
                           >
-                            {tpl.subject}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="font-body text-xs font-semibold uppercase tracking-widest opacity-40 text-white mb-1">Body content</p>
-                          <pre
-                            className="font-body text-sm text-white/70 leading-relaxed whitespace-pre-wrap px-4 py-4 border"
-                            style={{ backgroundColor: "hsl(var(--charcoal))", borderColor: "hsl(var(--golden-deep))" }}
-                          >
-                            {tpl.preview}
-                          </pre>
-                        </div>
+                            <X size={12} /> Discard
+                          </button>
+                        )}
+                        <button
+                          onClick={saveEmailTemplate}
+                          disabled={!isDirty || isSaving}
+                          className="flex items-center gap-1.5 px-4 py-1.5 font-body text-xs font-semibold uppercase tracking-wider transition-opacity disabled:opacity-40"
+                          style={{ backgroundColor: "hsl(var(--golden))", color: "#1A1A1A" }}
+                        >
+                          <Save size={12} /> {isSaving ? "Saving…" : "Save"}
+                        </button>
                       </div>
-                    )}
+                    </div>
+
+                    {/* Subject line */}
+                    <div className="flex-shrink-0">
+                      <p className="font-body text-xs font-semibold uppercase tracking-widest opacity-40 text-white mb-1">Subject line</p>
+                      <input
+                        value={editSubject}
+                        onChange={(e) => { setEditSubject(e.target.value); setIsDirty(true); }}
+                        className="w-full font-body text-sm px-3 py-2 border bg-transparent outline-none"
+                        style={{ borderColor: "hsl(var(--golden-deep))", color: "hsl(var(--golden))" }}
+                      />
+                    </div>
+
+                    {/* Editor + preview columns */}
+                    <div className="flex gap-3 flex-1 min-h-0">
+
+                      {/* HTML editor */}
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <p className="font-body text-xs font-semibold uppercase tracking-widest opacity-40 text-white mb-1 flex-shrink-0">HTML</p>
+                        <textarea
+                          value={editHtml}
+                          onChange={(e) => { setEditHtml(e.target.value); setIsDirty(true); }}
+                          className="flex-1 w-full font-mono text-xs p-3 border bg-transparent outline-none resize-none"
+                          style={{
+                            borderColor: "hsl(var(--golden-deep))",
+                            color: "rgba(255,255,255,0.7)",
+                            backgroundColor: "hsl(var(--charcoal))",
+                          }}
+                          spellCheck={false}
+                        />
+                      </div>
+
+                      {/* Live preview */}
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <p className="font-body text-xs font-semibold uppercase tracking-widest opacity-40 text-white mb-1 flex-shrink-0">
+                          Preview <span className="normal-case opacity-60">(sample data)</span>
+                        </p>
+                        <iframe
+                          srcDoc={applyPreviewTokens(editHtml)}
+                          className="flex-1 w-full border"
+                          style={{ borderColor: "hsl(var(--golden-deep))" }}
+                          sandbox="allow-same-origin"
+                          title="Email preview"
+                        />
+                      </div>
+
+                    </div>
                   </div>
-                );
-              })}
-            </div>
+                )}
+              </div>
+            )}
           </>
         )}
 

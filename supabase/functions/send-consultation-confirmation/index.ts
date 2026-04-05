@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { fetchTemplate, applyTokens } from "../_shared/email-db.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,125 +11,6 @@ interface ConsultationConfirmationPayload {
   lastName: string;
   email: string;
 }
-
-const renderClientEmail = (firstName: string): string => `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Consultation received — Kaizen Climbing Coaching</title>
-</head>
-<body style="margin:0;padding:0;background-color:#1A1A1A;font-family:'Inter',sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#1A1A1A;padding:40px 20px;">
-    <tr>
-      <td align="center">
-        <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
-          <tr>
-            <td style="background-color:#5C5435;padding:32px 40px;">
-              <p style="margin:0;font-family:'Arial Black',sans-serif;font-size:28px;font-weight:900;letter-spacing:0.05em;color:#FFC93C;text-transform:uppercase;">KAIZEN</p>
-              <p style="margin:4px 0 0 0;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:rgba(255,255,255,0.5);">Climbing Coaching</p>
-            </td>
-          </tr>
-          <tr>
-            <td style="background-color:#FFC93C;padding:40px;">
-              <p style="margin:0 0 4px 0;font-family:'Arial Black',sans-serif;font-size:32px;font-weight:900;letter-spacing:0.03em;color:#1A1A1A;text-transform:uppercase;line-height:1;">CONSULTATION</p>
-              <p style="margin:0 0 24px 0;font-family:'Arial Black',sans-serif;font-size:32px;font-weight:900;letter-spacing:0.03em;color:#1A1A1A;text-transform:uppercase;line-height:1;">RECEIVED!</p>
-              <p style="margin:0 0 20px 0;font-family:'Inter',sans-serif;font-size:15px;color:#1A1A1A;line-height:1.6;">
-                Hey ${firstName}, thanks for completing your consultation form. We'll review everything and be in touch with you <strong>within 72 hours</strong>.
-              </p>
-              <p style="margin:0 0 16px 0;font-family:'Inter',sans-serif;font-size:14px;color:#1A1A1A;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">
-                Here's what happens next:
-              </p>
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
-                <tr>
-                  <td style="padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.1);">
-                    <p style="margin:0;font-family:'Inter',sans-serif;font-size:13px;color:#1A1A1A;">
-                      <strong style="font-family:'Arial Black',sans-serif;color:#5C5435;">01 &nbsp;</strong>
-                      Consultation reviewed — we'll reply within 72 hours
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.1);">
-                    <p style="margin:0;font-family:'Inter',sans-serif;font-size:13px;color:#1A1A1A;">
-                      <strong style="font-family:'Arial Black',sans-serif;color:#5C5435;">02 &nbsp;</strong>
-                      Complete payment — a payment link will be sent to you
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:10px 0;">
-                    <p style="margin:0;font-family:'Inter',sans-serif;font-size:13px;color:#1A1A1A;">
-                      <strong style="font-family:'Arial Black',sans-serif;color:#5C5435;">03 &nbsp;</strong>
-                      Book your onboarding call — link sent after payment confirmed
-                    </p>
-                  </td>
-                </tr>
-              </table>
-              <p style="margin:0 0 28px 0;font-family:'Inter',sans-serif;font-size:14px;color:#1A1A1A;line-height:1.6;">
-                In the meantime, feel free to reach out with any questions.
-              </p>
-              <a href="mailto:admin@kaizenclimbing.co.uk"
-                 style="display:inline-block;background-color:#5C5435;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:14px 28px;">
-                GET IN TOUCH
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td style="background-color:#4A442B;padding:24px 40px;">
-              <p style="margin:0;font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">
-                You're receiving this email because you submitted a consultation via kaizenclimbing.com.<br />
-                Questions? Reply to this email or contact us at <a href="mailto:admin@kaizenclimbing.co.uk" style="color:#FFC93C;text-decoration:none;">admin@kaizenclimbing.co.uk</a>
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
-
-const renderAdminEmail = (firstName: string, lastName: string, email: string): string => `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8" /><title>New consultation — ${firstName} ${lastName}</title></head>
-<body style="margin:0;padding:0;background-color:#1A1A1A;font-family:'Inter',sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#1A1A1A;padding:40px 20px;">
-    <tr>
-      <td align="center">
-        <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
-          <tr>
-            <td style="background-color:#5C5435;padding:28px 40px;">
-              <p style="margin:0;font-family:'Arial Black',sans-serif;font-size:20px;font-weight:900;color:#FFC93C;text-transform:uppercase;">NEW CONSULTATION SUBMISSION</p>
-            </td>
-          </tr>
-          <tr>
-            <td style="background-color:#FFC93C;padding:32px 40px;">
-              <p style="margin:0 0 16px 0;font-family:'Inter',sans-serif;font-size:16px;color:#1A1A1A;">
-                <strong>${firstName} ${lastName}</strong> has submitted a consultation form.
-              </p>
-              <p style="margin:0 0 8px 0;font-family:'Inter',sans-serif;font-size:14px;color:#1A1A1A;">
-                Email: <a href="mailto:${email}" style="color:#5C5435;">${email}</a>
-              </p>
-              <a href="https://kaizenclimbing.com/admin"
-                 style="display:inline-block;margin-top:20px;background-color:#5C5435;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;padding:12px 24px;">
-                VIEW IN DASHBOARD
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td style="background-color:#4A442B;padding:20px 40px;">
-              <p style="margin:0;font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);">
-                Kaizen Climbing Coaching admin notification
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -142,19 +24,36 @@ serve(async (req) => {
     const payload: ConsultationConfirmationPayload = await req.json();
     const { firstName, lastName, email } = payload;
 
-    // Send confirmation to client
+    const [clientTpl, adminTpl] = await Promise.all([
+      fetchTemplate("consultation-client"),
+      fetchTemplate("consultation-admin"),
+    ]);
+
+    const tokens = { firstName, lastName, email };
+
+    const clientHtml = clientTpl
+      ? applyTokens(clientTpl.html_body, tokens)
+      : `<p>Hey ${firstName}, thanks for completing your consultation form. We'll be in touch within 72 hours.</p>`;
+    const clientSubject = clientTpl
+      ? applyTokens(clientTpl.subject, tokens)
+      : "Consultation received — Kaizen Climbing Coaching";
+
+    const adminHtml = adminTpl
+      ? applyTokens(adminTpl.html_body, tokens)
+      : `<p>${firstName} ${lastName} submitted a consultation form. Email: ${email}</p>`;
+    const adminSubject = adminTpl
+      ? applyTokens(adminTpl.subject, tokens)
+      : `New consultation: ${firstName} ${lastName}`;
+
     const clientRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: {
-        "Authorization": `Bearer ${RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
+      headers: { "Authorization": `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: "admin@kaizenclimbing.co.uk",
         to: [email],
-        subject: "Consultation received — Kaizen Climbing Coaching",
-        html: renderClientEmail(firstName),
+        subject: clientSubject,
+        html: clientHtml,
         text: `Hey ${firstName}, thanks for completing your consultation form. We'll review everything and be in touch within 72 hours.\n\nWhat happens next:\n01 — Consultation reviewed, we'll reply within 72 hours\n02 — Complete payment, a payment link will be sent to you\n03 — Book your onboarding call, link sent after payment confirmed\n\nIn the meantime, feel free to reach out: admin@kaizenclimbing.co.uk`,
       }),
     });
@@ -162,19 +61,15 @@ serve(async (req) => {
     const clientData = await clientRes.json();
     if (!clientRes.ok) throw new Error(`Resend client email error [${clientRes.status}]: ${JSON.stringify(clientData)}`);
 
-    // Send notification to admin
     const adminRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: {
-        "Authorization": `Bearer ${RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
+      headers: { "Authorization": `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         from: "Kaizen Climbing Coaching <notify@kaizenclimbing.com>",
         reply_to: email,
         to: ["admin@kaizenclimbing.co.uk"],
-        subject: `New consultation: ${firstName} ${lastName}`,
-        html: renderAdminEmail(firstName, lastName, email),
+        subject: adminSubject,
+        html: adminHtml,
         text: `New consultation submission from ${firstName} ${lastName} (${email}).\n\nView in dashboard: https://kaizenclimbing.com/admin`,
       }),
     });

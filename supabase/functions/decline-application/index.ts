@@ -1,66 +1,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { fetchTemplate, applyTokens } from "../_shared/email-db.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const renderEmail = (firstName: string, reason?: string): string => `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
-<body style="margin:0;padding:0;background-color:#1A1A1A;font-family:'Inter',sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#1A1A1A;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
-        <tr>
-          <td style="background-color:#5C5435;padding:32px 40px;">
-            <p style="margin:0;font-family:'Arial Black',sans-serif;font-size:28px;font-weight:900;letter-spacing:0.05em;color:#FFC93C;text-transform:uppercase;">KAIZEN</p>
-            <p style="margin:4px 0 0 0;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:rgba(255,255,255,0.5);">Climbing Coaching</p>
-          </td>
-        </tr>
-        <tr>
-          <td style="background-color:#2a2a2a;padding:40px;">
-            <p style="margin:0 0 20px 0;font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.85);line-height:1.6;">
-              Hey ${firstName},
-            </p>
-            <p style="margin:0 0 16px 0;font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.85);line-height:1.6;">
-              Thanks for applying for the Kaizen Plan — I appreciate you taking the time and being open about your climbing.
-            </p>
-            ${reason
-              ? `<p style="margin:0 0 16px 0;font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.85);line-height:1.6;">${reason}</p>`
-              : `<p style="margin:0 0 16px 0;font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.85);line-height:1.6;">
-                  After reviewing your application, I don't think we're the right fit at this point in time. I only take on a small number of athletes and I want to make sure every coaching relationship is one I can fully commit to.
-                </p>`
-            }
-            <p style="margin:0 0 16px 0;font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.85);line-height:1.6;">
-              That said, I don't want this to be the end of things. If your situation changes — goals, time, training — please don't hesitate to apply again. And in the meantime, the Training Tips section of the site is there for you.
-            </p>
-            <p style="margin:0;font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.85);line-height:1.6;">
-              Keep climbing — Buster
-            </p>
-          </td>
-        </tr>
-        <tr>
-          <td style="background-color:#5C5435;padding:24px 40px;text-align:center;">
-            <a href="https://kaizenclimbing.co.uk/training-tips"
-               style="display:inline-block;color:#FFC93C;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;">
-              BROWSE TRAINING TIPS →
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td style="background-color:#4A442B;padding:24px 40px;">
-            <p style="margin:0;font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">
-              Questions? Reply to this email or contact us at <a href="mailto:admin@kaizenclimbing.co.uk" style="color:#FFC93C;text-decoration:none;">admin@kaizenclimbing.co.uk</a>
-            </p>
-          </td>
-        </tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
+const DEFAULT_REASON = `After reviewing your application, I don't think we're the right fit at this point in time. I only take on a small number of athletes and I want to make sure every coaching relationship is one I can fully commit to.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -113,7 +60,17 @@ serve(async (req) => {
 
     if (updateErr) throw new Error(`Update error: ${updateErr.message}`);
 
-    // Send decline email
+    const reasonText = reason || DEFAULT_REASON;
+    const reasonBlock = `<p style="margin:0 0 16px 0;font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.85);line-height:1.6;">${reasonText}</p>`;
+
+    const tpl = await fetchTemplate("decline-application");
+    const html = tpl
+      ? applyTokens(tpl.html_body, { firstName: app.first_name, reason_block: reasonBlock })
+      : `<p>Hey ${app.first_name}, thanks for applying. ${reasonText} Keep climbing — Buster</p>`;
+    const subject = tpl
+      ? applyTokens(tpl.subject, { firstName: app.first_name })
+      : "Thanks for applying — Kaizen Climbing Coaching";
+
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { "Authorization": `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
@@ -121,9 +78,9 @@ serve(async (req) => {
         from: "Buster @ Kaizen <notify@kaizenclimbing.com>",
         reply_to: "admin@kaizenclimbing.co.uk",
         to: [app.email],
-        subject: "Thanks for applying — Kaizen Climbing Coaching",
-        html: renderEmail(app.first_name, reason),
-        text: `Hey ${app.first_name}, thanks for applying. After reviewing your application, I don't think we're the right fit at this point. Keep climbing — Buster`,
+        subject,
+        html,
+        text: `Hey ${app.first_name}, thanks for applying. ${reasonText}\n\nKeep climbing — Buster`,
       }),
     });
 
